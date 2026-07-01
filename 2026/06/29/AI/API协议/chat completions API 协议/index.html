@@ -1,0 +1,518 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>chat completions API 协议 | clerimia's Blog</title><meta name="author" content="clerimia"><meta name="copyright" content="clerimia"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="核心特点：  无状态，需要手动传递完整的 messages 对话历史 基于角色的对话模型：system&#x2F;user&#x2F;assistant&#x2F;tool  消息顺序约束：system -&gt; user -&gt; assistant -&gt; tool -&gt; user 每轮对话必须以 user 或者 tool 消息结尾（发起新请求时） tool 消息必须紧跟在 tool_calls 和 assi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="chat completions API 协议">
+<meta property="og:url" content="https://clerimia.github.io/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="clerimia&#39;s Blog">
+<meta property="og:description" content="核心特点：  无状态，需要手动传递完整的 messages 对话历史 基于角色的对话模型：system&#x2F;user&#x2F;assistant&#x2F;tool  消息顺序约束：system -&gt; user -&gt; assistant -&gt; tool -&gt; user 每轮对话必须以 user 或者 tool 消息结尾（发起新请求时） tool 消息必须紧跟在 tool_calls 和 assi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg">
+<meta property="article:published_time" content="2026-06-29T10:17:18.000Z">
+<meta property="article:modified_time" content="2026-07-01T10:06:54.973Z">
+<meta property="article:author" content="clerimia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "chat completions API 协议",
+  "url": "https://clerimia.github.io/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/",
+  "image": "https://clerimia.github.io/assets/cucumber-icon.jpg",
+  "datePublished": "2026-06-29T10:17:18.000Z",
+  "dateModified": "2026-07-01T10:06:54.973Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "clerimia",
+      "url": "https://clerimia.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/favicon.png"><link rel="canonical" href="https://clerimia.github.io/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'chat completions API 协议',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">clerimia's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">chat completions API 协议</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">chat completions API 协议</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-29T10:17:18.000Z" title="发表于 2026-06-29 18:17:18">2026-06-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-01T10:06:54.973Z" title="更新于 2026-07-01 18:06:54">2026-07-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>核心特点：</p>
+<ul>
+<li>无状态，需要手动传递完整的 <code>messages</code> 对话历史</li>
+<li>基于角色的对话模型：system/user/assistant/tool
+<ul>
+<li>消息顺序约束：system -&gt; user -&gt; assistant -&gt; tool -&gt; user</li>
+<li>每轮对话必须以 <code>user</code> 或者 <code>tool</code> 消息结尾（发起新请求时）</li>
+<li><code>tool</code> 消息必须紧跟在 <code>tool_calls</code> 和 <code>assistant</code> 消息后</li>
+<li>并行工具调用时，所有工具结果必须<strong>全部回传</strong>后才能继续对话</li>
+</ul>
+</li>
+<li>LLM API的事实标准，现在大部分的AI API都是提供了chat completions api兼容的，而且Open AI也称这个为永久兼容的。</li>
+</ul>
+<h2 id="一请求结构总览">一请求结构总览</h2>
+<h3 id="1-请求URL规范-baseURL">1. 请求URL规范, baseURL</h3>
+<p>采用 chat completions api 协议的网关一般的端点格式为：<br>
+<code>POST https://modelverse/v1/chat/completions</code></p>
+<h3 id="2-请求头规范">2. 请求头规范</h3>
+<p>HTTP Headers 中一般要携带<br>
+<code>Authorization: Bearer &lt;api-key&gt;</code> 来进行身份认证和Token审计。<br>
+<code>Content-Type: application/json</code> 来接收响应结果</p>
+<h3 id="3-请求体规范">3. 请求体规范</h3>
+<p>请求体的结构较为复杂，一般是一个json文本的格式组织的，下面分为几类来讲</p>
+<h4 id="3-1-基本必填的">3.1. 基本必填的</h4>
+<ul>
+<li><code>model</code>：模型名称</li>
+</ul>
+<ul>
+<li><code>messages</code>：消息列表，消息协议
+<ul>
+<li>system 消息：
+<ul>
+<li><code>role</code>：“system”</li>
+<li><code>content</code>：内容</li>
+<li><code>name</code>?: 区分不同的system消息</li>
+</ul>
+</li>
+<li>user 消息：
+<ul>
+<li><code>role</code>：“user”</li>
+<li><code>content</code>：可以是数组
+<ul>
+<li><code>type</code>：“text” | “image_url” | “input_audio” |</li>
+<li><code>image_url</code>?:
+<ul>
+<li><code>url</code>: URL | DataURI</li>
+</ul>
+</li>
+<li>`audio_url?:
+<ul>
+<li><code>url</code>：URL | DataURI</li>
+<li><code>format</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>assistant</code> 消息
+<ul>
+<li><code>role</code>：“assistant”</li>
+<li><code>content</code>: string | null（工具调用时）</li>
+<li><code>tool_calls</code>?: 数组
+<ul>
+<li><code>id</code></li>
+<li><code>type</code>：“function”</li>
+<li><code>function</code>
+<ul>
+<li><code>name</code></li>
+<li><code>arguments</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>tool</code> 消息
+<ul>
+<li><code>role</code>：“role”</li>
+<li><code>tool_call_id</code>：和assistant的toolid对应</li>
+<li><code>content</code>：string | []</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-生成控制参数">3.2 生成控制参数</h4>
+<ol>
+<li>随机性控制
+<ol>
+<li><code>temperature</code>：number：越低就会越倾向于选择高概率的token，也就是概率抉择</li>
+<li><code>top_p</code>：number： 概率采样, 0.1即考虑前10%，截断低概率token</li>
+<li><code>seed</code>：integer：随机种子</li>
+<li>![[Pasted image 20260626190435.png]]常用的随机程度对比</li>
+</ol>
+</li>
+<li>长度控制
+<ol>
+<li><code>max_completion_tokens</code>：最大生成Token数</li>
+<li><code>max_tokens</code>：同上</li>
+<li><code>n</code>：每次请求返回的候选回复数量</li>
+<li><code>stop</code>：遇到指定字符串时停止生成</li>
+</ol>
+</li>
+<li>重复惩罚
+<ol>
+<li><code>presence_penalty</code>：惩罚已经出现的 token，鼓励引入新话题</li>
+<li><code>frequency_penalty</code>：惩罚高频 token</li>
+<li><code>logit_bias</code>：调整指定 token 的概率。</li>
+</ol>
+</li>
+<li>概率分析
+<ol>
+<li><code>logprobs</code>：是否响应中返回每个 token 的对数概率，越接近 0 越确定</li>
+<li><code>top_logprobs</code>：每个位置返回概率最高的前 N 个 token 及其概率需要先打开 <code>logprobs</code></li>
+</ol>
+</li>
+</ol>
+<h4 id="3-3-工具列表和Schema">3.3 工具列表和Schema</h4>
+<ul>
+<li><code>tools</code>：工具定义列表
+<ul>
+<li><code>name</code>：required</li>
+<li><code>description</code>?</li>
+<li><code>strict</code>?</li>
+<li><code>parameters</code>?
+<ul>
+<li>zod 来写</li>
+</ul>
+</li>
+<li><code>strict</code>：boolean 模式约束，开启后严格按照 schema 生成</li>
+</ul>
+</li>
+<li><code>tool_choice</code>?：”none“ | “auto” | “required” | TOOL JSON
+<ul>
+<li>none：禁止调用工具</li>
+<li>auto：自行判断，默认</li>
+<li>required：至少调用一个</li>
+<li>TOOL JSON：强制调用指定工具</li>
+</ul>
+</li>
+<li><code>parallel_tool_calls</code>：boolean 默认 true 开启并行调用工具</li>
+</ul>
+<h4 id="3-4-结构化输出">3.4 结构化输出</h4>
+<ul>
+<li><code>response_format</code>：json
+<ul>
+<li>type：“text” | “json_object” | “json_schema”
+<ul>
+<li>text：默认，普通文本输出</li>
+<li>json_object：输出时合法JSON但是不约束结构</li>
+<li>json_schema：输入schema：严格要求输出符合 schema strict：true 时100%正确</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-5-流式传输">3.5 流式传输</h4>
+<ul>
+<li><code>stream</code> ： 默认false，</li>
+<li><code>stream_options</code>：{“include”：true} 让最后一帧附带 token 用量统计 <code>usage</code> 对象</li>
+</ul>
+<blockquote>
+<p>最后输出的是 [DONE]</p>
+</blockquote>
+<h4 id="3-6-其它参数">3.6 其它参数</h4>
+<ul>
+<li><code>user</code>：用户的唯一标识</li>
+<li><code>store</code>：是否将本次请求存储用于 Dashboard 查看或者 Fune-tuning</li>
+<li><code>metadata</code>：自定义键值对，用于业务标注</li>
+<li><strong><code>reasoning_effort</code></strong>：思考强度</li>
+<li><code>modalities</code>：输出音频模态</li>
+<li><code>audio</code>：音频输出类型</li>
+</ul>
+<h2 id="响应结构总览">响应结构总览</h2>
+<h3 id="1-阻塞式响应">1. 阻塞式响应</h3>
+<pre><code class="language-json">{
+	&quot;id&quot;: &quot;chatcmpl-xyz789&quot;,
+	&quot;object&quot;: &quot;chat.completion&quot;,
+	&quot;created&quot;: 1712345678,
+	&quot;model&quot;: &quot;gpt-4o-2024-08-06&quot;,
+	&quot;choices&quot;: [
+		{
+			&quot;index&quot;: 0,
+			&quot;message&quot;: {
+				&quot;role&quot;: &quot;assistant&quot;,
+				&quot;content&quot;: null,    // 有 tool_calls 时 content 为 null
+				&quot;refusal&quot;: null,
+				&quot;tool_calls&quot;: [
+					{
+						&quot;id&quot;: &quot;call_abc111&quot;,              // 唯一调用 ID，回传结果时必须对应
+						&quot;type&quot;: &quot;function&quot;,               // 目前固定为 &quot;function&quot;
+						&quot;function&quot;: {
+							&quot;name&quot;: &quot;get_weather&quot;,          // 调用的函数名
+							&quot;arguments&quot;: &quot;{\&quot;city\&quot;: \&quot;北京\&quot;, \&quot;days\&quot;: 3}&quot;  // JSON 字符串，需 json.loads() 解析
+						}
+					},
+					{
+						&quot;id&quot;: &quot;call_abc222&quot;,             // 并行调用第二个工具
+						&quot;type&quot;: &quot;function&quot;,
+						&quot;function&quot;: {
+							&quot;name&quot;: &quot;get_weather&quot;,
+							&quot;arguments&quot;: &quot;{\&quot;city\&quot;: \&quot;上海\&quot;, \&quot;days\&quot;: 3}&quot;
+						}
+					}
+				]
+			},
+			&quot;logprobs&quot;: null,
+			&quot;finish_reason&quot;: &quot;tool_calls&quot;  // 标志：需要执行工具并回传结果
+		}
+	],
+	&quot;usage&quot;: {
+		&quot;prompt_tokens&quot;: 85,
+		&quot;completion_tokens&quot;: 42,
+		&quot;total_tokens&quot;: 127,
+		&quot;prompt_tokens_details&quot;: {
+			&quot;cached_tokens&quot;: 0,
+			&quot;audio_tokens&quot;: 0
+		},
+		&quot;completion_tokens_details&quot;: {
+			&quot;reasoning_tokens&quot;: 0,
+			&quot;audio_tokens&quot; 0
+			&quot;accepted_prediction_tokens&quot; 0
+			&quot;rejected_prediction_tokens&quot; 0
+		}
+	},
+	&quot;system_fingerprint&quot;: &quot;fp_abc123&quot;
+}
+</code></pre>
+<h4 id="1-1-基本元数据字段">1.1 基本元数据字段</h4>
+<ul>
+<li><code>id</code>：本次API调用的唯一标识符</li>
+<li><code>object</code>：标识返回对象的类型，有 chat.completion 和 response</li>
+<li><code>created</code>：UNIX时间戳，代表请求处理时的时间</li>
+<li><code>model</code>：模型版本</li>
+<li><code>system_fingerprint</code>：系统指纹，代表后端配置。</li>
+</ul>
+<h4 id="1-2-核心内容字段-choices">1.2 核心内容字段 choices</h4>
+<ul>
+<li><code>choices</code>：是一个数组，包含了模型生成的结果，通常只有一个，但是可以指定<code>n</code>
+<ul>
+<li><code>index</code>：结果列表的选项索引</li>
+<li><code>logprobs</code>：对数概率值</li>
+<li><strong><code>finish_reason</code></strong>：停止生成文本的原因
+<ul>
+<li><code>stop</code>：自然结束</li>
+<li><code>length</code>：长度限制</li>
+<li><code>content_filter</code>：内容过滤</li>
+<li><code>tool_calls</code>：结束原因是工具调用</li>
+<li><code>null</code>：流式输出中间帧</li>
+</ul>
+</li>
+<li><code>message</code>：消息
+<ul>
+<li><code>role</code>：assistant</li>
+<li><code>content</code>：null | string | object 当发起工具调用时是null</li>
+<li><code>refusal</code>：null 模型拒绝回答时是有的</li>
+<li><code>tool_calls</code>：数组，可以并行调用
+<ul>
+<li><code>id</code>：工具调用的唯一ID，工具结果对应</li>
+<li><code>type</code>：固定为function</li>
+<li><code>function</code>：具体函数信息
+<ul>
+<li><code>name</code>：函数名</li>
+<li><code>arguments</code>：参数信息</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-3-资源消耗统计-usage">1.3 资源消耗统计 usage</h4>
+<ul>
+<li><code>usage</code>：Token消耗情况
+<ul>
+<li><code>prompt_tokens</code>：用户输入（包括历史对话）消耗的token数</li>
+<li><code>completion_tokens</code>：生成回复时消耗的token数</li>
+<li><code>total_tokens</code>：消耗的总token数</li>
+<li><code>prompt_tokens_detail</code>：输入token的细分统计
+<ul>
+<li><code>cached_tokens</code>：缓存命中token</li>
+<li><code>audio_tokens</code>：音频输入消耗token</li>
+</ul>
+</li>
+<li><code>completion_tokens_detail</code>：输出token的细分统计
+<ul>
+<li><code>reasoning_tokens</code>：推理消耗的token</li>
+<li><code>audio_tokens</code>：音频输出Token</li>
+<li><code>accept_prediction_tokens</code>：接受的预测token</li>
+<li><code>rejected_prediction_tokens</code>：被拒绝的预测token</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-流式响应">2. 流式响应</h3>
+<p>流式响应的结果是一个个和之前差不多的JSON对象，通过sse的方式增量传输</p>
+<blockquote>
+<p>但是content的部分变成了 <code>delta</code></p>
+</blockquote>
+<pre><code class="language-json">{
+  id: 'chatcmpl-aa1a9164e7aa3e91',
+  created: 1782561771,
+  model: 'agnes-2.0-flash',
+  object: 'chat.completion.chunk',
+  choices: [
+    {
+      index: 1,
+      delta: { content: '{' },
+      logprobs: {
+        content: [
+          {
+            token: '{',
+            bytes: [ 123 ],
+            logprob: -0.022546963766217232,
+            top_logprobs: [
+              {
+                token: '{',
+                bytes: [ 123 ],
+                logprob: -0.022546963766217232
+              },
+              {
+                token: '{&quot;',
+                bytes: [ 123, 34 ],
+                logprob: -3.8350470066070557
+              },
+              {
+                token: '{}',
+                bytes: [ 123, 125 ],
+                logprob: -7.272546768188477
+              },
+              { token: '&quot;', bytes: [ 34 ], logprob: -9999 },
+              { token: '!', bytes: [ 33 ], logprob: -9999 }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+{
+  id: 'chatcmpl-aa1a9164e7aa3e91',
+  created: 1782561771,
+  model: 'agnes-2.0-flash',
+  object: 'chat.completion.chunk',
+  choices: [ { index: 0, delta: {} } ],
+  usage: {
+    completion_tokens: 90,
+    prompt_tokens: 31,
+    total_tokens: 121,
+    completion_tokens_details: { reasoning_tokens: 0 }
+  }
+}
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://clerimia.github.io">clerimia</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://clerimia.github.io/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/">https://clerimia.github.io/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://clerimia.github.io" target="_blank">clerimia's Blog</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/assets/cucumber-icon.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/29/AI/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/Matt%20Pocock/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2"></div></div><div class="info-2"><div class="info-item-1">最近看到一篇小红书上的帖子，分享了一个他认为的最好的AI开发工作流skiils ，突然想到我最近一个朋友谈到他面试的时候有面试官问过：“你有一套固定的vibecoding工作流吗？”于是我就准备开个分类专门收集和学习一下开发AI工作流  一、ddmattdpocock skills 首先下载一下文章中提到的skill： npx skills@latest add vinvcn/mattpocock-skills-zh-CN 然后运行/setup-matt-pocock-skills 初始化 </div></div></div></a><a class="pagination-related" href="/2026/06/29/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/GIT/git%E6%A8%A1%E5%9E%8B/" title="GIT"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">GIT</div></div><div class="info-2"><div class="info-item-1">一、Git的对象模型设计理念 1. 快照存储模式 快照流 模式，每次提交时，Git都会对当前项目的全部文件各创建一个快照。 同时，为了提升效率，对于没有修改的文件，Git不会重复存储，而是创建一个指向上一版本的链接。 可以把Git理解位一个内容寻址数据库 Git 的数据主要存在 .git/objects 目录中，以对象的方式进行存储，常见的对象有4种，每个对象都有一个唯一的哈希ID：  blob：保存文件内容，但是没有文件名，按照内容哈希 tree：保存目录结构，记录目录有哪些目录和文件，文件名字，对象哈希，文件权限和类型 commit：保存提交信息（条目）：tree &lt;根目录tree哈希&gt; parent &lt;父提交哈希&gt; author tag：标签信息 branch： 指向某次提交的指针 commit -&gt; tree -&gt; blob   一次提交 -&gt; 一个根目录 -&gt; 多个文件内容  2. 三种文件状态 Git 文件的三个状态其实就是同一份文件在三个位置里的不同版本  Git 的三个状态可以理解为：工作区、暂存区、版本库中各有一份...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">clerimia</div><div class="author-info-description">后端开发工程师 | 合肥工业大学</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/clerimia"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/clerimia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1937049668@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到 clerimia 的技术博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88"><span class="toc-number">1.</span> <span class="toc-text">一请求结构总览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AF%B7%E6%B1%82URL%E8%A7%84%E8%8C%83-baseURL"><span class="toc-number">1.1.</span> <span class="toc-text">1. 请求URL规范, baseURL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AF%B7%E6%B1%82%E5%A4%B4%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.</span> <span class="toc-text">2. 请求头规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%B7%E6%B1%82%E4%BD%93%E8%A7%84%E8%8C%83"><span class="toc-number">1.3.</span> <span class="toc-text">3. 请求体规范</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-%E5%9F%BA%E6%9C%AC%E5%BF%85%E5%A1%AB%E7%9A%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1. 基本必填的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-%E7%94%9F%E6%88%90%E6%8E%A7%E5%88%B6%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 生成控制参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-%E5%B7%A5%E5%85%B7%E5%88%97%E8%A1%A8%E5%92%8CSchema"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 工具列表和Schema</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-%E7%BB%93%E6%9E%84%E5%8C%96%E8%BE%93%E5%87%BA"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 结构化输出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5-%E6%B5%81%E5%BC%8F%E4%BC%A0%E8%BE%93"><span class="toc-number">1.3.5.</span> <span class="toc-text">3.5 流式传输</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6-%E5%85%B6%E5%AE%83%E5%8F%82%E6%95%B0"><span class="toc-number">1.3.6.</span> <span class="toc-text">3.6 其它参数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88"><span class="toc-number">2.</span> <span class="toc-text">响应结构总览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%98%BB%E5%A1%9E%E5%BC%8F%E5%93%8D%E5%BA%94"><span class="toc-number">2.1.</span> <span class="toc-text">1. 阻塞式响应</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E5%9F%BA%E6%9C%AC%E5%85%83%E6%95%B0%E6%8D%AE%E5%AD%97%E6%AE%B5"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.1 基本元数据字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E6%A0%B8%E5%BF%83%E5%86%85%E5%AE%B9%E5%AD%97%E6%AE%B5-choices"><span class="toc-number">2.1.2.</span> <span class="toc-text">1.2 核心内容字段 choices</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-%E8%B5%84%E6%BA%90%E6%B6%88%E8%80%97%E7%BB%9F%E8%AE%A1-usage"><span class="toc-number">2.1.3.</span> <span class="toc-text">1.3 资源消耗统计 usage</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94"><span class="toc-number">2.2.</span> <span class="toc-text">2. 流式响应</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/30/JAVA/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/HashMap/" title="无标题">无标题</a><time datetime="2026-06-30T03:33:12.000Z" title="发表于 2026-06-30 11:33:12">2026-06-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/AI/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/Matt%20Pocock/" title="无标题">无标题</a><time datetime="2026-06-29T10:45:59.000Z" title="发表于 2026-06-29 18:45:59">2026-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/" title="chat completions API 协议">chat completions API 协议</a><time datetime="2026-06-29T10:17:18.000Z" title="发表于 2026-06-29 18:17:18">2026-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/GIT/git%E6%A8%A1%E5%9E%8B/" title="GIT">GIT</a><time datetime="2026-06-29T06:06:18.000Z" title="发表于 2026-06-29 14:06:18">2026-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/20/%E5%85%B3%E4%BA%8E%E6%88%91/" title="关于我">关于我</a><time datetime="2026-01-20T04:00:00.000Z" title="发表于 2026-01-20 12:00:00">2026-01-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By clerimia</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div><div class="footer_custom_text">Designed by clerimia</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
