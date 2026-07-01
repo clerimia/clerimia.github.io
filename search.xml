@@ -15,6 +15,10 @@
           
           <category> 技术 </category>
           
+          <category> JAVA </category>
+          
+          <category> 集合框架 </category>
+          
       </categories>
       
       
@@ -33,6 +37,10 @@
       <categories>
           
           <category> 技术 </category>
+          
+          <category> AI </category>
+          
+          <category> 开发工作流 </category>
           
       </categories>
       
@@ -59,6 +67,16 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> 技术 </tag>
+            
+            <tag> AI </tag>
+            
+            <tag> API协议 </tag>
+            
+        </tags>
       
     </entry>
     
