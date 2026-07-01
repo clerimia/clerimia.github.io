@@ -4,52 +4,6 @@
   
     
     <entry>
-      <title>HashMap</title>
-      <link href="/2026/06/30/JAVA/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/HashMap/"/>
-      <url>/2026/06/30/JAVA/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/HashMap/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      <categories>
-          
-          <category> 技术 </category>
-          
-          <category> JAVA </category>
-          
-          <category> 集合框架 </category>
-          
-      </categories>
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Matt Pocock</title>
-      <link href="/2026/06/29/AI/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/Matt%20Pocock/"/>
-      <url>/2026/06/29/AI/%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/Matt%20Pocock/</url>
-      
-        <content type="html"><![CDATA[<p>最近看到一篇小红书上的帖子，分享了一个他认为的<code>最好的AI开发工作流skiils</code> ，突然想到我最近一个朋友谈到他面试的时候有面试官问过：“你有一套固定的vibecoding工作流吗？”于是我就准备开个分类专门收集和学习一下开发AI工作流<br><img src="/assets/4cc27297468ab768efed4730b7b62ee9.jpeg" alt="ai驱动开发的七个阶段|265"></p><h2 id="一、ddmattdpocock-skills">一、ddmattdpocock skills</h2><p>首先下载一下文章中提到的skill：<br><code>npx skills@latest add vinvcn/mattpocock-skills-zh-CN</code><br>然后运行<code>/setup-matt-pocock-skills</code> 初始化</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 技术 </category>
-          
-          <category> AI </category>
-          
-          <category> 开发工作流 </category>
-          
-      </categories>
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>chat completions API 协议</title>
       <link href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/"/>
       <url>/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/</url>
