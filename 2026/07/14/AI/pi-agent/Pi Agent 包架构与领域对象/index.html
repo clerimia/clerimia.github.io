@@ -1,0 +1,1031 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>clerimia's Blog | clerimia's Blog</title><meta name="author" content="clerimia"><meta name="copyright" content="clerimia"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="【clerimia：】 之前写了《Pi Agent 设计思路》，从 AgentLoop -&gt; Agent -&gt; Providers 三层纵向拆解了引擎。但那只是 pi-agent monorepo 中 packages&#x2F;agent 一个包的故事。这次把视角从「分层」切换到「分包」，横向看 5 个包各自的职责、领域对象和依赖关系，补完整个 monorepo 的拼图。  全景图 pi-a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="clerimia&#39;s Blog">
+<meta property="og:url" content="https://clerimia.github.io/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="clerimia&#39;s Blog">
+<meta property="og:description" content="【clerimia：】 之前写了《Pi Agent 设计思路》，从 AgentLoop -&gt; Agent -&gt; Providers 三层纵向拆解了引擎。但那只是 pi-agent monorepo 中 packages&#x2F;agent 一个包的故事。这次把视角从「分层」切换到「分包」，横向看 5 个包各自的职责、领域对象和依赖关系，补完整个 monorepo 的拼图。  全景图 pi-a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg">
+<meta property="article:published_time" content="2026-07-14T07:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-15T05:09:10.654Z">
+<meta property="article:author" content="clerimia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "",
+  "url": "https://clerimia.github.io/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/",
+  "image": "https://clerimia.github.io/assets/cucumber-icon.jpg",
+  "datePublished": "2026-07-14T07:00:00.000Z",
+  "dateModified": "2026-07-15T05:09:10.654Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "clerimia",
+      "url": "https://clerimia.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/favicon.png"><link rel="canonical" href="https://clerimia.github.io/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'clerimia\'s Blog',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">clerimia's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">clerimia's Blog</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">无标题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-14T07:00:00.000Z" title="发表于 2026-07-14 15:00:00">2026-07-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-15T05:09:10.654Z" title="更新于 2026-07-15 13:09:10">2026-07-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>【clerimia：】 之前写了《Pi Agent 设计思路》，从 AgentLoop -&gt; Agent -&gt; Providers 三层纵向拆解了引擎。但那只是 pi-agent monorepo 中 <code>packages/agent</code> 一个包的故事。这次把视角从「分层」切换到「分包」，横向看 5 个包各自的职责、领域对象和依赖关系，补完整个 monorepo 的拼图。</p>
+</blockquote>
+<h2 id="全景图">全景图</h2>
+<p>pi-agent monorepo 包含 5 个包，依赖方向从底到顶：</p>
+<pre><code>依赖方向（箭头表示「被依赖」）
+
+  pi-tui          pi-ai
+    │               │
+    │               │
+    └──────┬────────┘
+           │
+     pi-agent-core
+           │
+           │
+    pi-coding-agent
+           │
+           │
+    pi-orchestrator
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>npm 名</th>
+<th>定位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pi-ai</td>
+<td><code>@earendil-works/pi-ai</code></td>
+<td>LLM 传输层：统一 API、provider 注册表、auth 解析、流式调用</td>
+</tr>
+<tr>
+<td>pi-tui</td>
+<td><code>@earendil-works/pi-tui</code></td>
+<td>终端 UI 层：差分渲染引擎、组件系统、键盘输入（零 Agent 感知）</td>
+</tr>
+<tr>
+<td>pi-agent-core</td>
+<td><code>@earendil-works/pi-agent-core</code></td>
+<td>Agent 引擎层：AgentLoop + Agent + AgentHarness + Session 持久化</td>
+</tr>
+<tr>
+<td>pi-coding-agent</td>
+<td><code>@earendil-works/pi-coding-agent</code></td>
+<td>编码 Agent 产品层：AgentSession + 7 个工具 + 扩展系统 + CLI</td>
+</tr>
+<tr>
+<td>pi-orchestrator</td>
+<td><code>@earendil-works/pi-orchestrator</code></td>
+<td>多实例进程编排层：daemon + RPC 网关 + 远程在线（实验性）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>【clerimia：】 注意 pi-tui 和 pi-ai 都是叶子包，互不依赖。pi-tui 甚至不知道 Agent 的存在–它是个纯粹的终端 UI 库。这种「UI 和引擎完全解耦」的设计让 UI 可以独立复用。</p>
+</blockquote>
+<hr>
+<h2 id="1-pi-ai：LLM-传输层">1. pi-ai：LLM 传输层</h2>
+<blockquote>
+<p>统一 LLM API，提供 provider 集合、自动 auth 解析、token/cost 追踪。<br>
+<strong>只包含支持 tool calling 的模型</strong>，因为这是 agentic workflow 的硬需求。</p>
+</blockquote>
+<h3 id="核心领域对象">核心领域对象</h3>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Model&lt;TApi&gt;</code></td>
+<td>interface</td>
+<td>模型定义：id / name / api / provider / baseUrl / reasoning / input / cost / contextWindow / maxTokens / compat</td>
+</tr>
+<tr>
+<td><code>Provider&lt;TApi&gt;</code></td>
+<td>interface</td>
+<td>provider 运行时单元：id / name / auth / getModels() / stream() / streamSimple()</td>
+</tr>
+<tr>
+<td><code>Models</code></td>
+<td>interface</td>
+<td>provider 集合 + auth 应用 + stream 便利方法。<code>getModels()</code> / <code>getModel()</code> / <code>getAuth()</code> / <code>streamSimple()</code></td>
+</tr>
+<tr>
+<td><code>Message</code></td>
+<td>type</td>
+<td><code>UserMessage | AssistantMessage | ToolResultMessage</code></td>
+</tr>
+<tr>
+<td><code>Context</code></td>
+<td>interface</td>
+<td>发给 LLM 的请求上下文：<code>{ systemPrompt?, messages, tools? }</code></td>
+</tr>
+<tr>
+<td><code>AssistantMessageEvent</code></td>
+<td>type</td>
+<td>流式事件联合（12 种：start / text_start / text_delta / text_end / thinking_* / toolcall_* / done / error）</td>
+</tr>
+<tr>
+<td><code>AssistantMessageEventStream</code></td>
+<td>class</td>
+<td>事件流，可 <code>for await</code> 消费，也可 <code>.result()</code> 获取最终消息</td>
+</tr>
+<tr>
+<td><code>StreamFn</code></td>
+<td>type</td>
+<td><code>(model, context, options?) =&gt; AssistantMessageEventStream</code>。契约：不抛异常，失败编码进流</td>
+</tr>
+<tr>
+<td><code>Tool&lt;TParameters&gt;</code></td>
+<td>interface</td>
+<td>工具定义：name / description / parameters（TypeBox schema）</td>
+</tr>
+<tr>
+<td><code>Usage</code></td>
+<td>interface</td>
+<td>token 统计：input / output / cacheRead / cacheWrite / reasoning / totalTokens / cost</td>
+</tr>
+<tr>
+<td><code>StopReason</code></td>
+<td>type</td>
+<td><code>&quot;stop&quot; | &quot;length&quot; | &quot;toolUse&quot; | &quot;error&quot; | &quot;aborted&quot;</code></td>
+</tr>
+<tr>
+<td><code>ThinkingLevel</code></td>
+<td>type</td>
+<td><code>&quot;minimal&quot; | &quot;low&quot; | &quot;medium&quot; | &quot;high&quot; | &quot;xhigh&quot; | &quot;max&quot;</code></td>
+</tr>
+<tr>
+<td><code>Transport</code></td>
+<td>type</td>
+<td><code>&quot;sse&quot; | &quot;websocket&quot; | &quot;websocket-cached&quot; | &quot;auto&quot;</code></td>
+</tr>
+<tr>
+<td><code>ProviderAuth</code></td>
+<td>type</td>
+<td>认证方式：<code>ApiKeyAuth | OAuthAuth</code>（每个 provider 必须至少有一种）</td>
+</tr>
+<tr>
+<td><code>CredentialStore</code></td>
+<td>interface</td>
+<td>凭证存储抽象（读写 API key / OAuth token）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键设计">关键设计</h3>
+<p><strong>两套 API 并存</strong>：</p>
+<ul>
+<li><strong>新 API</strong>（推荐）：<code>createModels()</code> + provider 工厂（如 <code>anthropicProvider()</code>）-&gt; <code>models.streamSimple(model, context, options)</code></li>
+<li><strong>旧 API</strong>（compat 层）：全局 <code>streamSimple()</code> / <code>completeSimple()</code>，从环境变量自动解析 API key</li>
+</ul>
+<blockquote>
+<p>【clerimia：】 compat.d.ts 的注释明确说「This module is deleted with the coding-agent ModelManager migration」–旧 API 是过渡产物。</p>
+</blockquote>
+<p><strong>Provider 注册表</strong>：<code>KnownProvider</code> 联合类型列出了 30+ 个内置 provider（anthropic / openai / google / xai / groq / openrouter / bedrock / mistral / 深度寻求 等）。每个 provider 有独立的工厂函数（<code>anthropicProvider()</code> / <code>openaiProvider()</code> 等），按需引入以减小包体积。</p>
+<p><strong>Compat 兼容层</strong>：<code>OpenAICompletionsCompat</code> 接口定义了 20+ 个兼容开关（<code>thinkingFormat</code> / <code>cacheControlFormat</code> / <code>supportsStrictMode</code> 等），让任意 OpenAI 兼容 API（Ollama / vLLM / LM Studio 等）都能正确工作。</p>
+<hr>
+<h2 id="2-pi-tui：终端-UI-层">2. pi-tui：终端 UI 层</h2>
+<blockquote>
+<p>从零实现的终端 UI 框架，不依赖 ink / blessed。核心特性是差分渲染 + 同步输出（CSI 2026），实现无闪烁的交互式 CLI。</p>
+</blockquote>
+<h3 id="核心领域对象-2">核心领域对象</h3>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUI</code></td>
+<td>class</td>
+<td>主渲染器：差分渲染引擎 + 组件树 + 焦点管理 + Overlay 浮层 + IME 光标定位</td>
+</tr>
+<tr>
+<td><code>Terminal</code></td>
+<td>interface</td>
+<td>终端抽象：start / stop / write / columns / rows / hideCursor / clearScreen</td>
+</tr>
+<tr>
+<td><code>ProcessTerminal</code></td>
+<td>class</td>
+<td><code>Terminal</code> 的生产实现，用 <code>process.stdin/stdout</code> + raw mode + Kitty keyboard 协商</td>
+</tr>
+<tr>
+<td><code>Component</code></td>
+<td>interface</td>
+<td>组件接口：<code>render(width): string[]</code> + <code>handleInput?(data)</code> + <code>invalidate()</code></td>
+</tr>
+<tr>
+<td><code>Focusable</code></td>
+<td>interface</td>
+<td>可聚焦组件：<code>focused: boolean</code></td>
+</tr>
+<tr>
+<td><code>Container</code></td>
+<td>class</td>
+<td>基础容器：<code>addChild()</code> / <code>removeChild()</code> / <code>clear()</code></td>
+</tr>
+<tr>
+<td><code>Editor</code></td>
+<td>class</td>
+<td>多行编辑器（2333 行）：word wrap / slash 补全 / Tab 文件补全 / Emacs 快捷键 / 撤销栈</td>
+</tr>
+<tr>
+<td><code>Markdown</code></td>
+<td>class</td>
+<td>Markdown 渲染组件，支持语法高亮回调</td>
+</tr>
+<tr>
+<td><code>SelectList</code></td>
+<td>class</td>
+<td>交互式选择列表</td>
+</tr>
+<tr>
+<td><code>Input</code></td>
+<td>class</td>
+<td>单行输入</td>
+</tr>
+<tr>
+<td><code>Image</code></td>
+<td>class</td>
+<td>内联图片（Kitty / iTerm2 图形协议）</td>
+</tr>
+<tr>
+<td><code>Key</code></td>
+<td>object</td>
+<td>按键标识符构造器：<code>Key.ctrl(&quot;c&quot;)</code> / <code>Key.shiftTab</code> 等，编译期类型安全</td>
+</tr>
+<tr>
+<td><code>KeybindingsManager</code></td>
+<td>class</td>
+<td>键绑定管理：默认绑定 + 用户自定义 + 冲突检测</td>
+</tr>
+<tr>
+<td><code>StdinBuffer</code></td>
+<td>class</td>
+<td>stdin 缓冲：把分批到达的数据拆分为完整转义序列</td>
+</tr>
+<tr>
+<td><code>CombinedAutocompleteProvider</code></td>
+<td>class</td>
+<td>自动补全：slash 命令 + <code>@</code> 文件路径 fuzzy 搜索</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键设计-2">关键设计</h3>
+<p><strong>三路键盘协议兼容</strong>：<code>keys.ts</code>（1400 行）同时处理 Kitty CSI-u / xterm modifyOtherKeys / legacy 三种键盘协议的输入解析。<code>ProcessTerminal</code> 在启动时协商协议，<code>isKittyProtocolActive()</code> 全局状态影响 legacy 序列的歧义解释。</p>
+<p><strong>差分渲染</strong>：<code>TUI.doRender()</code> 实现三策略–首次渲染全量 / 尺寸变化全量重绘 / 正常更新只渲染变化行。所有输出包裹在 <code>\x1b[?2026h ... \x1b[?2026l</code>（synchronized output）中。</p>
+<p><strong>Overlay 系统</strong>：<code>showOverlay(component, options)</code> 支持模态浮层，9 种锚点定位、百分比/绝对定位、焦点恢复状态机。</p>
+<p><strong>原生模块</strong>：<code>native/win32/</code> 和 <code>native/darwin/</code> 各有 C 模块处理平台特定的输入问题（Windows 的 VT 输入模式、macOS 的修饰键检测）。</p>
+<blockquote>
+<p>【clerimia：】 pi-tui 是 monorepo 里的叶子库，零 <code>@earendil-works/</code> 依赖。它不知道 Agent 的存在，通过 <code>Component</code> 接口向上提供扩展点。消费方（coding-agent）创建 TUI 实例，在 <code>editor.onSubmit</code> 回调中调用 Agent 逻辑，把响应渲染为新的 <code>Markdown</code> 组件。</p>
+</blockquote>
+<hr>
+<h2 id="3-pi-agent-core：Agent-引擎层">3. pi-agent-core：Agent 引擎层</h2>
+<blockquote>
+<p>通用 Agent 引擎，建立在 pi-ai 之上。两层架构：低层 <code>Agent</code> + <code>runAgentLoop</code> 是纯运行时引擎；高层 <code>AgentHarness</code> 叠加 session 持久化、compaction、hook 系统。</p>
+</blockquote>
+<h3 id="核心领域对象-3">核心领域对象</h3>
+<h4 id="3-1-引擎层">3.1 引擎层</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>runAgentLoop()</code></td>
+<td>function</td>
+<td>核心 agent 循环（callback 式）：双层 while 循环，外层处理 follow-up，内层处理 tool calls + steering</td>
+</tr>
+<tr>
+<td><code>agentLoop()</code></td>
+<td>function</td>
+<td>流式工厂（返回 <code>EventStream</code>，可 <code>for await</code>）</td>
+</tr>
+<tr>
+<td><code>AgentMessage</code></td>
+<td>type</td>
+<td><code>Message | CustomAgentMessages[keyof CustomAgentMessages]</code>。核心联合类型，通过 declaration merging 扩展</td>
+</tr>
+<tr>
+<td><code>AgentContext</code></td>
+<td>interface</td>
+<td>传入 loop 的快照：<code>{ systemPrompt, messages, tools? }</code></td>
+</tr>
+<tr>
+<td><code>AgentState</code></td>
+<td>interface</td>
+<td>Agent 公开状态：systemPrompt / model / thinkingLevel / tools / messages + 只读 isStreaming / streamingMessage / pendingToolCalls / errorMessage</td>
+</tr>
+<tr>
+<td><code>AgentEvent</code></td>
+<td>type</td>
+<td>生命周期事件联合（10 种：agent_start/end / turn_start/end / message_start/update/end / tool_execution_start/update/end）</td>
+</tr>
+<tr>
+<td><code>AgentLoopConfig</code></td>
+<td>interface</td>
+<td>循环配置：model / convertToLlm（必填）/ transformContext? / shouldStopAfterTurn? / getSteeringMessages? / getFollowUpMessages? / beforeToolCall? / afterToolCall?</td>
+</tr>
+<tr>
+<td><code>AgentTool&lt;TParameters, TDetails&gt;</code></td>
+<td>interface</td>
+<td>工具定义：继承 <code>Tool</code>，加 label / execute / executionMode? / prepareArguments?</td>
+</tr>
+<tr>
+<td><code>StreamFn</code></td>
+<td>type</td>
+<td>调用 LLM 的函数签名（从 pi-ai 导入）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-2-Agent-类">3.2 Agent 类</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Agent</code></td>
+<td>class</td>
+<td>低层 agent loop 的有状态封装。拥有 transcript（AgentState），管理生命周期事件，执行工具，暴露 steering/follow-up 队列</td>
+</tr>
+<tr>
+<td><code>PendingMessageQueue</code></td>
+<td>class</td>
+<td>消息队列：<code>&quot;all&quot;</code> / <code>&quot;one-at-a-time&quot;</code> 两种 drain 模式</td>
+</tr>
+<tr>
+<td><code>ActiveRun</code></td>
+<td>type</td>
+<td><code>{ promise, resolve, abortController }</code> – 运行中的任务凭证</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agent 的关键方法</strong>：<code>prompt()</code> / <code>continue()</code> / <code>steer()</code> / <code>followUp()</code> / <code>abort()</code> / <code>waitForIdle()</code> / <code>reset()</code> / <code>subscribe()</code></p>
+<blockquote>
+<p>【clerimia：】 Agent 不掌握 Session！它只有一个 <code>sessionId?: string</code>（给 provider 做 cache key 用的字符串），对话记录是 <code>_state.messages: AgentMessage[]</code> 纯内存数组。持久化是上层的事。</p>
+</blockquote>
+<h4 id="3-3-AgentHarness-类（高层编排器）">3.3 AgentHarness 类（高层编排器）</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AgentHarness</code></td>
+<td>class</td>
+<td>高层编排器，直接调 <code>runAgentLoop()</code>（绕过 Agent）。拥有 session 持久化、compaction、branch 导航、skills/prompt-templates 资源管理、hook 系统</td>
+</tr>
+<tr>
+<td><code>AgentHarnessPhase</code></td>
+<td>type</td>
+<td><code>&quot;idle&quot; | &quot;turn&quot; | &quot;compaction&quot; | &quot;branch_summary&quot; | &quot;retry&quot;</code> – 操作锁状态机</td>
+</tr>
+<tr>
+<td><code>Session</code></td>
+<td>class</td>
+<td>会话树操作层：从 leaf 到 root 重建 context，各种 entry 的 append</td>
+</tr>
+<tr>
+<td><code>SessionTreeEntry</code></td>
+<td>type</td>
+<td>会话树条目联合：MessageEntry / CompactionEntry / BranchSummaryEntry / ModelChangeEntry / ThinkingLevelChangeEntry / ActiveToolsChangeEntry / CustomEntry / CustomMessageEntry / LabelEntry / LeafEntry</td>
+</tr>
+<tr>
+<td><code>SessionStorage&lt;TMetadata&gt;</code></td>
+<td>interface</td>
+<td>entry 级 CRUD + getPathToRoot + getLabel</td>
+</tr>
+<tr>
+<td><code>SessionRepo</code></td>
+<td>interface</td>
+<td>session 级 CRUD：create / open / list / delete / fork</td>
+</tr>
+<tr>
+<td><code>ExecutionEnv</code></td>
+<td>interface</td>
+<td><code>FileSystem + Shell</code> 组合接口，平台无关的 I/O 抽象（所有方法返回 <code>Result&lt;T, Error&gt;</code>，永不抛异常）</td>
+</tr>
+<tr>
+<td><code>AgentHarnessError</code></td>
+<td>class</td>
+<td>顶层错误归一化（code: busy / invalid_state / session / hook / auth / compaction / …）</td>
+</tr>
+<tr>
+<td><code>Skill</code></td>
+<td>interface</td>
+<td>技能：name / description / content / filePath / disableModelInvocation?</td>
+</tr>
+<tr>
+<td><code>PromptTemplate</code></td>
+<td>interface</td>
+<td>提示模板：name / description? / content（含 <code>$1</code> / <code>$@</code> 占位符）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>AgentHarness 的关键方法</strong>：<code>prompt()</code> / <code>skill()</code> / <code>promptFromTemplate()</code> / <code>steer()</code> / <code>followUp()</code> / <code>nextTurn()</code> / <code>compact()</code> / <code>navigateTree()</code> / <code>abort()</code> / <code>subscribe()</code> / <code>on()</code></p>
+<h4 id="3-4-Compaction（上下文压缩）">3.4 Compaction（上下文压缩）</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prepareCompaction()</code></td>
+<td>function</td>
+<td>找 cut point，分割出要摘要的消息</td>
+</tr>
+<tr>
+<td><code>compact()</code></td>
+<td>function</td>
+<td>执行摘要生成（调用 LLM），处理 split-turn</td>
+</tr>
+<tr>
+<td><code>shouldCompact()</code></td>
+<td>function</td>
+<td>阈值判断：<code>contextTokens &gt; contextWindow - reserveTokens</code></td>
+</tr>
+<tr>
+<td><code>generateSummary()</code></td>
+<td>function</td>
+<td>单次摘要生成，支持 <code>previousSummary</code>（增量更新）</td>
+</tr>
+<tr>
+<td><code>generateBranchSummary()</code></td>
+<td>function</td>
+<td>分支摘要（用于 tree 导航时摘要被放弃的分支）</td>
+</tr>
+<tr>
+<td><code>CompactionSettings</code></td>
+<td>interface</td>
+<td><code>enabled</code> / <code>reserveTokens</code>（默认 16384）/ <code>keepRecentTokens</code>（默认 20000）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键设计-3">关键设计</h3>
+<p><strong>AgentMessage 可扩展性</strong>：<code>CustomAgentMessages</code> 是空接口，下游包通过 declaration merging 添加自定义 message 角色（如 coding-agent 的 <code>bashExecution</code> / <code>compactionSummary</code> / <code>branchSummary</code>）。<code>convertToLlm</code> 是唯一的 LLM 边界转换点，把自定义类型转成 LLM 能理解的 <code>Message[]</code>。</p>
+<p><strong>两层架构演进</strong>：<code>AgentHarness</code> 曾依赖 <code>Agent</code>，现已移除依赖直接调 <code>runAgentLoop()</code>。但 coding-agent 还没迁移到 AgentHarness（状态 Planned），仍用自己的 <code>AgentSession</code>。</p>
+<p><strong>Session 树模型</strong>：每条 entry 有 <code>id</code> 和 <code>parentId</code> 形成树结构，“leaf” 指针跟踪当前位置。branching 把 leaf 移到更早的 entry，允许新分支而不修改历史。<code>buildContext()</code> 从 leaf 到 root 路径重建 context。</p>
+<blockquote>
+<p>【clerimia：】 这个包是整个框架的心脏。AgentLoop 是引擎，Agent 是旧产品壳，AgentHarness 是新编排层（还在 scratch 阶段）。三层并存是过渡期状态。</p>
+</blockquote>
+<hr>
+<h2 id="4-pi-coding-agent：编码-Agent-产品层">4. pi-coding-agent：编码 Agent 产品层</h2>
+<blockquote>
+<p>Coding agent CLI，内置 read / bash / edit / write 工具和会话管理。刻意不内置 sub-agents / plan mode / 权限弹窗 / MCP，而是通过 Extensions / Skills / Prompt Templates 把工作流外置。</p>
+</blockquote>
+<h3 id="核心领域对象-4">核心领域对象</h3>
+<h4 id="4-1-AgentSession-–-核心中的核心">4.1 AgentSession – 核心中的核心</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AgentSession</code></td>
+<td>class</td>
+<td>Agent 生命周期与会话管理的核心抽象（3246 行）。封装 agent 状态访问、事件订阅 + 自动 session 持久化、模型/thinking 管理、手动/自动 compaction、bash 执行、session 切换/分支、extension 系统绑定</td>
+</tr>
+<tr>
+<td><code>AgentSessionConfig</code></td>
+<td>interface</td>
+<td>构造参数：agent + sessionManager + settingsManager + cwd + scopedModels + resourceLoader + customTools + modelRegistry</td>
+</tr>
+<tr>
+<td><code>AgentSessionEvent</code></td>
+<td>type</td>
+<td>AgentSession 对外的事件联合</td>
+</tr>
+</tbody>
+</table>
+<p><strong>AgentSession 的关键方法</strong>：</p>
+<ul>
+<li>提示：<code>prompt()</code> / <code>steer()</code> / <code>followUp()</code> / <code>sendCustomMessage()</code></li>
+<li>控制：<code>abort()</code> / <code>waitForIdle()</code></li>
+<li>模型：<code>setModel()</code> / <code>cycleModel()</code> / <code>setThinkingLevel()</code> / <code>cycleThinkingLevel()</code></li>
+<li>Compaction：<code>compact()</code> / <code>abortCompaction()</code> / <code>setAutoCompactionEnabled()</code></li>
+<li>Session 树：<code>navigateTree()</code> / <code>getSessionStats()</code> / <code>exportToHtml()</code></li>
+<li>Extension：<code>bindExtensions()</code> / <code>reload()</code> / <code>hasExtensionHandlers()</code></li>
+</ul>
+<blockquote>
+<p>【clerimia：】 AgentSession 持有 <code>agent: Agent</code> 和 <code>sessionManager: SessionManager</code>。它在合适时机把 SessionManager 构建的消息塞回 Agent 的 state.messages–Agent 自己不会读磁盘。AgentSession 和 pi-agent-core 的 AgentHarness 在职责上高度重叠，都是「Agent + 持久化 + 产品级能力」的组合器，是两代编排层并存。</p>
+</blockquote>
+<h4 id="4-2-SessionManager">4.2 SessionManager</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SessionManager</code></td>
+<td>class</td>
+<td>把会话作为 append-only 树存储在 JSONL 文件中。每条 entry 有 id 和 parentId 形成树结构，leaf 指针跟踪当前位置</td>
+</tr>
+<tr>
+<td><code>SessionEntry</code></td>
+<td>type</td>
+<td>树条目联合：message / thinking_level_change / model_change / compaction / branch_summary / custom / custom_message / label / session_info</td>
+</tr>
+<tr>
+<td><code>SessionContext</code></td>
+<td>interface</td>
+<td><code>{ messages, thinkingLevel, model }</code> – 从树路径重建的上下文</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键方法</strong>：<code>create()</code> / <code>open()</code> / <code>continueRecent()</code> / <code>inMemory()</code> / <code>forkFrom()</code> / <code>appendMessage()</code> / <code>appendCompaction()</code> / <code>buildSessionContext()</code> / <code>branch()</code> / <code>createBranchedSession()</code></p>
+<h4 id="4-3-其他核心领域对象">4.3 其他核心领域对象</h4>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SettingsManager</code></td>
+<td>class</td>
+<td>从 global（<code>~/.pi/agent/settings.json</code>）和 project（<code>.pi/settings.json</code>）两个 scope 加载设置，deep-merge。约 50 个配置字段，部分持久化（只 merge 修改字段）</td>
+</tr>
+<tr>
+<td><code>ModelRegistry</code></td>
+<td>class</td>
+<td>加载管理模型（builtin + custom from <code>models.json</code>），通过 <code>AuthStorage</code> 解析 API key。支持 provider 级 override 和动态 provider 注册（来自 extensions）</td>
+</tr>
+<tr>
+<td><code>AuthStorage</code></td>
+<td>class</td>
+<td>API key / OAuth 凭证的持久化存储</td>
+</tr>
+<tr>
+<td><code>createAgentSession()</code></td>
+<td>function</td>
+<td>SDK 高层入口：用指定 options 创建一个 AgentSession，所有参数可选</td>
+</tr>
+<tr>
+<td><code>AgentSessionRuntime</code></td>
+<td>class</td>
+<td>持有当前 AgentSession 及其 cwd-bound services，提供 session 替换操作（switch / new / fork / import）</td>
+</tr>
+<tr>
+<td><code>ExtensionRunner</code></td>
+<td>class</td>
+<td>扩展系统运行时：加载 TypeScript 扩展、注册工具/命令/hook、事件转发</td>
+</tr>
+<tr>
+<td><code>ToolDefinition</code></td>
+<td>interface</td>
+<td>工具定义（含 schema + prompt snippet + guidelines），比 AgentTool 更丰富</td>
+</tr>
+<tr>
+<td><code>buildSystemPrompt()</code></td>
+<td>function</td>
+<td>构建系统提示词：工具列表 + guidelines + context files + skills</td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-4-内置工具">4.4 内置工具</h4>
+<p>7 个工具，每个有 <code>createXxxToolDefinition(cwd, options)</code> 工厂：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>read</code></td>
+<td>读文件（截断 + 高亮）</td>
+</tr>
+<tr>
+<td><code>bash</code></td>
+<td>执行 shell 命令（支持 spawn hook、输出捕获）</td>
+</tr>
+<tr>
+<td><code>edit</code></td>
+<td>编辑文件（精确替换 + diff 生成）</td>
+</tr>
+<tr>
+<td><code>write</code></td>
+<td>写文件</td>
+</tr>
+<tr>
+<td><code>grep</code></td>
+<td>内容搜索（ripgrep 封装）</td>
+</tr>
+<tr>
+<td><code>find</code></td>
+<td>文件搜索</td>
+</tr>
+<tr>
+<td><code>ls</code></td>
+<td>列目录</td>
+</tr>
+</tbody>
+</table>
+<p>默认启用 <code>[&quot;read&quot;, &quot;bash&quot;, &quot;edit&quot;, &quot;write&quot;]</code>，<code>grep</code> / <code>find</code> / <code>ls</code> 可选启用。</p>
+<h4 id="4-5-自定义消息类型">4.5 自定义消息类型</h4>
+<p>通过 declaration merging 扩展 <code>CustomAgentMessages</code>：</p>
+<table>
+<thead>
+<tr>
+<th>消息类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BashExecutionMessage</code></td>
+<td>bash 命令执行记录（command / output / exitCode / cancelled / truncated）</td>
+</tr>
+<tr>
+<td><code>CompactionSummaryMessage</code></td>
+<td>compaction 摘要</td>
+</tr>
+<tr>
+<td><code>BranchSummaryMessage</code></td>
+<td>分支摘要</td>
+</tr>
+<tr>
+<td><code>CustomMessage&lt;T&gt;</code></td>
+<td>扩展自定义消息</td>
+</tr>
+</tbody>
+</table>
+<p><code>convertToLlm()</code> 把这些自定义类型转换为 LLM 能理解的 <code>Message[]</code>（通常包装为 user message + 特殊标记）。</p>
+<h3 id="运行模式">运行模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>触发</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>interactive</td>
+<td>默认（TTY）</td>
+<td>全屏 TUI</td>
+</tr>
+<tr>
+<td>print</td>
+<td><code>-p</code> 或非 TTY</td>
+<td>单次提示，输出纯文本后退出</td>
+</tr>
+<tr>
+<td>json</td>
+<td><code>--mode json</code></td>
+<td>输出所有事件为 JSON lines</td>
+</tr>
+<tr>
+<td>rpc</td>
+<td><code>--mode rpc</code></td>
+<td>进程集成，stdin/stdout JSONL 协议</td>
+</tr>
+<tr>
+<td>SDK</td>
+<td>编程调用</td>
+<td><code>createAgentSession()</code> 嵌入第三方 app</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键设计-4">关键设计</h3>
+<p><strong>Extension 系统全外置</strong>：不内置 sub-agents / plan mode / 权限弹窗 / MCP，而是通过 TypeScript Extensions 让用户自己实现。扩展可以注册工具、命令、hook（before_provider_request / before_provider_payload / after_provider_response / before_tool_call / after_tool_call / session_before_compact 等）、UI 组件、provider。</p>
+<p><strong>资源来源追踪</strong>：<code>ResourceLoader</code> 发现并加载 extensions / skills / prompt-templates / themes / context files（<a target="_blank" rel="noopener" href="http://AGENTS.md">AGENTS.md</a> / <a target="_blank" rel="noopener" href="http://CLAUDE.md">CLAUDE.md</a>），每个资源带来源元数据（global / project / extension）。</p>
+<p><strong>自动 Compaction</strong>：两种触发–overflow（LLM 返回 context overflow，移除错误消息后 compact-and-retry，仅一次）vs threshold（接近上限，compact 但不 retry）。</p>
+<blockquote>
+<p>【clerimia：】 这个包是&quot;产品壳&quot;，把 pi-agent-core 的引擎 + pi-ai 的 LLM 能力 + pi-tui 的 UI 组装成一个可用的 coding agent。AgentSession 是它的核心粘合剂。但它还在用旧的 Agent（不是 AgentHarness），迁移计划状态是 Planned。</p>
+</blockquote>
+<hr>
+<h2 id="5-pi-orchestrator：多实例进程编排层">5. pi-orchestrator：多实例进程编排层</h2>
+<blockquote>
+<p>实验性的多实例进程编排器。管理多个 pi agent 子进程的生命周期、RPC 转发、远程在线状态。不是任务级的多 Agent 协作编排。</p>
+</blockquote>
+<h3 id="核心领域对象-5">核心领域对象</h3>
+<table>
+<thead>
+<tr>
+<th>领域对象</th>
+<th>类型</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OrchestratorSupervisor</code></td>
+<td>class</td>
+<td>中枢：维护 <code>Map&lt;string, LiveInstance&gt;</code>，管理 spawn / stop / RPC 转发 / 崩溃恢复</td>
+</tr>
+<tr>
+<td><code>LiveInstance</code></td>
+<td>type</td>
+<td>运行中实例：record + resources（rpcProcess / radiusPiId / sessionId）+ subscribers</td>
+</tr>
+<tr>
+<td><code>InstanceStatus</code></td>
+<td>type</td>
+<td><code>&quot;starting&quot; | &quot;online&quot; | &quot;stopping&quot; | &quot;stopped&quot; | &quot;error&quot;</code></td>
+</tr>
+<tr>
+<td><code>InstanceRecord</code></td>
+<td>interface</td>
+<td>持久化记录：id / status / cwd / createdAt / lastSeenAt / label / sessionId / sessionFile / radiusPiId</td>
+</tr>
+<tr>
+<td><code>RpcProcessInstance</code></td>
+<td>class</td>
+<td>spawn 一个 <code>pi --mode rpc</code> 子进程，通过 stdin/stdout JSONL 通信</td>
+</tr>
+<tr>
+<td><code>RadiusPresence</code></td>
+<td>class</td>
+<td>管理机器和 Pi 实例在 <code>radius.pi.dev</code> 上的在线状态（HTTP 心跳）</td>
+</tr>
+<tr>
+<td>IPC 协议</td>
+<td>-</td>
+<td>Unix socket（<code>~/.pi/orchestrator/orchestrator.sock</code>）上的 JSONL 请求/响应</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键设计-5">关键设计</h3>
+<p><strong>进程外编排</strong>：orchestrator 不直接 import <code>Agent</code> / <code>AgentSession</code>，只通过 RPC 类型（<code>RpcCommand</code> / <code>RpcResponse</code> / <code>AgentSessionEvent</code>）间接关联。它 spawn 一个 <code>pi --mode rpc</code> 子进程，子进程内部才跑 AgentSession。orchestrator 只持有子进程的 stdin/stdout 句柄。</p>
+<p><strong>Radius 远程在线</strong>（可选）：<code>radius.pi.dev</code> 是一个在线状态服务。pi 实例注册后定期心跳，其他机器可以查询哪些 pi 实例在线。容错策略：404 连续 3 次后 re-registration，非 404 用指数退避。</p>
+<p><strong>CLI</strong>：<code>orchestrator serve</code> 启动 daemon / <code>list</code> / <code>spawn</code> / <code>stop</code> / <code>status</code> / <code>rpc</code> / <code>rpc-stream</code></p>
+<blockquote>
+<p>【clerimia：】 这个包很小（约 1500 行）、很新（CHANGELOG 全空）、实验性。它的 “orchestration” 语义是「进程池管理 + RPC 网关 + 远程在线」，不是 LangGraph / CrewAI 那种任务编排。没有任务分发、agent 间通信、共享上下文。每个 pi 实例完全独立。</p>
+</blockquote>
+<hr>
+<h2 id="包间依赖关系总结">包间依赖关系总结</h2>
+<pre><code>pi-tui          pi-ai            pi-tui: 零 @earendil-works 依赖
+  │               │               pi-ai:  零 @earendil-works 依赖
+  │               │
+  └──────┬────────┘               pi-agent-core: 依赖 pi-ai
+         │                        pi-coding-agent: 依赖 pi-ai + pi-agent-core + pi-tui
+   pi-agent-core                  pi-orchestrator: 依赖 pi-coding-agent
+         │
+         │
+  pi-coding-agent
+         │
+         │
+  pi-orchestrator
+</code></pre>
+<h3 id="依赖矩阵">依赖矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>依赖的 pi 包</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pi-ai</td>
+<td>（无）</td>
+</tr>
+<tr>
+<td>pi-tui</td>
+<td>（无）</td>
+</tr>
+<tr>
+<td>pi-agent-core</td>
+<td>pi-ai</td>
+</tr>
+<tr>
+<td>pi-coding-agent</td>
+<td>pi-ai, pi-agent-core, pi-tui</td>
+</tr>
+<tr>
+<td>pi-orchestrator</td>
+<td>pi-coding-agent</td>
+</tr>
+</tbody>
+</table>
+<h3 id="层级职责一句话">层级职责一句话</h3>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>包</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>传输层</td>
+<td>pi-ai</td>
+<td>统一 LLM API，不管 Agent 逻辑</td>
+</tr>
+<tr>
+<td>UI 层</td>
+<td>pi-tui</td>
+<td>终端渲染，不管 Agent 逻辑</td>
+</tr>
+<tr>
+<td>引擎层</td>
+<td>pi-agent-core</td>
+<td>Agent 循环 + 状态 + 持久化，不管具体工具</td>
+</tr>
+<tr>
+<td>产品层</td>
+<td>pi-coding-agent</td>
+<td>编码工具 + 扩展 + CLI，不管多实例</td>
+</tr>
+<tr>
+<td>编排层</td>
+<td>pi-orchestrator</td>
+<td>多实例进程管理，不管单个 Agent 内部</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>【clerimia：】 这个分层非常干净：每层只依赖下一层，不知道上层的存在。pi-ai 不知道 Agent，pi-agent-core 不知道 coding 工具，pi-coding-agent 不知道多实例。唯一的例外是 pi-orchestrator 直接依赖 pi-coding-agent（因为要 spawn <code>pi --mode rpc</code> 子进程）。这种单向依赖链让每一层都可以独立复用。</p>
+</blockquote>
+<hr>
+<h2 id="架构演进观察">架构演进观察</h2>
+<p>从代码中可以看到几个正在进行的迁移：</p>
+<ol>
+<li>
+<p><strong>Agent -&gt; AgentHarness</strong>：pi-agent-core 的 AgentHarness 已完成基础（session、compaction、hook），但 coding-agent 还没迁移（AgentSession 仍用 Agent）。状态：Planned。</p>
+</li>
+<li>
+<p><strong>全局 API -&gt; Models 实例</strong>：pi-ai 的 compat 层（全局 <code>streamSimple()</code>）标注为 deprecated，新 API 是 <code>createModels()</code> + provider 工厂。compat 层将在 coding-agent 迁移完成后删除。</p>
+</li>
+<li>
+<p><strong>AgentSession -&gt; AgentHarness</strong>：AgentSession（coding-agent 包）和 AgentHarness（pi-agent-core 包）在职责上高度重叠。长期看 AgentHarness 应该取代 AgentSession，但目前两者并存。</p>
+</li>
+</ol>
+<blockquote>
+<p>【clerimia：】 三条迁移线指向同一个方向：把更多能力从产品层下沉到引擎层。Session 持久化、compaction、hook 系统这些「产品级能力」正在从 coding-agent 的 AgentSession 往 pi-agent-core 的 AgentHarness 搬。完成后 coding-agent 会变成一个薄薄的产品壳–只保留 coding 工具、扩展系统和 CLI，核心编排能力由 AgentHarness 提供。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://clerimia.github.io">clerimia</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://clerimia.github.io/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/">https://clerimia.github.io/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://clerimia.github.io" target="_blank">clerimia's Blog</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/assets/cucumber-icon.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/16/AI/pi-agent/Pi%20Agent%20Session%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2"></div></div><div class="info-2"><div class="info-item-1"> 【clerimia：】 之前拆了 AgentLoop 引擎和五个包的领域对象，但一直没搞清楚一个关键问题：pi 启动时到底往 LLM 发了什么？&quot;上下文&quot;到底是个什么东西？这次直接读 pi-coding-agent 的源码，把 session 初始化和 context 组装的过程完整还原。  1. 先看结论：Context 不是扁平的字典 我之前以为 pi 初始化时组装了一个 context = { systemPrompt, AGENTS.md, skills, tools, messages } 这样的扁平对象。读完源码发现不是。 实际结构是三层分离： 发往 LLM 的请求 ├── System Prompt（字符串）── 每次 turn 前可能被 extension 覆盖 │   ├── 默认模板 或 SYSTEM.md │   ├── APPEND_SYSTEM.md │   ├── &lt;project_context&gt; 包裹的 AGENTS.md 链 │   ├── &lt;available_skills&gt; XML 块 │   ├...</div></div></div></a><a class="pagination-related" href="/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2"></div></div><div class="info-2"><div class="info-item-1"> 【clerimia：】 最近在写Agent的时候了解到一个据说是最简单的 Agent 实现-pi-agent ,仔细看了一下，模块做的非常好，职责分离，解耦也很好。所以准备深入学习一下。 参考材料  1. AgentLoop-核心循环 Agent Loop 在 PiAgent 中充当了核心的执行引擎，被编排在agent-loop.ts 一个文件中。 主要的结构包括五个核心部分：  导入声明 入口函数（agentLoop() agentLoopContinue() runAgentLoop() runAgentLoopContinue() ） runLoop() 核心代码 streamAssistantResponse() 调用LLM：消息变换 -&gt; 格式转换 -&gt; 调用 -&gt; 流式处理 工具执行函数  prepare -&gt; execute -&gt; finalize    声明导入的核心概念  AgentContext = AgentMessage【】 +  + 可用工具 AgentMessage = 对话中的一条消息 = Message + Cust...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">clerimia</div><div class="author-info-description">后端开发工程师 | 合肥工业大学</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/clerimia"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/clerimia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1937049668@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到 clerimia 的技术博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E6%99%AF%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">全景图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-pi-ai%EF%BC%9ALLM-%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-number">2.</span> <span class="toc-text">1. pi-ai：LLM 传输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">2.1.</span> <span class="toc-text">核心领域对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.2.</span> <span class="toc-text">关键设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-pi-tui%EF%BC%9A%E7%BB%88%E7%AB%AF-UI-%E5%B1%82"><span class="toc-number">3.</span> <span class="toc-text">2. pi-tui：终端 UI 层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1-2"><span class="toc-number">3.1.</span> <span class="toc-text">核心领域对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-2"><span class="toc-number">3.2.</span> <span class="toc-text">关键设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-pi-agent-core%EF%BC%9AAgent-%E5%BC%95%E6%93%8E%E5%B1%82"><span class="toc-number">4.</span> <span class="toc-text">3. pi-agent-core：Agent 引擎层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1-3"><span class="toc-number">4.1.</span> <span class="toc-text">核心领域对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-%E5%BC%95%E6%93%8E%E5%B1%82"><span class="toc-number">4.1.1.</span> <span class="toc-text">3.1 引擎层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-Agent-%E7%B1%BB"><span class="toc-number">4.1.2.</span> <span class="toc-text">3.2 Agent 类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-AgentHarness-%E7%B1%BB%EF%BC%88%E9%AB%98%E5%B1%82%E7%BC%96%E6%8E%92%E5%99%A8%EF%BC%89"><span class="toc-number">4.1.3.</span> <span class="toc-text">3.3 AgentHarness 类（高层编排器）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-Compaction%EF%BC%88%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%EF%BC%89"><span class="toc-number">4.1.4.</span> <span class="toc-text">3.4 Compaction（上下文压缩）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-3"><span class="toc-number">4.2.</span> <span class="toc-text">关键设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-pi-coding-agent%EF%BC%9A%E7%BC%96%E7%A0%81-Agent-%E4%BA%A7%E5%93%81%E5%B1%82"><span class="toc-number">5.</span> <span class="toc-text">4. pi-coding-agent：编码 Agent 产品层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1-4"><span class="toc-number">5.1.</span> <span class="toc-text">核心领域对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-AgentSession-%E2%80%93-%E6%A0%B8%E5%BF%83%E4%B8%AD%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="toc-number">5.1.1.</span> <span class="toc-text">4.1 AgentSession – 核心中的核心</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-SessionManager"><span class="toc-number">5.1.2.</span> <span class="toc-text">4.2 SessionManager</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-%E5%85%B6%E4%BB%96%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">5.1.3.</span> <span class="toc-text">4.3 其他核心领域对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4-%E5%86%85%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="toc-number">5.1.4.</span> <span class="toc-text">4.4 内置工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-5-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.1.5.</span> <span class="toc-text">4.5 自定义消息类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.2.</span> <span class="toc-text">运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-4"><span class="toc-number">5.3.</span> <span class="toc-text">关键设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-pi-orchestrator%EF%BC%9A%E5%A4%9A%E5%AE%9E%E4%BE%8B%E8%BF%9B%E7%A8%8B%E7%BC%96%E6%8E%92%E5%B1%82"><span class="toc-number">6.</span> <span class="toc-text">5. pi-orchestrator：多实例进程编排层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1-5"><span class="toc-number">6.1.</span> <span class="toc-text">核心领域对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-5"><span class="toc-number">6.2.</span> <span class="toc-text">关键设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E9%97%B4%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">包间依赖关系总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E7%9F%A9%E9%98%B5"><span class="toc-number">7.1.</span> <span class="toc-text">依赖矩阵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%82%E7%BA%A7%E8%81%8C%E8%B4%A3%E4%B8%80%E5%8F%A5%E8%AF%9D"><span class="toc-number">7.2.</span> <span class="toc-text">层级职责一句话</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E8%A7%82%E5%AF%9F"><span class="toc-number">8.</span> <span class="toc-text">架构演进观察</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/AI/pi-agent/Pi%20Agent%20Session%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96/" title="无标题">无标题</a><time datetime="2026-07-15T16:00:00.000Z" title="发表于 2026-07-16 00:00:00">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/" title="无标题">无标题</a><time datetime="2026-07-14T07:00:00.000Z" title="发表于 2026-07-14 15:00:00">2026-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" title="无标题">无标题</a><time datetime="2026-07-13T03:07:50.000Z" title="发表于 2026-07-13 11:07:50">2026-07-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/" title="chat completions API 协议">chat completions API 协议</a><time datetime="2026-06-29T10:17:18.000Z" title="发表于 2026-06-29 18:17:18">2026-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/GIT/git%E6%A8%A1%E5%9E%8B/" title="GIT">GIT</a><time datetime="2026-06-29T06:06:18.000Z" title="发表于 2026-06-29 14:06:18">2026-06-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By clerimia</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div><div class="footer_custom_text">Designed by clerimia</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>

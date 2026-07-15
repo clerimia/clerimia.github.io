@@ -1,0 +1,1114 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>clerimia's Blog | clerimia's Blog</title><meta name="author" content="clerimia"><meta name="copyright" content="clerimia"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="【clerimia：】 最近在写Agent的时候了解到一个据说是最简单的 Agent 实现-pi-agent ,仔细看了一下，模块做的非常好，职责分离，解耦也很好。所以准备深入学习一下。 参考材料  1. AgentLoop-核心循环 Agent Loop 在 PiAgent 中充当了核心的执行引擎，被编排在agent-loop.ts 一个文件中。 主要的结构包括五个核心部分：  导入声明 入口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="clerimia&#39;s Blog">
+<meta property="og:url" content="https://clerimia.github.io/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:site_name" content="clerimia&#39;s Blog">
+<meta property="og:description" content="【clerimia：】 最近在写Agent的时候了解到一个据说是最简单的 Agent 实现-pi-agent ,仔细看了一下，模块做的非常好，职责分离，解耦也很好。所以准备深入学习一下。 参考材料  1. AgentLoop-核心循环 Agent Loop 在 PiAgent 中充当了核心的执行引擎，被编排在agent-loop.ts 一个文件中。 主要的结构包括五个核心部分：  导入声明 入口">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg">
+<meta property="article:published_time" content="2026-07-13T03:07:50.000Z">
+<meta property="article:modified_time" content="2026-07-15T05:09:10.651Z">
+<meta property="article:author" content="clerimia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "",
+  "url": "https://clerimia.github.io/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/",
+  "image": "https://clerimia.github.io/assets/cucumber-icon.jpg",
+  "datePublished": "2026-07-13T03:07:50.000Z",
+  "dateModified": "2026-07-15T05:09:10.651Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "clerimia",
+      "url": "https://clerimia.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/favicon.png"><link rel="canonical" href="https://clerimia.github.io/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'clerimia\'s Blog',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">clerimia's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">clerimia's Blog</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">无标题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-13T03:07:50.000Z" title="发表于 2026-07-13 11:07:50">2026-07-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-15T05:09:10.651Z" title="更新于 2026-07-15 13:09:10">2026-07-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>【clerimia：】 最近在写Agent的时候了解到一个据说是最简单的 Agent 实现-<code>pi-agent</code> ,仔细看了一下，模块做的非常好，职责分离，解耦也很好。所以准备深入学习一下。<br>
+<a target="_blank" rel="noopener" href="https://notes.aiself.site/pi-mono?lang=zh-CN">参考材料</a></p>
+</blockquote>
+<h2 id="1-AgentLoop-核心循环">1. AgentLoop-核心循环</h2>
+<p>Agent Loop 在 PiAgent 中充当了核心的执行引擎，被编排在<code>agent-loop.ts</code> 一个文件中。<br>
+主要的结构包括五个核心部分：</p>
+<ul>
+<li>导入声明</li>
+<li>入口函数（<code>agentLoop()</code> <code>agentLoopContinue()</code> <code>runAgentLoop()</code> <code>runAgentLoopContinue()</code> ）</li>
+<li><code>runLoop()</code> <strong>核心代码</strong></li>
+<li>streamAssistantResponse() 调用LLM：消息变换 -&gt; 格式转换 -&gt; 调用 -&gt; 流式处理</li>
+<li>工具执行函数
+<ul>
+<li>prepare -&gt; execute -&gt; finalize</li>
+</ul>
+</li>
+</ul>
+<h3 id="声明导入的核心概念">声明导入的核心概念</h3>
+<ol>
+<li>AgentContext = AgentMessage【】 +  + 可用工具</li>
+<li>AgentMessage = 对话中的一条消息 = Message + CustomAgentMessages</li>
+<li>AgentEvent = AgentLoop的生命周期事件，释放给UI消费
+<ol>
+<li><code>agent_start</code> <code>agent_end</code></li>
+<li><code>trun_start</code> <code>trun_end</code></li>
+<li><code>message_start</code> <code>message_update</code> <code>message_end</code></li>
+<li><code>tool_excution_start</code> <code>tool_excution_update</code> <code>tool_excution_end</code></li>
+</ol>
+</li>
+<li>StreamFn = 调用 LLM 的函数 = pi-ai 的 stream 方法</li>
+</ol>
+<h3 id="入口函数">入口函数</h3>
+<blockquote>
+<p>【clerimia：】这里主要关注一点：agentLoop 返回了一个 EventStream&lt;AgentEvent, AgentMessage【】&gt; 对象</p>
+</blockquote>
+<p>参数有：</p>
+<ol>
+<li>prompts : AgentMessage[]</li>
+<li>context：AgentContext</li>
+<li>config：AgentLoopConfig</li>
+<li>signal?：AbortSignal</li>
+<li>streamFn？：StreamFn</li>
+<li><strong>没有 emit</strong></li>
+</ol>
+<p>行为：</p>
+<ol>
+<li>把用户的新消息放入上下文</li>
+<li>通知外部“循环开始了”</li>
+<li>调用真正的核心函数 runLoop（）</li>
+</ol>
+<h3 id="核心循环引擎-runLoop">核心循环引擎 runLoop()</h3>
+<p>函数签名：</p>
+<pre><code class="language-typescript">async function runLoop(
+  currentContext: AgentContext, // AgentMessage[], SystemPrompt, AgentTool[]
+  newMessages: AgentMessage[], // 一次AgentLoop的新消息列表，在agent_end时发送
+  config: AgentLoopConfig, // 模型选择、hook函数、消息队列
+  signal: AbortSignal | undefined, // 取消按钮
+  emit: AgentEventSink, // 广播器，事件总线
+  streamFn?: StreamFn, // LLM
+): Promise&lt;void&gt;
+</code></pre>
+<blockquote>
+<p>【clerimia：】核心就是：记忆 + 取消机制 + 事件通知</p>
+</blockquote>
+<h4 id="初始化">初始化</h4>
+<pre><code class="language-typescript">  let firstTurn = true;
+  // Check for steering messages at start
+  let pendingMessages: AgentMessage[] =
+    (await config.getSteeringMessages?.())
+    || [];
+</code></pre>
+<p>firstTurn：标记是不是第一轮，用于控制事件通知<br>
+pendingMessages：检查有没有&quot;<strong>插队消息 = SteerMessage</strong>&quot;——用户可能在等待期间打了新字。</p>
+<h4 id="外层循环">外层循环</h4>
+<pre><code class="language-typescript">  // Outer loop: continues when queued
+  // follow-up messages arrive after
+  // agent would stop
+  while (true) {
+    let hasMoreToolCalls = true;
+</code></pre>
+<p>【clerimia：】无限循环<br>
+<strong>外层循环的作用</strong>：当 agent 完成工作想停下来时，检查有没有用户追加的新任务（<strong>followUp</strong>）。如果有，就继续干活。<br>
+<code>hasMoreToolCalls</code> 确保内循环至少执行一次</p>
+<h4 id="内层循环-AgentLoop-本体">内层循环 AgentLoop 本体</h4>
+<pre><code class="language-typescript">    // Inner loop: process tool calls
+    // and steering messages
+    while (hasMoreToolCalls
+           || pendingMessages.length &gt; 0) {
+</code></pre>
+<ul>
+<li><code>hasMoreToolCalls</code> = AI 还需要使用工具</li>
+<li><code>pendingMessages.length &gt; 0</code> = 有插队信息要处理</li>
+</ul>
+<h5 id="内部循环-步骤A：注入插队消息">内部循环-步骤A：注入插队消息</h5>
+<pre><code class="language-typescript">      if (!firstTurn) {
+        // 如果不是第一轮就发送 turn_start
+        await emit({ type: &quot;turn_start&quot; });
+      } else {
+        // 如果是第一轮，就什么都不做
+        firstTurn = false;
+      }
+
+      // Process pending messages 有插队消息，加入上下文
+      if (pendingMessages.length &gt; 0) {
+        for (const message of pendingMessages) {
+          await emit({
+            type: &quot;message_start&quot;, message
+          });
+          await emit({
+            type: &quot;message_end&quot;, message
+          });
+          currentContext.messages.push(message);
+          newMessages.push(message);
+        }
+        pendingMessages = [];
+      }
+</code></pre>
+<p>【clerimia：】目前还没有实现</p>
+<h5 id="内部循环-步骤B：调用LLM">内部循环-步骤B：调用LLM</h5>
+<pre><code class="language-typescript">      // Stream assistant response
+      const message = await
+        streamAssistantResponse(
+          currentContext, 
+          config,
+          signal, 
+          emit, 
+          streamFn
+        );
+      newMessages.push(message);
+</code></pre>
+<ul>
+<li>【clerimia：】这里的 streamAssistantResponse 是一个打包操作，里面很多步骤：
+<ul>
+<li><code>transformContext</code> ：可以理解为一个Hook，处理上下文</li>
+<li><code>convertToLlm</code>：AgentMessage 格式转换，主要是将CustomMessage过滤</li>
+<li>组装 Context (Provider 层消费格式)</li>
+<li>调用 LLM API</li>
+</ul>
+</li>
+</ul>
+<h5 id="内部循环-停止条件-1：出错、被取消">内部循环-停止条件#1：出错、被取消</h5>
+<pre><code class="language-typescript">      if (message.stopReason === &quot;error&quot;
+          || message.stopReason === &quot;aborted&quot;
+      ) {
+        await emit({
+          type: &quot;turn_end&quot;,
+          message, 
+          toolResults: []
+        });
+        await emit({
+          type: &quot;agent_end&quot;,
+          messages: newMessages
+        });
+        return;
+      }
+</code></pre>
+<p>LLM 调用失败原因：</p>
+<ul>
+<li>error</li>
+<li>aborted<br>
+最后释放 agent_end event</li>
+</ul>
+<blockquote>
+<p>v2 目前没有考虑到，seam 不同</p>
+</blockquote>
+<h5 id="内部循环-工具执行">内部循环-工具执行</h5>
+<pre><code class="language-typescript">      // Check for tool calls，过滤获取工具调用块 ToolCallContent
+      const toolCalls = message.content
+        .filter((c) =&gt; c.type === &quot;toolCall&quot;);
+
+      const toolResults: ToolResultMessage[] = [];
+      hasMoreToolCalls = false;
+
+      if (toolCalls.length &gt; 0) {
+        const executedToolBatch =
+          await executeToolCalls(
+            currentContext, message,
+            config, signal, emit
+          );
+        toolResults.push(
+          ...executedToolBatch.messages
+        );
+        hasMoreToolCalls =
+          !executedToolBatch.terminate;
+
+        for (const result of toolResults) {
+          currentContext.messages.push(result);
+          newMessages.push(result);
+        }
+      }
+</code></pre>
+<blockquote>
+<p>【clerimia：】executeToolCalls 被封装为一个函数，传入上下文</p>
+</blockquote>
+<ol>
+<li><code>toolCalls</code> 获取 AssistantMessage 中所有工具调用块</li>
+<li>初始化 <code>toolResults</code> <code>hasMoreToolCalls</code></li>
+<li><code>executedToolCalls</code> 批量执行工具</li>
+<li>收集工具执行结果：<code>toolResults</code> <code>hasMoreToolCalls</code> 工具的终止提示</li>
+<li>把工具执行结果加入 <code>AgentContext</code> 和 <code>newMessages</code></li>
+</ol>
+<h5 id="内部循环-检查是否强制停止：停止条件-2可选的外部强制停止">内部循环-检查是否强制停止：停止条件#2可选的外部强制停止</h5>
+<pre><code class="language-typescript">      // 通知外部，这轮结束了
+      await emit({
+        type: &quot;turn_end&quot;,
+        message, toolResults
+      });
+
+			// 停止条件#2 hook自定义
+      if (
+        await config.shouldStopAfterTurn?.(
+          {
+            message, toolResults,
+            context: currentContext,
+            newMessages,
+          }
+        )
+      ) {
+        await emit({
+          type: &quot;agent_end&quot;,
+          messages: newMessages
+        });
+        return;
+      }
+			
+			// 检查有没有新的插队信息
+      pendingMessages =
+        (await config.getSteeringMessages?.())
+        || [];
+
+    } // ← 内层循环结束
+</code></pre>
+<blockquote>
+<p>【clerimia：】这里从 AgentLoopConfig 中拿了一个 hoos ：<code>shouldStopAfterTurn</code><br>
+到目前为止都没有出现过最大循环次数，应该是在 <code>shouldStopAfterTurn</code> 中封装了</p>
+</blockquote>
+<h4 id="外层循环结束">外层循环结束</h4>
+<pre><code class="language-typescript">    // Agent would stop here.
+    // Check for follow-up messages. 检查有没有 followUp 消息（追加任务）
+    const followUpMessages =
+      (await config.getFollowUpMessages?.())
+      || [];
+    // 如果有：继续循环
+    if (followUpMessages.length &gt; 0) {
+      pendingMessages = followUpMessages;
+      continue;
+    }
+
+    // No more messages, exit 如果没有，结束外层循环
+    break;
+  }
+
+	// 通知外部 agent 结束了
+  await emit({
+    type: &quot;agent_end&quot;,
+    messages: newMessages
+  });
+}
+</code></pre>
+<blockquote>
+<p>【clerimia：】循环停止的三个条件</p>
+<ol>
+<li>出错 / 中断  -&gt; 内层 return</li>
+<li>外部强制 shouldStopAfterTurn -&gt; 内层 return</li>
+<li>AI 没有工具要用 + 没有 followUp -&gt; 外层 break<br>
+条件 1 和 3 所有 agent 都有。条件 2 是产品层面的安全阀。</li>
+</ol>
+</blockquote>
+<h4 id="辅助函数：streamAssistantResponse-—-怎么调用-LLM">辅助函数：streamAssistantResponse() — 怎么调用 LLM</h4>
+<h5 id="函数签名">函数签名</h5>
+<pre><code class="language-typescript">async function streamAssistantResponse(
+  context: AgentContext,
+  config: AgentLoopConfig,
+  signal: AbortSignal | undefined,
+  emit: AgentEventSink,
+  streamFn?: StreamFn,
+): Promise&lt;AssistantMessage&gt; {
+</code></pre>
+<h5 id="第一步：上下文变换">第一步：上下文变换</h5>
+<pre><code class="language-typescript">  // 第一步：上下文变换
+  let messages = context.messages;
+  if (config.transformContext) {
+    messages = await config.transformContext(
+      messages, signal
+    );
+  }
+</code></pre>
+<blockquote>
+<p>【clerimia：】<code>transformContext</code> 是一个Hook，但是为什么要 <code>signal</code> 呢？<br>
+这里就是<code>上下文工程</code>的实现！！！！</p>
+</blockquote>
+<h5 id="第二步：格式转换">第二步：格式转换</h5>
+<pre><code class="language-typescript">// 第二步：格式转换
+  const llmMessages =
+    await config.convertToLlm(messages);
+</code></pre>
+<h5 id="第三步：组装完整请求">第三步：组装完整请求</h5>
+<pre><code class="language-typescript">  // 第三步：组装完整请求
+  const llmContext: Context = {
+    systemPrompt: context.systemPrompt,
+    messages: llmMessages,
+    tools: context.tools,
+  };
+
+  const streamFunction =
+    streamFn || streamSimple;
+
+  // 解析 API key
+  const resolvedApiKey =
+    (config.getApiKey
+      ? await config.getApiKey(
+          config.model.provider
+        )
+      : undefined)
+    || config.apiKey;
+</code></pre>
+<blockquote>
+<p>【clerimia：】</p>
+<ol>
+<li>AgentContext -&gt; Context</li>
+<li>解析 API key</li>
+</ol>
+</blockquote>
+<h5 id="第四步：真正调用-LLM">第四步：真正调用 LLM</h5>
+<pre><code class="language-typescript">  const response = await streamFunction(
+    config.model, 
+    llmContext, 
+    { ...config,
+      apiKey: resolvedApiKey,
+      signal,}
+  );
+</code></pre>
+<blockquote>
+<p>【clerimia：】这里做好了 AgentLoopConfig 和 SimpleStreamOptions 的接缝</p>
+</blockquote>
+<h5 id="第五步：处理流式响应">第五步：处理流式响应</h5>
+<pre><code class="language-typescript">  // 第五步：处理流式响应
+  let partialMessage = null;
+  let addedPartial = false;
+
+  for await (const event of response) {
+    switch (event.type) {
+      case &quot;start&quot;:
+        partialMessage = event.partial;
+        context.messages.push(partialMessage);
+        addedPartial = true;
+        await emit({ type: &quot;message_start&quot;,
+          message: {...partialMessage} });
+        break;
+      case &quot;text_start&quot;:
+      case &quot;text_delta&quot;:
+      // ... 更多事件类型 ...
+        // 更新消息内容
+        await emit({
+          type: &quot;message_update&quot;, ...
+        });
+        break;
+      case &quot;done&quot;:
+      case &quot;error&quot;:
+        const finalMessage =
+          await response.result();
+        // 更新到最终版本
+        await emit({
+          type: &quot;message_end&quot;,
+          message: finalMessage
+        });
+        return finalMessage;
+    }
+  }
+  // ... 收尾处理 ...
+}
+</code></pre>
+<blockquote>
+<p>【clerimia：】这里进行了两种消费生产</p>
+<ol>
+<li>构造 <code>AssistantMessage</code>，供 AgentLoop 消费</li>
+<li>构造 <code>AgentEvent</code> ，供 上层UI 消费<br>
+这个就是之前我对于流式的理解迷雾所在！！！</li>
+</ol>
+</blockquote>
+<h4 id="辅助函数：工具执行相关函数">辅助函数：工具执行相关函数</h4>
+<h6 id="工具执行入口：并行-vs-顺序">工具执行入口：并行 vs 顺序</h6>
+<pre><code class="language-typescript">async function executeToolCalls(
+  currentContext: AgentContext,
+  assistantMessage: AssistantMessage,
+  config: AgentLoopConfig,
+  signal: AbortSignal | undefined,
+  emit: AgentEventSink,
+): Promise&lt;ExecutedToolCallBatch&gt; {
+
+  const toolCalls = assistantMessage
+    .content
+    .filter((c) =&gt; c.type === &quot;toolCall&quot;);
+
+  // 判断是顺序执行还是并行执行
+  const hasSequentialToolCall =
+    toolCalls.some((tc) =&gt;
+      currentContext.tools?.find(
+        (t) =&gt; t.name === tc.name
+      )?.executionMode === &quot;sequential&quot;
+    );
+
+  if (config.toolExecution === &quot;sequential&quot;
+      || hasSequentialToolCall) {
+    return executeToolCallsSequential(...);
+  }
+  return executeToolCallsParallel(...);
+}
+</code></pre>
+<blockquote>
+<p>【clerimia：】</p>
+<ol>
+<li>首先提取了 <code>assistanMessage</code> 的所有 <code>ToolCallContent</code></li>
+<li>然后判断是顺序执行还是并行执行，工具定义中看</li>
+<li>如果<code>执行方式是串行</code>或者<code>工具中有一个是串行</code>，调用 <code>executeToolCallsSequential</code></li>
+<li>否则调用 <code>executeToolCallsParallel</code></li>
+</ol>
+</blockquote>
+<h5 id="工具执行的三步：准备-执行-收尾">工具执行的三步：准备 -&gt; 执行 -&gt; 收尾</h5>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>函数</th>
+<th>做什么</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 准备</td>
+<td><code>prepareToolCall()</code></td>
+<td>找到工具、校验参数、问 beforeToolCall hook “允许吗？”</td>
+<td>助手说&quot;我要用你的信用卡&quot;→ 你先检查合不合理</td>
+</tr>
+<tr>
+<td>2. 执行</td>
+<td><code>executePreparedToolCall()</code></td>
+<td>真正运行工具代码</td>
+<td>你同意了，助手真的去刷卡</td>
+</tr>
+<tr>
+<td>3. 收尾</td>
+<td><code>finalizeExecutedToolCall()</code></td>
+<td>调 afterToolCall hook、格式化结果</td>
+<td>刷完卡后你审查一下账单，确认没问题</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-typescript">async function executeToolCallsSequential( currentContext, assistantMessage, toolCalls, config, signal, emit, ): Promise&lt;ExecutedToolCallBatch&gt; { const finalizedCalls = []; const messages = []; for (const toolCall of toolCalls) { await emit({ type: &quot;tool_execution_start&quot;, toolCallId: toolCall.id, ... }); const preparation = await prepareToolCall(currentContext, assistantMessage, toolCall, config, signal); if (preparation.kind === &quot;immediate&quot;) { // 准备阶段就被拦截了（参数错误/权限不允许） finalized = { toolCall, result: preparation.result, isError: preparation.isError }; } else { // 真正执行 const executed = await executePreparedToolCall(preparation, signal, emit); finalized = await finalizeExecutedToolCall(..., preparation, executed, config, signal); } await emitToolExecutionEnd(finalized, emit); const toolResultMessage = createToolResultMessage(finalized); await emitToolResultMessage(toolResultMessage, emit); messages.push(toolResultMessage); } return { messages, terminate: shouldTerminateToolBatch(finalizedCalls) }; } // ... prepareToolCall、executePreparedToolCall、finalizeExecutedToolCall ... // ... 省略 300 行具体实现 ... 
+</code></pre>
+<blockquote>
+<p>【clerimia：】这里就有大量的 hook 了</p>
+</blockquote>
+<h3 id="概念总结：">概念总结：</h3>
+<pre><code class="language-text">1. Agent = 一个循环，不是一次问答 
+   └─ 调 LLM → 有工具调用？→ 是 → 执行 → 结果喂回 → 再调 LLM 
+											   → 否 → 结束 
+   
+2. 停止条件有三层保护 
+   ├─ 出错/取消 → 立即停 
+   ├─ 外部强制（max turns / token limit） → 安全阀 
+   └─ AI 自然完成（没有更多工具调用） → 正常结束 
+   
+3. 调 LLM 前有&quot;变换管道&quot; 
+   └─ 原始消息 → transformContext（压缩/裁剪）→ convertToLlm（格式转换）→ 发给 LLM 
+   
+4. 工具执行前有&quot;权限关卡&quot; 
+   └─ beforeToolCall → 可以 block → Claude Code 的&quot;Allow?&quot;就是这个 
+   
+5. 事件系统让外部观察循环状态 
+   └─ turn_start / message_start / tool_execution_start / ... / agent_end
+</code></pre>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/Pasted%20image%2020260713161358.png" alt=""></p>
+<h2 id="2-Agent：管理层">2. Agent：管理层</h2>
+<blockquote>
+<p>如果说 AgentLoop 是引擎，Agent 就是产品的壳<br>
+引擎是纯逻辑，不绑定任何产品形态。Agent 类是产品化的壳——不同产品可以用同一个引擎，但用不同的 Agent 配置。<br>
+我们将 Agent 分为 四个层次、9 个区块来读</p>
+</blockquote>
+<h3 id="配置层">配置层</h3>
+<h4 id="区块1：-消息筛选函数-默认值">区块1： 消息筛选函数 + 默认值</h4>
+<pre><code class="language-typescript">function defaultConvertToLlm(messages: AgentMessage[]): Message[] {
+  return messages.filter(
+    (message) =&gt; message.role === &quot;user&quot;
+      || message.role === &quot;assistant&quot;
+      || message.role === &quot;toolResult&quot;,
+  );
+}
+
+const EMPTY_USAGE = { input: 0, output: 0, ... };
+const DEFAULT_MODEL = { id: &quot;unknown&quot;, ... };
+</code></pre>
+<p>这里就对应的 AgentLoop 中调用LLM的 convertToLlm</p>
+<blockquote>
+<p>【clerimia：】<br>
+Agent 内部记录了很多种消息，但发给 AI 模型时只需要三种：用户说的（user）、AI 说的（assistant）、工具结果（toolResult）。<br>
+<code>.filter()</code> 就是过一遍列表，只留符合条件的——这里就是只留这三种角色的消息，其他的丢掉。</p>
+</blockquote>
+<h4 id="区块2：Agent-内部状态的保护机制">区块2：Agent 内部状态的保护机制</h4>
+<pre><code class="language-typescript">type MutableAgentState = Omit&lt;AgentState, &quot;isStreaming&quot; | &quot;streamingMessage&quot; | &quot;pendingToolCalls&quot; | &quot;errorMessage&quot;&gt; &amp; {
+    isStreaming: boolean;
+    streamingMessage?: AgentMessage;
+    pendingToolCalls: Set&lt;string&gt;;
+    errorMessage?: string;
+};
+
+function createMutableAgentState(
+    initialState?: Partial&lt;Omit&lt;AgentState, &quot;pendingToolCalls&quot; | &quot;isStreaming&quot; | &quot;streamingMessage&quot; | &quot;errorMessage&quot;&gt;&gt;,
+): MutableAgentState {
+    let tools = initialState?.tools?.slice() ?? [];
+    let messages = initialState?.messages?.slice() ?? [];
+
+    return {
+        systemPrompt: initialState?.systemPrompt ?? &quot;&quot;,
+        model: initialState?.model ?? DEFAULT_MODEL,
+        thinkingLevel: initialState?.thinkingLevel ?? &quot;off&quot;,
+        get tools() {
+            return tools;
+        },
+        set tools(nextTools: AgentTool&lt;any&gt;[]) {
+            tools = nextTools.slice();
+        },
+        get messages() {
+            return messages;
+        },
+        set messages(nextMessages: AgentMessage[]) {
+            messages = nextMessages.slice();
+        },
+        isStreaming: false,
+        streamingMessage: undefined,
+        pendingToolCalls: new Set&lt;string&gt;(),
+        errorMessage: undefined,
+    };
+}
+</code></pre>
+<p>Agent 运行时需要记住的东西有：</p>
+<ul>
+<li>对话记录：AgentMessage[]</li>
+<li>工具列表：AgentTool[]</li>
+<li>系统提示词：systemPrompt</li>
+<li>是否正在运行：isStreaming</li>
+<li>正在处理的工具列表：pendingToolCalls</li>
+</ul>
+<p>这样 AgentState 就是一个快照<br>
+当外部想替换整个工具列表时，代码会先把新列表<strong>复印一份</strong>（<code>.slice()</code> 就是复印）再存，这样外部后续怎么改自己手上的列表，都不影响 Agent 内部的存档。</p>
+<h4 id="区块3：创建-Agent-时的配置清单">区块3：创建 Agent 时的配置清单</h4>
+<pre><code class="language-typescript">/** Options for constructing an {@link Agent}. */
+export interface AgentOptions {
+		// 初始状态
+    initialState?: Partial&lt;Omit&lt;AgentState, &quot;pendingToolCalls&quot; | &quot;isStreaming&quot; | &quot;streamingMessage&quot; | &quot;errorMessage&quot;&gt;&gt;;
+    
+    // LLM 调用相关
+    convertToLlm?: (messages: AgentMessage[]) =&gt; Message[] | Promise&lt;Message[]&gt;;
+    transformContext?: (messages: AgentMessage[], signal?: AbortSignal) =&gt; Promise&lt;AgentMessage[]&gt;;
+    streamFn?: StreamFn;
+    getApiKey?: (provider: string) =&gt; Promise&lt;string | undefined&gt; | string | undefined;
+    
+    // Hooks
+    onPayload?: SimpleStreamOptions[&quot;onPayload&quot;];
+    onResponse?: SimpleStreamOptions[&quot;onResponse&quot;];
+    beforeToolCall?: (context: BeforeToolCallContext, signal?: AbortSignal) =&gt; Promise&lt;BeforeToolCallResult | undefined&gt;;
+    afterToolCall?: (context: AfterToolCallContext, signal?: AbortSignal) =&gt; Promise&lt;AfterToolCallResult | undefined&gt;;
+    prepareNextTurn?: (
+        signal?: AbortSignal,
+    ) =&gt; Promise&lt;AgentLoopTurnUpdate | undefined&gt; | AgentLoopTurnUpdate | undefined;
+    prepareNextTurnWithContext?: (
+        context: PrepareNextTurnContext,
+        signal?: AbortSignal,
+    ) =&gt; Promise&lt;AgentLoopTurnUpdate | undefined&gt; | AgentLoopTurnUpdate | undefined;
+    
+    // 运行模式，队列行为
+    steeringMode?: QueueMode;
+    followUpMode?: QueueMode;
+    
+    // 其它数据
+    sessionId?: string;
+    thinkingBudgets?: ThinkingBudgets;
+    transport?: Transport;
+    maxRetryDelayMs?: number;
+    toolExecution?: ToolExecutionMode;
+}
+</code></pre>
+<h3 id="控制层-重要">控制层 重要</h3>
+<h4 id="区块4：消息排队队列-—-运行中插话-的实现">区块4：消息排队队列 — &quot;运行中插话&quot;的实现</h4>
+<p>Agent 运行时，外部可以往这个桶里塞消息。引擎在合适的时机来取。<br>
+四个操作：</p>
+<ul>
+<li>enqueue（排队）：往队列中插入一条消息</li>
+<li>hasItems：还有东西吗</li>
+<li>drain（出队）：队首出队</li>
+<li>clear：清空<br>
+两种出队方式：</li>
+<li><code>all</code> 模式：一次把桶里所有消息全部倒出来，桶清空。适合批量场景——比如用户快速连发了 3 条修改指令，全部一次性交给 AI。</li>
+<li><code>one-at-a-time</code> 模式默认：每次只从桶里取第一条，剩下的留着下次取。这样每条消息都会触发一轮完整的 AI 回复，确保每条都被认真处理。</li>
+</ul>
+<pre><code class="language-typescript">class PendingMessageQueue {
+    private messages: AgentMessage[] = [];
+    public mode: QueueMode;
+    constructor(mode: QueueMode) {
+        this.mode = mode;
+    }
+    enqueue(message: AgentMessage): void {
+        this.messages.push(message);
+    }
+    hasItems(): boolean {
+        return this.messages.length &gt; 0;
+    }
+    drain(): AgentMessage[] {
+        if (this.mode === &quot;all&quot;) {
+            const drained = this.messages.slice();
+            this.messages = [];
+            return drained;
+        }
+        const first = this.messages[0];
+        if (!first) {
+            return [];
+        }
+        this.messages = this.messages.slice(1);
+        return [first];
+    }
+    clear(): void {
+        this.messages = [];
+    }
+}
+</code></pre>
+<h4 id="区块5：对外操作面板">区块5：对外操作面板</h4>
+<p>这个是 Agent 类中暴露的接口</p>
+<pre><code class="language-typescript">		// 订阅进度通知, 注册AgentEvent的消费者，返回取消订阅函数
+    subscribe(listener: (event: AgentEvent, signal: AbortSignal) =&gt; Promise&lt;void&gt; | void): () =&gt; void {
+        this.listeners.add(listener);
+        return () =&gt; this.listeners.delete(listener);
+    }
+    
+    // 获取当前状态
+    get state(): AgentState {
+        return this._state;
+    }
+    
+    // 两个消息队列
+    // 每轮结束后取 steering 队列
+    // 准备收工时取 followUp 队列
+    // 有 setMode getMode clearQueue hasQueuedMessages 方法
+    steer(message: AgentMessage): void {
+        this.steeringQueue.enqueue(message);
+    }
+    followUp(message: AgentMessage): void {
+        this.followUpQueue.enqueue(message);
+    }
+    
+    // 运行时操作
+    // abort() 中断
+    // waitForIdle() 获取等待完成的凭证，用于透传
+    get signal(): AbortSignal | undefined {
+        return this.activeRun?.abortController.signal;
+    }
+    abort(): void {
+        this.activeRun?.abortController.abort();
+    }
+    waitForIdle(): Promise&lt;void&gt; {
+        return this.activeRun?.promise ?? Promise.resolve();
+    }
+    
+    // 重置 Agent 状态，相当于新开会话
+    reset(): void {
+        this._state.messages = [];
+        this._state.isStreaming = false;
+        this._state.streamingMessage = undefined;
+        this._state.pendingToolCalls = new Set&lt;string&gt;();
+        this._state.errorMessage = undefined;
+        this.clearFollowUpQueue();
+        this.clearSteeringQueue();
+    }
+</code></pre>
+<h4 id="区块6：两种启动方式">区块6：两种启动方式</h4>
+<ul>
+<li>prompt() — 发新消息启动
+<ul>
+<li>如果 Agent 已经在忙（activeRun 存在），直接拒绝并报错。报错信息还引导你改用 steer/followUp</li>
+</ul>
+</li>
+<li>continue() — 让 Agent 接着干
+<ul>
+<li><strong>上次最后说话的是 AI</strong>（assistant）取消息队列中找消息
+<ul>
+<li>先取 steer 消息 → 有就用</li>
+<li>再取 followUp 消息</li>
+<li>都为空就报错</li>
+</ul>
+</li>
+<li><strong>上次最后说话的是用户或工具</strong>
+<ul>
+<li>说明 AI 还没来得及回就被中断了，直接从断点恢复。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-typescript">    /** Start a new prompt from text, a single message, or a batch of messages. */
+    async prompt(message: AgentMessage | AgentMessage[]): Promise&lt;void&gt;;
+    async prompt(input: string, images?: ImageContent[]): Promise&lt;void&gt;;
+    async prompt(input: string | AgentMessage | AgentMessage[], images?: ImageContent[]): Promise&lt;void&gt; {
+        if (this.activeRun) {
+            throw new Error(
+                &quot;Agent is already processing a prompt. Use steer() or followUp() to queue messages, or wait for completion.&quot;,
+            );
+        }
+        const messages = this.normalizePromptInput(input, images);
+        await this.runPromptMessages(messages);
+    }
+
+    async continue(): Promise&lt;void&gt; {
+        if (this.activeRun) {
+            throw new Error(&quot;Agent is already processing. Wait for completion before continuing.&quot;);
+        }
+        const lastMessage = this._state.messages[this._state.messages.length - 1];
+        if (!lastMessage) {
+            throw new Error(&quot;No messages to continue from&quot;);
+        }
+        if (lastMessage.role === &quot;assistant&quot;) {
+            const queuedSteering = this.steeringQueue.drain();
+            if (queuedSteering.length &gt; 0) {
+                await this.runPromptMessages(queuedSteering, { skipInitialSteeringPoll: true });
+                return;
+            }
+            const queuedFollowUps = this.followUpQueue.drain();
+            if (queuedFollowUps.length &gt; 0) {
+                await this.runPromptMessages(queuedFollowUps);
+                return;
+            }
+            throw new Error(&quot;Cannot continue from message role: assistant&quot;)
+        }
+        await this.runContinuation();
+    }
+</code></pre>
+<h3 id="引擎交接层">引擎交接层</h3>
+<h4 id="区块7：Agent-的零件清单-出厂组装">区块7：Agent 的零件清单 + 出厂组装</h4>
+<p>四个核心零件：</p>
+<ul>
+<li><em>satete：记事本，记住所有对话内容和运行状态</em></li>
+<li><code>listeners</code> — 订阅者名单，谁在关注 Agent 的进度</li>
+<li><code>steeringQueue / followUpQueue</code> — 上面读过的两个消息队列<br>
+ActiveRun：记录当前正在跑的任务，有任务时调用 prompt() 会被拒绝</li>
+<li>promise：等待完成的凭证</li>
+<li>resolve：直接通知完成</li>
+<li>abortController：中断控制器</li>
+</ul>
+<pre><code class="language-typescript">type ActiveRun = {
+  promise: Promise&lt;void&gt;;
+  resolve: () =&gt; void;
+  abortController: AbortController;
+};
+
+export class Agent {
+  private _state: MutableAgentState;
+  private readonly listeners = new Set&lt;...&gt;();
+  private readonly steeringQueue: PendingMessageQueue;
+  private readonly followUpQueue: PendingMessageQueue;
+
+  public convertToLlm: ...;
+  public transformContext?: ...;
+  public streamFn: StreamFn;
+  public beforeToolCall?: ...;
+  public afterToolCall?: ...;
+  private activeRun?: ActiveRun;
+  public toolExecution: ToolExecutionMode;
+
+  constructor(options: AgentOptions = {}) {
+    this._state = createMutableAgentState(options.initialState);
+    this.convertToLlm = options.convertToLlm
+      ?? defaultConvertToLlm;
+    this.streamFn = options.streamFn ?? streamSimple;
+    this.steeringQueue = new PendingMessageQueue(
+      options.steeringMode ?? &quot;one-at-a-time&quot;);
+    this.followUpQueue = new PendingMessageQueue(
+      options.followUpMode ?? &quot;one-at-a-time&quot;);
+    this.toolExecution = options.toolExecution
+      ?? &quot;parallel&quot;;
+  }
+</code></pre>
+<h4 id="区块8：启动前准备-引擎对接-收工清理">区块8：启动前准备 + 引擎对接 + 收工清理</h4>
+<ul>
+<li>createContextSnapshot()：打印Context快照</li>
+<li>createLoopConfig()：创建引擎配置</li>
+<li>runWithLifecycle()：启动的标准流程
+<ul>
+<li>看当前有无ActiveRun()</li>
+<li>初始化中断处理器</li>
+<li>初始化ActiveRun()</li>
+<li>excute() 执行</li>
+<li>await this.handleRunFailure(error, abortController.signal.aborted);</li>
+<li>finishRun() 收尾</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-typescript">private async runPromptMessages(messages, options) {
+  await this.runWithLifecycle(async (signal) =&gt; {
+    await runAgentLoop(
+      this.createContextSnapshot(),
+      this.createLoopConfig(options),
+      (event) =&gt; this.processEvents(event),
+    );
+}
+
+private createLoopConfig(options: { skipInitialSteeringPoll?: boolean } = {}): AgentLoopConfig {
+        let skipInitialSteeringPoll = options.skipInitialSteeringPoll === true;
+        return {
+            model: this._state.model,
+            reasoning: this._state.thinkingLevel === &quot;off&quot; ? undefined : this._state.thinkingLevel,
+            sessionId: this.sessionId,
+            onPayload: this.onPayload,
+            onResponse: this.onResponse,
+            transport: this.transport,
+            thinkingBudgets: this.thinkingBudgets,
+            maxRetryDelayMs: this.maxRetryDelayMs,
+            toolExecution: this.toolExecution,
+            beforeToolCall: this.beforeToolCall,
+            afterToolCall: this.afterToolCall,
+            prepareNextTurn:
+                this.prepareNextTurnWithContext || this.prepareNextTurn
+                    ? async (context) =&gt; {
+                            if (this.prepareNextTurnWithContext) {
+                                return await this.prepareNextTurnWithContext(context, this.signal);
+                            }
+                            return await this.prepareNextTurn?.(this.signal);
+                        }
+                    : undefined,
+            convertToLlm: this.convertToLlm,
+            transformContext: this.transformContext,
+            getApiKey: this.getApiKey,
+            getSteeringMessages: async () =&gt; {
+                if (skipInitialSteeringPoll) {
+                    skipInitialSteeringPoll = false;
+                    return [];
+                }
+                return this.steeringQueue.drain();
+            },
+            getFollowUpMessages: async () =&gt; this.followUpQueue.drain(),
+        };
+}
+
+private async runWithLifecycle(executor) {
+  if (this.activeRun) throw new Error(...);
+  const abortController = new AbortController();
+  const promise = new Promise((resolve) =&gt; ...);
+  this.activeRun = { promise, resolve, abortController };
+  this._state.isStreaming = true;
+
+  try {
+    await executor(abortController.signal);
+  } catch (error) {
+    await this.handleRunFailure(error, ...);
+  } finally {
+    this.finishRun();
+  }
+}
+
+private async handleRunFailure(error: unknown, aborted: boolean): Promise&lt;void&gt; {
+        const failureMessage = {
+            role: &quot;assistant&quot;,
+            content: [{ type: &quot;text&quot;, text: &quot;&quot; }],
+            api: this._state.model.api,
+            provider: this._state.model.provider,
+            model: this._state.model.id,
+            usage: EMPTY_USAGE,
+            stopReason: aborted ? &quot;aborted&quot; : &quot;error&quot;,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            timestamp: Date.now(),
+        } satisfies AgentMessage;
+        await this.processEvents({ type: &quot;message_start&quot;, message: failureMessage });
+        await this.processEvents({ type: &quot;message_end&quot;, message: failureMessage });
+        await this.processEvents({ type: &quot;turn_end&quot;, message: failureMessage, toolResults: [] });
+        await this.processEvents({ type: &quot;agent_end&quot;, messages: [failureMessage] });
+}
+
+private finishRun(): void {
+        this._state.isStreaming = false;
+        this._state.streamingMessage = undefined;
+        this._state.pendingToolCalls = new Set&lt;string&gt;();
+        this.activeRun?.resolve();
+        this.activeRun = undefined;
+    }
+</code></pre>
+<h3 id="事件处理层">事件处理层</h3>
+<h4 id="区块9：收到引擎通知后怎么处理">区块9：收到引擎通知后怎么处理</h4>
+<ol>
+<li>更新自己的状态：AgentState</li>
+<li>分发事件给订阅者处理</li>
+</ol>
+<pre><code class="language-typescript">private async processEvents(event: AgentEvent): Promise&lt;void&gt; {
+				// Agent消费event，更新AgentState
+        switch (event.type) {
+            case &quot;message_start&quot;:
+                this._state.streamingMessage = event.message;
+                break;
+            case &quot;message_update&quot;:
+                this._state.streamingMessage = event.message;
+                break;
+            case &quot;message_end&quot;:
+                this._state.streamingMessage = undefined;
+                this._state.messages.push(event.message);
+                break;
+            case &quot;tool_execution_start&quot;: {
+                const pendingToolCalls = new Set(this._state.pendingToolCalls);
+                pendingToolCalls.add(event.toolCallId);
+                this._state.pendingToolCalls = pendingToolCalls;
+                break;
+            }
+            case &quot;tool_execution_end&quot;: {
+                const pendingToolCalls = new Set(this._state.pendingToolCalls);
+                pendingToolCalls.delete(event.toolCallId);
+                this._state.pendingToolCalls = pendingToolCalls;
+                break;
+            }
+            case &quot;turn_end&quot;:
+                if (event.message.role === &quot;assistant&quot; &amp;&amp; event.message.errorMessage){
+                    this._state.errorMessage = event.message.errorMessage;
+                }
+                break;
+            case &quot;agent_end&quot;:
+                this._state.streamingMessage = undefined;
+                break;
+        }
+        
+        const signal = this.activeRun?.abortController.signal;
+        if (!signal) {
+            throw new Error(&quot;Agent listener invoked outside active run&quot;);
+        }
+        
+        // 分发给订阅者
+        for (const listener of this.listeners) {
+            await listener(event, signal);
+        }
+    }
+</code></pre>
+<h2 id="3-Providers：传输层">3. Providers：传输层</h2>
+<h3 id="模型注册表，管理层">模型注册表，管理层</h3>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/Pasted%20image%2020260713171818.png" alt=""></p>
+<h3 id="API注册表，传输层">API注册表，传输层</h3>
+<p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/Pasted%20image%2020260713171852.png" alt=""></p>
+<p><strong>两张注册表的区别：</strong></p>
+<ul>
+<li>模型注册表 — 管理层用，启动时查一次：&quot;anthropic 的 claude-opus-4-6 是什么？&quot;→ 返回 Model 对象</li>
+<li>API 注册表 — 路由用，每次调 LLM 时查：&quot;anthropic-messages 协议该调哪个函数？&quot;→ 返回调用函数<br>
+<strong>完整流程：</strong></li>
+</ul>
+<ol>
+<li>引擎调路由：streamFn(model, context, options)</li>
+<li>路由查 API 注册表后调 provider：providerFn(model, context, options)</li>
+<li>Provider 干完活，事件流返回给路由</li>
+<li>路由把事件流原样返回给引擎</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://clerimia.github.io">clerimia</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://clerimia.github.io/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/">https://clerimia.github.io/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://clerimia.github.io" target="_blank">clerimia's Blog</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/assets/cucumber-icon.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/" title=""><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2"></div></div><div class="info-2"><div class="info-item-1"> 【clerimia：】 之前写了《Pi Agent 设计思路》，从 AgentLoop -&gt; Agent -&gt; Providers 三层纵向拆解了引擎。但那只是 pi-agent monorepo 中 packages/agent 一个包的故事。这次把视角从「分层」切换到「分包」，横向看 5 个包各自的职责、领域对象和依赖关系，补完整个 monorepo 的拼图。  全景图 pi-agent monorepo 包含 5 个包，依赖方向从底到顶： 依赖方向（箭头表示「被依赖」）    pi-tui          pi-ai     │               │     │               │     └──────┬────────┘            │      pi-agent-core            │            │     pi-coding-agent            │            │     pi-orchestrator     包 npm 名 定位     pi-ai @earendil...</div></div></div></a><a class="pagination-related" href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/" title="chat completions API 协议"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">chat completions API 协议</div></div><div class="info-2"><div class="info-item-1">核心特点：  无状态，需要手动传递完整的 messages 对话历史 基于角色的对话模型：system/user/assistant/tool  消息顺序约束：system -&gt; user -&gt; assistant -&gt; tool -&gt; user 每轮对话必须以 user 或者 tool 消息结尾（发起新请求时） tool 消息必须紧跟在 tool_calls 和 assistant 消息后 并行工具调用时，所有工具结果必须全部回传后才能继续对话   LLM API的事实标准，现在大部分的AI API都是提供了chat completions api兼容的，而且Open AI也称这个为永久兼容的。  一请求结构总览 1. 请求URL规范, baseURL 采用 chat completions api 协议的网关一般的端点格式为： POST https://modelverse/v1/chat/completions 2. 请求头规范 HTTP Headers 中一般要携带 Authorization: Bearer &lt;api-key&gt; 来进行...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">clerimia</div><div class="author-info-description">后端开发工程师 | 合肥工业大学</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/clerimia"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/clerimia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1937049668@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到 clerimia 的技术博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-AgentLoop-%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.</span> <span class="toc-text">1. AgentLoop-核心循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%AF%BC%E5%85%A5%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">声明导入的核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">入口函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E5%BC%95%E6%93%8E-runLoop"><span class="toc-number">1.3.</span> <span class="toc-text">核心循环引擎 runLoop()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.3.1.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%96%E5%B1%82%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.3.2.</span> <span class="toc-text">外层循环</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%B1%82%E5%BE%AA%E7%8E%AF-AgentLoop-%E6%9C%AC%E4%BD%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">内层循环 AgentLoop 本体</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%BE%AA%E7%8E%AF-%E6%AD%A5%E9%AA%A4A%EF%BC%9A%E6%B3%A8%E5%85%A5%E6%8F%92%E9%98%9F%E6%B6%88%E6%81%AF"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">内部循环-步骤A：注入插队消息</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%BE%AA%E7%8E%AF-%E6%AD%A5%E9%AA%A4B%EF%BC%9A%E8%B0%83%E7%94%A8LLM"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">内部循环-步骤B：调用LLM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%BE%AA%E7%8E%AF-%E5%81%9C%E6%AD%A2%E6%9D%A1%E4%BB%B6-1%EF%BC%9A%E5%87%BA%E9%94%99%E3%80%81%E8%A2%AB%E5%8F%96%E6%B6%88"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">内部循环-停止条件#1：出错、被取消</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%BE%AA%E7%8E%AF-%E5%B7%A5%E5%85%B7%E6%89%A7%E8%A1%8C"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">内部循环-工具执行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%BE%AA%E7%8E%AF-%E6%A3%80%E6%9F%A5%E6%98%AF%E5%90%A6%E5%BC%BA%E5%88%B6%E5%81%9C%E6%AD%A2%EF%BC%9A%E5%81%9C%E6%AD%A2%E6%9D%A1%E4%BB%B6-2%E5%8F%AF%E9%80%89%E7%9A%84%E5%A4%96%E9%83%A8%E5%BC%BA%E5%88%B6%E5%81%9C%E6%AD%A2"><span class="toc-number">1.3.3.5.</span> <span class="toc-text">内部循环-检查是否强制停止：停止条件#2可选的外部强制停止</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%96%E5%B1%82%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9D%9F"><span class="toc-number">1.3.4.</span> <span class="toc-text">外层循环结束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%EF%BC%9AstreamAssistantResponse-%E2%80%94-%E6%80%8E%E4%B9%88%E8%B0%83%E7%94%A8-LLM"><span class="toc-number">1.3.5.</span> <span class="toc-text">辅助函数：streamAssistantResponse() — 怎么调用 LLM</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E7%AD%BE%E5%90%8D"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">函数签名</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8F%98%E6%8D%A2"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">第一步：上下文变换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.3.5.3.</span> <span class="toc-text">第二步：格式转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E7%BB%84%E8%A3%85%E5%AE%8C%E6%95%B4%E8%AF%B7%E6%B1%82"><span class="toc-number">1.3.5.4.</span> <span class="toc-text">第三步：组装完整请求</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E7%9C%9F%E6%AD%A3%E8%B0%83%E7%94%A8-LLM"><span class="toc-number">1.3.5.5.</span> <span class="toc-text">第四步：真正调用 LLM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E5%A4%84%E7%90%86%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94"><span class="toc-number">1.3.5.6.</span> <span class="toc-text">第五步：处理流式响应</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%EF%BC%9A%E5%B7%A5%E5%85%B7%E6%89%A7%E8%A1%8C%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.6.</span> <span class="toc-text">辅助函数：工具执行相关函数</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E6%89%A7%E8%A1%8C%E5%85%A5%E5%8F%A3%EF%BC%9A%E5%B9%B6%E8%A1%8C-vs-%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">工具执行入口：并行 vs 顺序</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E6%89%A7%E8%A1%8C%E7%9A%84%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%87%86%E5%A4%87-%E6%89%A7%E8%A1%8C-%E6%94%B6%E5%B0%BE"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">工具执行的三步：准备 -&gt; 执行 -&gt; 收尾</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">1.4.</span> <span class="toc-text">概念总结：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Agent%EF%BC%9A%E7%AE%A1%E7%90%86%E5%B1%82"><span class="toc-number">2.</span> <span class="toc-text">2. Agent：管理层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%B1%82"><span class="toc-number">2.1.</span> <span class="toc-text">配置层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%971%EF%BC%9A-%E6%B6%88%E6%81%AF%E7%AD%9B%E9%80%89%E5%87%BD%E6%95%B0-%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="toc-number">2.1.1.</span> <span class="toc-text">区块1： 消息筛选函数 + 默认值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%972%EF%BC%9AAgent-%E5%86%85%E9%83%A8%E7%8A%B6%E6%80%81%E7%9A%84%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="toc-number">2.1.2.</span> <span class="toc-text">区块2：Agent 内部状态的保护机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%973%EF%BC%9A%E5%88%9B%E5%BB%BA-Agent-%E6%97%B6%E7%9A%84%E9%85%8D%E7%BD%AE%E6%B8%85%E5%8D%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">区块3：创建 Agent 时的配置清单</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%B1%82-%E9%87%8D%E8%A6%81"><span class="toc-number">2.2.</span> <span class="toc-text">控制层 重要</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%974%EF%BC%9A%E6%B6%88%E6%81%AF%E6%8E%92%E9%98%9F%E9%98%9F%E5%88%97-%E2%80%94-%E8%BF%90%E8%A1%8C%E4%B8%AD%E6%8F%92%E8%AF%9D-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.2.1.</span> <span class="toc-text">区块4：消息排队队列 — &quot;运行中插话&quot;的实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%975%EF%BC%9A%E5%AF%B9%E5%A4%96%E6%93%8D%E4%BD%9C%E9%9D%A2%E6%9D%BF"><span class="toc-number">2.2.2.</span> <span class="toc-text">区块5：对外操作面板</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%976%EF%BC%9A%E4%B8%A4%E7%A7%8D%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.3.</span> <span class="toc-text">区块6：两种启动方式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E6%93%8E%E4%BA%A4%E6%8E%A5%E5%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">引擎交接层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%977%EF%BC%9AAgent-%E7%9A%84%E9%9B%B6%E4%BB%B6%E6%B8%85%E5%8D%95-%E5%87%BA%E5%8E%82%E7%BB%84%E8%A3%85"><span class="toc-number">2.3.1.</span> <span class="toc-text">区块7：Agent 的零件清单 + 出厂组装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%978%EF%BC%9A%E5%90%AF%E5%8A%A8%E5%89%8D%E5%87%86%E5%A4%87-%E5%BC%95%E6%93%8E%E5%AF%B9%E6%8E%A5-%E6%94%B6%E5%B7%A5%E6%B8%85%E7%90%86"><span class="toc-number">2.3.2.</span> <span class="toc-text">区块8：启动前准备 + 引擎对接 + 收工清理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%B1%82"><span class="toc-number">2.4.</span> <span class="toc-text">事件处理层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%9D%979%EF%BC%9A%E6%94%B6%E5%88%B0%E5%BC%95%E6%93%8E%E9%80%9A%E7%9F%A5%E5%90%8E%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86"><span class="toc-number">2.4.1.</span> <span class="toc-text">区块9：收到引擎通知后怎么处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Providers%EF%BC%9A%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-number">3.</span> <span class="toc-text">3. Providers：传输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%B3%A8%E5%86%8C%E8%A1%A8%EF%BC%8C%E7%AE%A1%E7%90%86%E5%B1%82"><span class="toc-number">3.1.</span> <span class="toc-text">模型注册表，管理层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#API%E6%B3%A8%E5%86%8C%E8%A1%A8%EF%BC%8C%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-number">3.2.</span> <span class="toc-text">API注册表，传输层</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/AI/pi-agent/Pi%20Agent%20Session%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96/" title="无标题">无标题</a><time datetime="2026-07-15T16:00:00.000Z" title="发表于 2026-07-16 00:00:00">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/" title="无标题">无标题</a><time datetime="2026-07-14T07:00:00.000Z" title="发表于 2026-07-14 15:00:00">2026-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" title="无标题">无标题</a><time datetime="2026-07-13T03:07:50.000Z" title="发表于 2026-07-13 11:07:50">2026-07-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/" title="chat completions API 协议">chat completions API 协议</a><time datetime="2026-06-29T10:17:18.000Z" title="发表于 2026-06-29 18:17:18">2026-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/GIT/git%E6%A8%A1%E5%9E%8B/" title="GIT">GIT</a><time datetime="2026-06-29T06:06:18.000Z" title="发表于 2026-06-29 14:06:18">2026-06-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By clerimia</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div><div class="footer_custom_text">Designed by clerimia</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
