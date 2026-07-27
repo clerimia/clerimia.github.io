@@ -1,0 +1,527 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>韧性工程四能力：一个思维框架与示范挂载 | clerimia's Blog</title><meta name="author" content="clerimia"><meta name="copyright" content="clerimia"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="可靠的系统不是没有失败，而是失败可以被发现、预防、处理、恢复，并从中学习。 把这句拆开，正好对应 Erik Hollnagel 韧性工程的四能力。本文把这四能力当作一个思维框架–每个能力是一个&quot;挂钩&quot;，挂钩上可挂不同的实现方案；下半篇用 Spring AOP 在其中一个挂钩上做一次示范挂载，展示&quot;挂上去长什么样&quot;。  一、 理论基石：韧性工程四大能力 基于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="韧性工程四能力：一个思维框架与示范挂载">
+<meta property="og:url" content="https://clerimia.github.io/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="clerimia&#39;s Blog">
+<meta property="og:description" content="可靠的系统不是没有失败，而是失败可以被发现、预防、处理、恢复，并从中学习。 把这句拆开，正好对应 Erik Hollnagel 韧性工程的四能力。本文把这四能力当作一个思维框架–每个能力是一个&quot;挂钩&quot;，挂钩上可挂不同的实现方案；下半篇用 Spring AOP 在其中一个挂钩上做一次示范挂载，展示&quot;挂上去长什么样&quot;。  一、 理论基石：韧性工程四大能力 基于">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg">
+<meta property="article:published_time" content="2026-07-27T06:56:55.000Z">
+<meta property="article:modified_time" content="2026-07-27T07:54:37.902Z">
+<meta property="article:author" content="clerimia">
+<meta property="article:tag" content="aop">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="resilience">
+<meta property="article:tag" content="software-engineering">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://clerimia.github.io/assets/cucumber-icon.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "韧性工程四能力：一个思维框架与示范挂载",
+  "url": "https://clerimia.github.io/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/",
+  "image": "https://clerimia.github.io/assets/cucumber-icon.jpg",
+  "datePublished": "2026-07-27T06:56:55.000Z",
+  "dateModified": "2026-07-27T07:54:37.902Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "clerimia",
+      "url": "https://clerimia.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/favicon.png"><link rel="canonical" href="https://clerimia.github.io/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '韧性工程四能力：一个思维框架与示范挂载',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">clerimia's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">韧性工程四能力：一个思维框架与示范挂载</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">韧性工程四能力：一个思维框架与示范挂载</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-27T06:56:55.000Z" title="发表于 2026-07-27 14:56:55">2026-07-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-27T07:54:37.902Z" title="更新于 2026-07-27 15:54:37">2026-07-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>可靠的系统不是没有失败，而是失败可以被<strong>发现、预防、处理、恢复，并从中学习</strong>。</p>
+<p>把这句拆开，正好对应 Erik Hollnagel 韧性工程的四能力。本文把这四能力当作一个<strong>思维框架</strong>–每个能力是一个&quot;挂钩&quot;，挂钩上可挂不同的实现方案；下半篇用 Spring AOP 在其中一个挂钩上做一次示范挂载，展示&quot;挂上去长什么样&quot;。</p>
+</blockquote>
+<h2 id="一、-理论基石：韧性工程四大能力">一、 理论基石：韧性工程四大能力</h2>
+<p>基于 Erik Hollnagel 的 <strong>Resilience Engineering</strong> 框架，一个系统能否在扰动下持续保持所需表现，取决于四种<strong>潜能（potentials）<strong>是否到位。注意原文用词是动词形式，且 Hollnagel 反复强调韧性是</strong>表现（performance）而非属性（property）</strong>–系统不存在&quot;具备韧性&quot;这种状态，只有&quot;在扰动下表现出了韧性&quot;这种过程。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">能力</th>
+<th style="text-align:left">原文动词</th>
+<th style="text-align:left">Hollnagel 的定义（knowing…）</th>
+<th style="text-align:left">这个能力服务什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>可响应</strong></td>
+<td style="text-align:left">Respond</td>
+<td style="text-align:left">knowing what to do</td>
+<td style="text-align:left">对已发生的扰动有应对手段</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>可观测</strong></td>
+<td style="text-align:left">Monitor</td>
+<td style="text-align:left">knowing what to look for</td>
+<td style="text-align:left">让发生的一切被看见</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>可预防</strong></td>
+<td style="text-align:left">Anticipate</td>
+<td style="text-align:left">knowing what to expect</td>
+<td style="text-align:left">提前预判风险并前置拦截</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>可学习</strong></td>
+<td style="text-align:left">Learn</td>
+<td style="text-align:left">knowing what has happened</td>
+<td style="text-align:left">从经验中沉淀，让下次更好</td>
+</tr>
+</tbody>
+</table>
+<p>四能力<strong>相互依赖、不可替代</strong>–Hollnagel 明确指出&quot;某一项的缺失无法被其他项的增强补偿&quot;。例如：Respond 依赖 Monitor（得先看见故障才能响应），Learn 又依赖 Monitor 的数据。</p>
+<hr>
+<h2 id="二、-思维框架：能力是视角，实践是挂载">二、 思维框架：能力是视角，实践是挂载</h2>
+<h3 id="2-1-框架的核心观念：能力-≠-实现">2.1 框架的核心观念：能力 ≠ 实现</h3>
+<p>很多人把&quot;四能力&quot;和&quot;某种具体实现&quot;焊死–比如一提 Respond 就想到重试、一提 Learn 就想到审计。但 Hollnagel 的四能力是<strong>视角</strong>，不是实现。同一个&quot;应对故障&quot;的需求（Respond 视角），可以挂重试、挂降级、挂人工兜底，方案是可选的。</p>
+<p>所以本文把笔记组织成：<strong>每个能力是一个&quot;挂钩&quot;，挂钩上列出可选的实践方案</strong>；下半篇只挑一个挂钩做一次示范挂载。这样框架本身不绑死任何实现，换语言、换框架都能用。</p>
+<h3 id="2-2-四个挂钩与其上的可选方案">2.2 四个挂钩与其上的可选方案</h3>
+<p>挂钩按闭环递进排序：先看见（Monitor）才能响应（Respond），响应够了还要能预防（Anticipate），最后从一切中学习（Learn）。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">挂钩</th>
+<th style="text-align:left">服务目标</th>
+<th style="text-align:left">挂钩上的可选方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Monitor</strong>（可观测）</td>
+<td style="text-align:left">让&quot;发生的一切&quot;被看见</td>
+<td style="text-align:left">Trace、Metric、Log、Audit</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Respond</strong>（可响应）</td>
+<td style="text-align:left">让&quot;已发生的扰动&quot;被应对</td>
+<td style="text-align:left">重试、断路器、降级、超时、舱壁隔离、<strong>补偿（Saga / BASE / TCC）</strong>、告警触发</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Anticipate</strong>（可预防）</td>
+<td style="text-align:left">让&quot;该被拦的&quot;在执行前被拦</td>
+<td style="text-align:left">限流（令牌桶 / 漏桶）、幂等、参数校验、前置条件</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Learn</strong>（可学习）</td>
+<td style="text-align:left">让&quot;发生过的事&quot;沉淀为&quot;下次更好&quot;</td>
+<td style="text-align:left">事后复盘、阈值调优、规则沉淀、混沌演练、故障入库</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-3-跨挂钩复合模式">2.3 跨挂钩复合模式</h3>
+<p>上一节把每个实践按&quot;主要服务的能力&quot;归进一个挂钩，但有些实践<strong>天生跨多个挂钩</strong>，硬归一个会失真。这类&quot;复合模式&quot;值得单独点明，避免被追问&quot;它到底是哪个能力&quot;时卡壳。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">复合模式</th>
+<th style="text-align:left">跨的挂钩</th>
+<th style="text-align:left">拆解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>补偿（Saga / BASE / TCC）</strong></td>
+<td style="text-align:left">Respond + Learn</td>
+<td style="text-align:left">执行时是 Respond（恢复一致），补偿记录供事后 Learn（复盘为什么需要补偿）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>告警闭环</strong></td>
+<td style="text-align:left">Respond + Learn</td>
+<td style="text-align:left">触发时是 Respond（响应故障），告警聚合后的趋势供 Learn（发现系统性问题）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>对账恢复</strong>（Audit-based Reconciliation）</td>
+<td style="text-align:left">Monitor + Respond</td>
+<td style="text-align:left">用 audit 数据对账发现不一致（Monitor），发现后执行修复动作恢复一致（Respond）。audit 数据本身是 Monitor 基础设施，是它&quot;被读了干嘛&quot;决定了驱动哪个能力</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>审计日志</strong></td>
+<td style="text-align:left">Monitor + Learn</td>
+<td style="text-align:left">写入时偏 Monitor（留痕可查），用途上可驱动 Learn（复盘），也可驱动 Respond（对账恢复）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>规律</strong>：复合模式都是&quot;某数据/动作被读后驱动了下一个能力&quot;。Saga 的补偿记录被复盘读-&gt; Learn；audit 被对账读-&gt; 驱动 Respond；告警被趋势分析读-&gt; Learn。<strong>驱动者 ≠ 被驱动的数据</strong>，别把数据本身归到它驱动的能力上。</p>
+<h3 id="2-4-正交-vs-内聚：挂钩如何挂载的指导原则">2.4 正交 vs 内聚：挂钩如何挂载的指导原则</h3>
+<p>把能力挂载到系统时，先分清哪些是<strong>切面/模块内聚</strong>的、哪些是<strong>系统级正交</strong>的。判别法：<strong>如果把这块挂载删掉，这个能力还在不在？</strong></p>
+<ul>
+<li>限流、重试、断路器、降级、补偿 – 删掉挂载它们就没了，是<strong>内聚实现</strong>。</li>
+<li>Trace、Metric、Log、Audit – 删掉任何具体挂载它们还在。HTTP 入口还在打 trace，数据库层还在打 log。这套基础设施是<strong>系统级正交</strong>的，挂载只是它的使用者。</li>
+</ul>
+<blockquote>
+<p><strong>一个反直觉点：观察 vs 控制</strong>。可观测本身<strong>不驱动弹性</strong>–关掉 metrics，限流照样挡，重试照样跑，你只是&quot;瞎了&quot;。真正&quot;做&quot;弹性的是控制组件（限流器抛异常、熔断器开闸、重试再调 proceed）。可观测是弹性的<strong>前提条件</strong>而非<strong>驱动器</strong>：控制组件<strong>消费</strong>可观测数据作为决策输入，才间接驱动了弹性。</p>
+</blockquote>
+<blockquote>
+<p><strong>一个灰色地带</strong>：熔断器内部维护的&quot;滑动窗口失败计数&quot;本质是一份 metric，但由熔断器自持、不进通用 metrics 系统。这份计数<strong>既是观察（记失败率）又是控制（决定开闸）</strong>，是个灰色地带。承认它，比硬归类更贴合真实系统。</p>
+</blockquote>
+<h3 id="2-5-挂载方式本身也是可选的">2.5 挂载方式本身也是可选的</h3>
+<p>同一个挂钩，可用不同的挂载机制接入系统：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">挂载方式</th>
+<th style="text-align:left">适用</th>
+<th style="text-align:left">代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>AOP 切面</strong>（Spring <code>@Around</code>）</td>
+<td style="text-align:left">进程内、声明式、业务低侵入</td>
+<td style="text-align:left">只能管进程内单次调用</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>响应式拦截</strong>（Interceptor / Filter）</td>
+<td style="text-align:left">Web/MQ 入口、同步阻塞少</td>
+<td style="text-align:left">管不了方法内部的重试</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>编排器 / Orchestrator</strong></td>
+<td style="text-align:left">跨服务长事务、Saga 协调</td>
+<td style="text-align:left">重，需独立服务</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>中间件 / Sidecar</strong>（Service Mesh）</td>
+<td style="text-align:left">跨语言、统一治理</td>
+<td style="text-align:left">基础设施重</td>
+</tr>
+</tbody>
+</table>
+<p>下文示范用 AOP 切面挂载，因为它最适合讲清&quot;声明式 + 低侵入&quot;，但要记住它<strong>不是唯一挂载方式</strong>。</p>
+<hr>
+<h2 id="三、-示范挂载：用-Spring-AOP-挂载-Respond-挂钩">三、 示范挂载：用 Spring AOP 挂载 Respond 挂钩</h2>
+<blockquote>
+<p><strong>本节范围声明</strong>：仅用 AOP 挂载 Respond 挂钩中的 <strong>重试 + 断路器 + 降级</strong>。Anticipate（限流/幂等）、Monitor（可观测基础设施）、Learn（复盘/调优）作为挂钩存在于框架层，但不在本示范的代码实现内–它们是正交基础设施或另一套挂载，不在本切面职责范围。补偿（Saga/BASE/TCC）也属于 Respond 挂钩，但因涉及分布式、复杂度高，留在框架层做选型对比，不在本示范落地。</p>
+</blockquote>
+<h3 id="3-1-设计选择：为什么只用一个-Around">3.1 设计选择：为什么只用一个 <code>@Around</code></h3>
+<p>韧性的核心是<strong>控制执行流</strong>–重不重试、降不降级、开不开闸。在 Spring AOP 的通知里，只有 <code>@Around</code> 能控制 <code>proceed()</code>（决定是否执行、执行几次、替换返回值），<code>@Before</code> / <code>@After</code> 等都是<strong>观察者</strong>，只能记录、不能干预。</p>
+<p>所以这里把重试、断路器、降级<strong>全部收进单个 <code>@Around</code></strong>，让状态留在方法栈上，避免多通知之间靠上下文传参产生的可见性坑。代价是方法变长，换来的是执行顺序一目了然、状态自洽。</p>
+<h3 id="3-2-注解：声明式激活">3.2 注解：声明式激活</h3>
+<pre><code class="language-java">@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Resilience {
+
+    // [Respond] 重试
+    int maxRetries() default 0;
+    Class&lt;? extends Throwable&gt;[] retryOn() default {};
+
+    // [Respond] 断路器
+    String circuitBreakerName() default &quot;&quot;;
+
+    // [Respond] 降级
+    String fallbackMethod() default &quot;&quot;;
+}
+</code></pre>
+<h3 id="3-3-切面内聚状态">3.3 切面内聚状态</h3>
+<p>按 2.4 的正交原则，切面只持有<strong>内聚执行态</strong>；可观测基础设施（metrics）通过 <code>@Autowired</code> 注入，traceId 通过 <code>MDC.get(&quot;traceId&quot;)</code> 直接取，<strong>不再包一层&quot;上下文对象&quot;</strong> --那是无意义的间接。</p>
+<pre><code class="language-java">/**
+ * 切面内聚状态：单机内一次方法调用的执行态。
+ * 生命周期 = 一次 @Around 调用，结束后丢弃；不跨请求、不跨机器。
+ */
+@Data
+public class ResilienceState {
+    private long startNanos;
+    private boolean degraded;
+    private int retryAttempts;
+    private boolean circuitOpen;
+    private boolean finalSuccess;
+    private Throwable finalException;
+}
+</code></pre>
+<h3 id="3-4-切面：单个-Around-串起重试-断路器-降级">3.4 切面：单个 <code>@Around</code> 串起重试 / 断路器 / 降级</h3>
+<pre><code class="language-java">@Aspect
+@Component
+public class ResilienceAspect {
+
+    // [Monitor·L1正交] 正交基础设施，直接注入，不包上下文
+    @Autowired private MetricsCollector metricsCollector;
+    @Autowired private CircuitBreakerManager circuitBreakerManager;
+
+    @Around(&quot;@annotation(resilience)&quot;)
+    public Object aroundAdvice(ProceedingJoinPoint pjp, Resilience resilience) throws Throwable {
+        ResilienceState state = new ResilienceState();
+        state.setStartNanos(System.nanoTime());
+
+        // ───── Respond：断路器前置闸门 ─────
+        // ⚠️ cb.allowRequest() / recordSuccess() / recordFailure() 读写的是熔断器内部
+        // 维护的&quot;滑动窗口失败计数&quot;--它本质是一份 metric，但由熔断器自持、
+        // 不进通用 metrics 系统。这是&quot;既是观察又是控制&quot;的灰色地带：
+        // recordFailure 是记录，但累积到阈值后 allowRequest 返回 false 即为控制。
+        CircuitBreaker cb = null;
+        if (StringUtils.hasText(resilience.circuitBreakerName())) {
+            cb = circuitBreakerManager.get(resilience.circuitBreakerName());
+            if (!cb.allowRequest()) {
+                state.setCircuitOpen(true);
+                metricsCollector.counter(&quot;circuit.open&quot;).increment();
+                // 熔断开启时直接走降级，不进重试
+                return doFallback(pjp, resilience,
+                    new CircuitOpenException(resilience.circuitBreakerName() + &quot; circuit open&quot;),
+                    state);
+            }
+        }
+
+        // ───── Respond：重试循环 ─────
+        int currentAttempt = 0;
+        Throwable lastException = null;
+        Object result = null;
+
+        while (currentAttempt &lt;= resilience.maxRetries()) {
+            try {
+                result = pjp.proceed();
+                if (cb != null) cb.recordSuccess();
+                state.setFinalSuccess(true);
+                return result;
+            } catch (Throwable t) {
+                lastException = t;
+                if (cb != null) cb.recordFailure();
+
+                boolean isRetryable = isRetryableException(t, resilience.retryOn());
+                // 不可重试，或已是最后一次尝试：退出循环
+                if (!isRetryable || currentAttempt == resilience.maxRetries()) break;
+
+                currentAttempt++;
+                state.setRetryAttempts(currentAttempt);
+                metricsCollector.counter(&quot;retry.attempt&quot;).increment();
+
+                // 指数退避 × 随机抖动：抖动乘进退避值，避免雪崩同步重试。
+                // ⚠️ 生产环境勿用 Thread.sleep 阻塞工作线程--尤其是 Agent /
+                // 异步场景。应交由调度器（ScheduledExecutor / 响应式 delay）延迟重试：
+                //   scheduler.schedule(() -&gt; retryQueue.offer(pjp), backoffMillis, MS);
+                long base = (long) Math.pow(2, currentAttempt) * 1000;
+                long backoffMillis = (long) (base * (0.5 + Math.random() * 0.5));
+                Thread.sleep(backoffMillis); // 仅作演示
+            }
+        }
+
+        // ───── Respond：降级 ─────
+        if (lastException != null) {
+            return doFallback(pjp, resilience, lastException, state);
+        }
+        return result;
+    }
+
+    private Object doFallback(ProceedingJoinPoint pjp, Resilience resilience,
+                              Throwable cause, ResilienceState state) throws Throwable {
+        state.setDegraded(true);
+        state.setFinalException(cause);
+        if (StringUtils.hasText(resilience.fallbackMethod())) {
+            metricsCollector.counter(&quot;fallback.triggered&quot;).increment();
+            return invokeFallbackMethod(pjp, resilience.fallbackMethod(), pjp.getArgs(), cause);
+        }
+        throw cause;
+    }
+}
+</code></pre>
+<h3 id="3-5-关于-Monitor-Learn-在本示范的边界">3.5 关于 Monitor / Learn 在本示范的边界</h3>
+<p>本示范<strong>不实现</strong> Monitor 和 Learn，但它们的&quot;接入点&quot;在代码里清晰可见：</p>
+<ul>
+<li><strong>Monitor 接入点</strong>：<code>metricsCollector.counter(...)</code> 那几行就是切面往正交可观测基础设施里埋点（L2 层）。这些基础设施由系统提供，切面只是使用者。</li>
+<li><strong>Learn 接入点</strong>：本切面不持有。真正的 Learn（复盘、调优、混沌演练）发生在切面之外，基于 Monitor 产生的数据做事后分析。切面能做的是<strong>把足够的数据喂给 Monitor</strong>，让 Learn 有料可学。</li>
+</ul>
+<p>一句话：<strong>切面负责 Respond 的控制 + Monitor 的埋点；Learn 是框架层的能力，由人/平台基于数据去做，不在这段代码里。</strong></p>
+<hr>
+<h2 id="四、-业务侧：低侵入接入">四、 业务侧：低侵入接入</h2>
+<p>业务代码只需关注核心逻辑，通过 <code>@Resilience</code> 声明式激活能力：</p>
+<pre><code class="language-java">@Service
+public class OrderService {
+
+    @Resilience(
+        circuitBreakerName = &quot;paymentService&quot;,
+        maxRetries = 3,
+        retryOn = { TransientException.class, TimeoutException.class },
+        fallbackMethod = &quot;createOrderFallback&quot;
+    )
+    public OrderVO createOrder(CreateOrderRequest request) {
+        // 核心业务逻辑，无需感知重试/熔断/降级
+        inventoryService.deductStock(request.getSkuId(), request.getQty());
+        paymentService.pay(request.getUserId(), request.getAmount());
+        return orderRepository.save(request);
+    }
+
+    // 降级兜底：返回待审核状态，后续人工或定时任务处理
+    public OrderVO createOrderFallback(CreateOrderRequest request, Exception ex) {
+        return OrderVO.builder()
+            .status(OrderStatus.PENDING_REVIEW)
+            .message(&quot;系统繁忙，订单已挂起&quot;)
+            .build();
+    }
+}
+</code></pre>
+<blockquote>
+<p>注：<code>createOrder</code> 真要落地还需考虑跨服务的<strong>数据一致性</strong>（库存扣了但订单没建怎么办），那属于 Respond 挂钩上的<strong>补偿方案</strong>（Saga / BASE / TCC），见 2.2 的挂钩表。本示范只展示单机内的重试/降级，不碰补偿–它在框架层是独立可选方案，不在本切面职责内。</p>
+</blockquote>
+<hr>
+<h2 id="五、-总结">五、 总结</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">维度</th>
+<th style="text-align:left">传统系统</th>
+<th style="text-align:left">韧性系统</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>失败感知</strong></td>
+<td style="text-align:left">用户报错，日志散落</td>
+<td style="text-align:left">Trace 串联，Metric 实时告警</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>失败预防</strong></td>
+<td style="text-align:left">依赖人工测试</td>
+<td style="text-align:left">限流 + 幂等自动拦截</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>失败处理</strong></td>
+<td style="text-align:left">直接抛出，流程中断</td>
+<td style="text-align:left">重试自愈、降级兜底、断路器隔离</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>失败恢复</strong></td>
+<td style="text-align:left">数据不一致，需人工修</td>
+<td style="text-align:left">补偿（Saga/BASE/TCC）自动回滚或重试到一致</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>从失败学习</strong></td>
+<td style="text-align:left">出了事就过去了</td>
+<td style="text-align:left">复盘、调优、混沌演练，让下次更好</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：Hollnagel 的四能力是<strong>思维框架</strong>，不是一套固定实现。把每个能力当作挂钩，挂载限流/重试/断路器/补偿/可观测等可选方案，再用某种挂载机制（AOP / 编排器 / Sidecar）接入系统。本文用 Spring AOP 在 Respond 挂钩上挂了&quot;重试 + 断路器 + 降级&quot;做示范，其余挂钩上的方案留在框架层做选型对比。韧性的本质不是消灭失败，而是让每一次失败都落在&quot;可发现 -&gt; 可预防 -&gt; 可处理 -&gt; 可恢复 -&gt; 可学习&quot;的闭环里。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://clerimia.github.io">clerimia</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://clerimia.github.io/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/">https://clerimia.github.io/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://clerimia.github.io" target="_blank">clerimia's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/software-engineering/">software-engineering</a><a class="post-meta__tags" href="/tags/resilience/">resilience</a><a class="post-meta__tags" href="/tags/aop/">aop</a><a class="post-meta__tags" href="/tags/java/">java</a></div><div class="post-share"><div class="social-share" data-image="/assets/cucumber-icon.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/16/AI/pi-agent/Pi%20Agent%20Session%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Pi Agent Session 上下文初始化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Pi Agent Session 上下文初始化</div></div><div class="info-2"><div class="info-item-1"> 【clerimia：】 之前拆了 AgentLoop 引擎和五个包的领域对象，但一直没搞清楚一个关键问题：pi 启动时到底往 LLM 发了什么？&quot;上下文&quot;到底是个什么东西？这次直接读 pi-coding-agent 的源码，把 session 初始化和 context 组装的过程完整还原。  1. 先看结论：Context 不是扁平的字典 我之前以为 pi 初始化时组装了一个 context = { systemPrompt, AGENTS.md, skills, tools, messages } 这样的扁平对象。读完源码发现不是。 实际结构是三层分离： 发往 LLM 的请求 ├── System Prompt（字符串）── 每次 turn 前可能被 extension 覆盖 │   ├── 默认模板 或 SYSTEM.md │   ├── APPEND_SYSTEM.md │   ├── &lt;project_context&gt; 包裹的 AGENTS.md 链 │   ├── &lt;available_skills&gt; XML 块 │   ├...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/assets/cucumber-icon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">clerimia</div><div class="author-info-description">后端开发工程师 | 合肥工业大学</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/clerimia"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/clerimia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1937049668@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到 clerimia 的技术博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E7%90%86%E8%AE%BA%E5%9F%BA%E7%9F%B3%EF%BC%9A%E9%9F%A7%E6%80%A7%E5%B7%A5%E7%A8%8B%E5%9B%9B%E5%A4%A7%E8%83%BD%E5%8A%9B"><span class="toc-number">1.</span> <span class="toc-text">一、 理论基石：韧性工程四大能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-%E6%80%9D%E7%BB%B4%E6%A1%86%E6%9E%B6%EF%BC%9A%E8%83%BD%E5%8A%9B%E6%98%AF%E8%A7%86%E8%A7%92%EF%BC%8C%E5%AE%9E%E8%B7%B5%E6%98%AF%E6%8C%82%E8%BD%BD"><span class="toc-number">2.</span> <span class="toc-text">二、 思维框架：能力是视角，实践是挂载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%A0%B8%E5%BF%83%E8%A7%82%E5%BF%B5%EF%BC%9A%E8%83%BD%E5%8A%9B-%E2%89%A0-%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 框架的核心观念：能力 ≠ 实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9B%E4%B8%AA%E6%8C%82%E9%92%A9%E4%B8%8E%E5%85%B6%E4%B8%8A%E7%9A%84%E5%8F%AF%E9%80%89%E6%96%B9%E6%A1%88"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 四个挂钩与其上的可选方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E8%B7%A8%E6%8C%82%E9%92%A9%E5%A4%8D%E5%90%88%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 跨挂钩复合模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E6%AD%A3%E4%BA%A4-vs-%E5%86%85%E8%81%9A%EF%BC%9A%E6%8C%82%E9%92%A9%E5%A6%82%E4%BD%95%E6%8C%82%E8%BD%BD%E7%9A%84%E6%8C%87%E5%AF%BC%E5%8E%9F%E5%88%99"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 正交 vs 内聚：挂钩如何挂载的指导原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E6%8C%82%E8%BD%BD%E6%96%B9%E5%BC%8F%E6%9C%AC%E8%BA%AB%E4%B9%9F%E6%98%AF%E5%8F%AF%E9%80%89%E7%9A%84"><span class="toc-number">2.5.</span> <span class="toc-text">2.5 挂载方式本身也是可选的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81-%E7%A4%BA%E8%8C%83%E6%8C%82%E8%BD%BD%EF%BC%9A%E7%94%A8-Spring-AOP-%E6%8C%82%E8%BD%BD-Respond-%E6%8C%82%E9%92%A9"><span class="toc-number">3.</span> <span class="toc-text">三、 示范挂载：用 Spring AOP 挂载 Respond 挂钩</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%AE%BE%E8%AE%A1%E9%80%89%E6%8B%A9%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E7%94%A8%E4%B8%80%E4%B8%AA-Around"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 设计选择：为什么只用一个 @Around</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%B3%A8%E8%A7%A3%EF%BC%9A%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%BF%80%E6%B4%BB"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 注解：声明式激活</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%88%87%E9%9D%A2%E5%86%85%E8%81%9A%E7%8A%B6%E6%80%81"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 切面内聚状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%88%87%E9%9D%A2%EF%BC%9A%E5%8D%95%E4%B8%AA-Around-%E4%B8%B2%E8%B5%B7%E9%87%8D%E8%AF%95-%E6%96%AD%E8%B7%AF%E5%99%A8-%E9%99%8D%E7%BA%A7"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 切面：单个 @Around 串起重试 &#x2F; 断路器 &#x2F; 降级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%85%B3%E4%BA%8E-Monitor-Learn-%E5%9C%A8%E6%9C%AC%E7%A4%BA%E8%8C%83%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-number">3.5.</span> <span class="toc-text">3.5 关于 Monitor &#x2F; Learn 在本示范的边界</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81-%E4%B8%9A%E5%8A%A1%E4%BE%A7%EF%BC%9A%E4%BD%8E%E4%BE%B5%E5%85%A5%E6%8E%A5%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text">四、 业务侧：低侵入接入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81-%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">五、 总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/27/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E5%8F%AF%E9%9D%A0%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%BB%E7%BB%93/" title="韧性工程四能力：一个思维框架与示范挂载">韧性工程四能力：一个思维框架与示范挂载</a><time datetime="2026-07-27T06:56:55.000Z" title="发表于 2026-07-27 14:56:55">2026-07-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/16/AI/pi-agent/Pi%20Agent%20Session%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Pi Agent Session 上下文初始化">Pi Agent Session 上下文初始化</a><time datetime="2026-07-15T16:00:00.000Z" title="发表于 2026-07-16 00:00:00">2026-07-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/14/AI/pi-agent/Pi%20Agent%20%E5%8C%85%E6%9E%B6%E6%9E%84%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%AF%B9%E8%B1%A1/" title="Pi Agent 包架构与领域对象">Pi Agent 包架构与领域对象</a><time datetime="2026-07-14T07:00:00.000Z" title="发表于 2026-07-14 15:00:00">2026-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/13/AI/pi-agent/Pi%20Agent%20%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/" title="Pi Agent 设计思路">Pi Agent 设计思路</a><time datetime="2026-07-13T03:07:50.000Z" title="发表于 2026-07-13 11:07:50">2026-07-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/29/AI/API%E5%8D%8F%E8%AE%AE/chat%20completions%20API%20%E5%8D%8F%E8%AE%AE/" title="chat completions API 协议">chat completions API 协议</a><time datetime="2026-06-29T10:17:18.000Z" title="发表于 2026-06-29 18:17:18">2026-06-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By clerimia</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div><div class="footer_custom_text">Designed by clerimia</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
