@@ -7,7 +7,7 @@ import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
-import Terminal from '@/components/home/Terminal.tsx'
+import Terminal from '@/components/home/Terminal.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import config from '@/site-config'
@@ -72,7 +72,6 @@ if (!images[imagePath])
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
       {/* 可交互终端 */}
       <Terminal
-        client:load
         user='clerimia'
         host='devserver'
         cwd='~'

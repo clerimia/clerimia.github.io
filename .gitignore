@@ -43,3 +43,8 @@ bunfig.toml
 # 主题上游源码目录（站点从 npm 安装 astro-pure，此处仅作本地参考）
 /packages/
 /preset/
+
+# 本地调试临时文件
+dev*.log
+/*.png
+/.playwright-cli/

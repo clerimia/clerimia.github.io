@@ -1,5 +1,4 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import react from '@astrojs/react'
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
@@ -118,9 +117,11 @@ export default defineConfig({
     // astro-pure will automatically add sitemap, mdx & unocss
     // sitemap(),
     // mdx(),
-    AstroPureIntegration(config),
-    // React 岛屿：用于自建的交互组件（首页终端等）
-    react()
+    AstroPureIntegration(config)
+    // 注意：不要添加 @astrojs/react。Astro 6 的 React 集成会注入
+    // `vite-react-refresh-wrapper`，在 dev 模式下与 rolldown-vite 不兼容，
+    // 导致所有 CSS/JS 资源 500（官方 issue #16229，标记为不修复）。
+    // 站点的交互组件（首页终端、入场动画）均用原生 JS 实现。
   ],
 
   // [Experimental]
