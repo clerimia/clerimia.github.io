@@ -1,0 +1,244 @@
+---
+import avatar from '@/assets/avatar.png'
+import '@/assets/styles/intro.css'
+import config from '@/site-config'
+
+/** 用于入场文案里的用户名 */
+const githubUser = 'clerimia'
+
+const enterText = `进入 ~/${githubUser} →`
+const skipText = '跳过 →'
+const replayText = '↻ 重播入场'
+---
+
+<div
+  id='intro-overlay'
+  class='intro-overlay'
+  data-name={config.title}
+  data-duration='3200'
+  aria-hidden='true'
+>
+  <canvas id='intro-canvas'></canvas>
+
+  <div class='intro-hud' id='intro-hud'>
+    <div class='intro-pipe'>
+      <div class='intro-stage'><i></i><span>sample</span></div>
+      <div class='intro-seg'><b></b></div>
+      <div class='intro-stage'><i></i><span>refine</span></div>
+      <div class='intro-seg'><b></b></div>
+      <div class='intro-stage'><i></i><span>decode</span></div>
+    </div>
+  </div>
+
+  <div class='intro-card' id='intro-card'>
+    <img class='intro-av' src={avatar.src} alt={config.title} width='112' height='112' />
+    <div class='intro-nm'>{config.title}</div>
+    <button class='intro-enter' id='intro-enter' type='button'>{enterText}</button>
+  </div>
+
+  <button id='intro-skip' class='intro-skip' type='button'>{skipText}</button>
+</div>
+
+<button id='intro-replay' class='intro-replay' type='button'>{replayText}</button>
+
+<script is:inline>
+  ;(function () {
+    var overlay = document.getElementById('intro-overlay')
+    var canvas = document.getElementById('intro-canvas')
+    if (!overlay || !canvas) return
+
+    var hud = document.getElementById('intro-hud')
+    var card = document.getElementById('intro-card')
+    var skipBtn = document.getElementById('intro-skip')
+    var enterBtn = document.getElementById('intro-enter')
+    var replayBtn = document.getElementById('intro-replay')
+
+    var ctx = canvas.getContext('2d')
+    var W = 0,
+      H = 0,
+      DPR = 1
+    var parts = []
+    var d = 0
+    var raf = 0
+    var t0 = 0
+    var running = false
+    var revealed = false
+    var idleTimer = 0
+
+    var NAME = overlay.getAttribute('data-name') || 'home'
+    var DURATION = parseInt(overlay.getAttribute('data-duration') || '3200', 10)
+    var stageEls = [].slice.call(overlay.querySelectorAll('.intro-stage'))
+    var segEls = [].slice.call(overlay.querySelectorAll('.intro-seg b'))
+
+    function isReduced() {
+      return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)
+    }
+
+    /* 把文字渲染到离屏 canvas，采样像素点作为粒子目标位置 */
+    function build() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2)
+      W = canvas.width = Math.floor((window.innerWidth || 1280) * DPR)
+      H = canvas.height = Math.floor((window.innerHeight || 800) * DPR)
+
+      var off = document.createElement('canvas')
+      off.width = W
+      off.height = H
+      var octx = off.getContext('2d')
+
+      var fs = Math.min(W / (NAME.length * 0.62), H * 0.24)
+      octx.fillStyle = '#fff'
+      octx.font = '800 ' + Math.floor(fs) + 'px Satoshi, system-ui, -apple-system, sans-serif'
+      octx.textAlign = 'center'
+      octx.textBaseline = 'middle'
+      octx.fillText(NAME, W / 2, H / 2)
+
+      var data = octx.getImageData(0, 0, W, H).data
+      var gap = Math.max(3, Math.round(fs / 26))
+      var pts = []
+      for (var y = 0; y < H; y += gap) {
+        for (var x = 0; x < W; x += gap) {
+          if (data[(y * W + x) * 4 + 3] > 128) pts.push([x, y])
+        }
+      }
+
+      var MAX = 5000
+      if (pts.length > MAX) {
+        var picked = []
+        var step = pts.length / MAX
+        for (var i = 0; i < MAX; i++) picked.push(pts[Math.floor(i * step)])
+        pts = picked
+      }
+
+      parts = pts.map(function (p) {
+        return {
+          tx: p[0],
+          ty: p[1],
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: (Math.random() * 1.1 + 0.6) * DPR,
+          a: Math.random() * 0.7 + 0.3,
+          sp: 0.02 + Math.random() * 0.05
+        }
+      })
+
+      ctx.fillStyle = '#06090d'
+      ctx.fillRect(0, 0, W, H)
+    }
+
+    function updateStages(prog) {
+      var idx = prog < 0.34 ? 0 : prog < 0.72 ? 1 : 2
+      for (var i = 0; i < stageEls.length; i++) {
+        stageEls[i].classList.toggle('on', i === idx)
+        stageEls[i].classList.toggle('done', i < idx)
+      }
+      for (var j = 0; j < segEls.length; j++) {
+        var segProg = Math.max(0, Math.min(1, (prog - j * 0.34) / 0.34))
+        segEls[j].style.width = segProg * 100 + '%'
+      }
+    }
+
+    function draw() {
+      /* 半透明覆盖形成拖尾 */
+      ctx.fillStyle = 'rgba(6,9,13,0.26)'
+      ctx.fillRect(0, 0, W, H)
+
+      var noise = (1 - d) * 90 * DPR
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i]
+        var k = p.sp * (0.35 + d * 0.9)
+        p.x += (p.tx - p.x) * k
+        p.y += (p.ty - p.y) * k
+        if (noise > 0.5) {
+          p.x += (Math.random() - 0.5) * noise * 0.12
+          p.y += (Math.random() - 0.5) * noise * 0.12
+        }
+        ctx.beginPath()
+        ctx.fillStyle = 'rgba(125,211,252,' + (0.18 + p.a * 0.82 * d).toFixed(3) + ')'
+        ctx.arc(p.x, p.y, p.r, 0, 6.2832)
+        ctx.fill()
+      }
+    }
+
+    function frame(ts) {
+      if (!t0) t0 = ts
+      d = Math.min(1, (ts - t0) / DURATION)
+      draw()
+      updateStages(d)
+      if (d >= 1 && !revealed) {
+        revealed = true
+        card.classList.add('show')
+      }
+      if (running) raf = requestAnimationFrame(frame)
+    }
+
+    function start() {
+      window.clearTimeout(idleTimer)
+      overlay.classList.remove('intro-idle', 'intro-done')
+      overlay.classList.add('intro-play')
+      card.classList.remove('show')
+      hud.classList.add('show')
+      build()
+      t0 = 0
+      d = 0
+      revealed = false
+      running = true
+      if (raf) cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(frame)
+    }
+
+    function stop(mark) {
+      running = false
+      if (raf) cancelAnimationFrame(raf)
+      overlay.classList.remove('intro-play')
+      overlay.classList.add('intro-done')
+      card.classList.remove('show')
+      hud.classList.remove('show')
+      if (mark) {
+        try {
+          localStorage.setItem('intro-seen-at', String(Date.now()))
+        } catch (e) {}
+      }
+      idleTimer = window.setTimeout(function () {
+        overlay.classList.add('intro-idle')
+      }, 1000)
+    }
+
+    /* 24 小时内看过就不再自动播放；尊重「减少动态效果」偏好 */
+    var recentlySeen = false
+    try {
+      var seenAt = parseInt(localStorage.getItem('intro-seen-at') || '0', 10)
+      recentlySeen = seenAt > 0 && Date.now() - seenAt < 24 * 60 * 60 * 1000
+    } catch (e) {}
+
+    if (recentlySeen || isReduced()) {
+      overlay.classList.add('intro-idle')
+    } else {
+      start()
+    }
+
+    if (skipBtn)
+      skipBtn.addEventListener('click', function () {
+        stop(true)
+      })
+    if (enterBtn)
+      enterBtn.addEventListener('click', function () {
+        stop(true)
+      })
+    if (replayBtn) {
+      replayBtn.addEventListener('click', function () {
+        try {
+          localStorage.removeItem('intro-seen-at')
+        } catch (e) {}
+        start()
+      })
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (running && (e.key === 'Escape' || e.key === 'Enter')) stop(true)
+    })
+
+    window.addEventListener('resize', function () {
+      if (running) build()
+    })
+  })()
+</script>

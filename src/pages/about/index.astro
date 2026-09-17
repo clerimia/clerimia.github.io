@@ -1,0 +1,99 @@
+---
+import { Timeline } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import ToolSection from '@/components/about/ToolSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'about-me', text: '简介' },
+  { depth: 2, slug: 'tools', text: '常用工具' },
+  { depth: 2, slug: 'social-networks', text: '联系我' },
+  { depth: 2, slug: 'about-blog', text: '关于本站' }
+]
+---
+
+<PageLayout title='关于' {headings} comment>
+  <p>合肥工业大学在读，关注 AI Agent 与全栈开发。</p>
+  <p>平时喜欢把想法做成能跑起来的东西，再把过程记录下来。这个站点就是其中之一。</p>
+  <p>Motto: Stay hungry, stay foolish.</p>
+
+  <h2 id='about-me'>简介</h2>
+  <ul>
+    <li>在读：合肥工业大学</li>
+    <li>关注方向：AI Agent、全栈开发</li>
+    <li>所在地：安徽 宣城</li>
+    <li>常用语言：TypeScript / Java / Python / Verilog</li>
+  </ul>
+
+  <h2 id='tools'>常用工具</h2>
+  <ToolSection
+    title='日常'
+    tools={[
+      {
+        name: 'VS Code',
+        description: '编辑器',
+        href: 'https://code.visualstudio.com/',
+        icon: import('@/assets/tools/vscode.svg?raw')
+      },
+      {
+        name: 'Chrome',
+        description: '浏览器',
+        href: 'https://www.google.com/chrome/',
+        icon: import('@/assets/tools/chrome.svg?raw')
+      },
+      {
+        name: 'Windows 11',
+        description: '操作系统',
+        href: 'https://www.microsoft.com/windows/windows-11',
+        icon: import('@/assets/tools/windows11.svg?raw')
+      }
+    ]}
+  />
+
+  <h2 id='social-networks'>联系我</h2>
+  <ul>
+    <li>
+      GitHub: <a href='https://github.com/clerimia' target='_blank'>@clerimia</a>
+    </li>
+    <li>
+      Email: <a href='mailto:2022217375@mail.hfut.edu.cn'>2022217375@mail.hfut.edu.cn</a>
+    </li>
+  </ul>
+
+  <h2 id='about-blog'>关于本站</h2>
+  <p>站点历史：</p>
+  <Timeline
+    events={[
+      {
+        date: '2024',
+        content: '用 Hexo 搭起第一个博客'
+      },
+      {
+        date: '2026-09',
+        content: '迁移到 Astro，手写了一套自己的脚手架'
+      },
+      {
+        date: '2026-09-17',
+        content:
+          '改用 <a href="https://github.com/cworld1/astro-theme-pure" target="_blank">Astro Theme Pure</a> 主题，专注写内容'
+      }
+    ]}
+  />
+  <p>本站由以下项目与服务驱动：</p>
+  <ul>
+    <li>
+      框架：<a href='https://astro.build/' target='_blank'>Astro</a>
+    </li>
+    <li>
+      主题：<a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>Astro Theme Pure</a>
+    </li>
+    <li>
+      样式：<a href='https://unocss.dev/' target='_blank'>UnoCSS</a>
+    </li>
+    <li>
+      托管：<a href='https://pages.github.com/' target='_blank'>GitHub Pages</a>
+    </li>
+    <li>
+      搜索：<a href='https://pagefind.app/' target='_blank'>Pagefind</a>
+    </li>
+  </ul>
+</PageLayout>

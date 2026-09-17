@@ -1,0 +1,141 @@
+---
+import { type CollectionEntry } from 'astro:content'
+
+import { getBlogCollection } from 'astro-pure/server'
+import { cn } from 'astro-pure/utils'
+
+export const prerender = true
+export const partial = true
+
+const docsCollection = (await getBlogCollection('docs')) as CollectionEntry<'docs'>[]
+
+/** 直接放在 docs 根目录下的文章归入该分类 */
+const DEFAULT_CATE = '_root'
+
+/** 分类显示名：未登记的目录名直接以原文显示 */
+const cateTitles: Record<string, string> = {
+  _root: '',
+  notes: '笔记',
+  setup: 'Setup',
+  integrations: 'Integrations',
+  advanced: 'Advanced'
+}
+
+/** 按目录（id 的第一段）分组，目录名即分类 */
+const docsByCate = docsCollection.reduce(
+  (acc, doc) => {
+    const cate = doc.id.includes('/') ? doc.id.split('/')[0] : DEFAULT_CATE
+    if (!acc[cate]) acc[cate] = []
+    acc[cate].push(doc)
+    return acc
+  },
+  {} as Record<string, CollectionEntry<'docs'>[]>
+)
+
+/** 组内按 order 排序；组之间按最小 order 排序 */
+const groups = Object.entries(docsByCate)
+  .map(([cate, docs]) => ({
+    cate,
+    title: cateTitles[cate] ?? cate,
+    docs: docs.sort((a, b) => a.data.order - b.data.order)
+  }))
+  .sort((a, b) => (a.docs[0]?.data.order ?? 999) - (b.docs[0]?.data.order ?? 999))
+
+/** 只有一个无标题分组时直接平铺，不显示分类标题 */
+const flat = groups.length === 1 && !groups[0].title
+
+type Props = {
+  title?: boolean
+  class?: string
+}
+
+const { title = true, class: className, ...props } = Astro.props
+---
+
+<docs-toc class={cn('not-prose', className)} {...props}>
+  {title && <h2 class='text-foreground font-medium'>目录</h2>}
+
+  {
+    flat && (
+      <ul class='mt-4 flex flex-col'>
+        {groups[0].docs.map((doc) => (
+          <li class='docs-item flex relative ms-2 px-3 py-1 text-foreground/75 transition-all rounded-2xl'>
+            <a class='flex-1 hover:text-foreground' href={`/docs/${doc.id}`}>
+              {doc.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    !flat && (
+      <ul class='mt-4 flex flex-col gap-y-5'>
+        {groups.map(({ title: cateTitle, docs }) => (
+          <li>
+            {cateTitle && (
+              <h3 class='text-muted-foreground text-xs tracking-widest uppercase'>{cateTitle}</h3>
+            )}
+            <ul class='mt-2 flex flex-col'>
+              {docs.map((doc) => (
+                <li class='docs-item flex relative ms-2 px-3 py-1 text-foreground/75 transition-all rounded-2xl'>
+                  <a class='flex-1 hover:text-foreground' href={`/docs/${doc.id}`}>
+                    {doc.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</docs-toc>
+
+<style>
+  docs-toc .docs-item::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 5%;
+    bottom: 5%;
+    left: -0.5rem;
+    width: 2px;
+    background-color: hsl(var(--input) / var(--un-bg-opacity));
+  }
+
+  docs-toc :global(.docs-item.docs-hl) {
+    background-color: hsl(var(--muted) / var(--un-bg-opacity));
+    font-weight: 500;
+    & a {
+      color: hsl(var(--primary) / var(--un-text-opacity));
+    }
+
+    &::before {
+      background-color: hsl(var(--primary) / var(--un-bg-opacity));
+    }
+  }
+</style>
+
+<script>
+  class DocsTOC extends HTMLElement {
+    link: string = ''
+
+    constructor() {
+      super()
+      this.link = window.location.pathname
+    }
+
+    connectedCallback() {
+      const links = this.querySelectorAll('a')
+      links.forEach((link) => {
+        if (link.getAttribute('href') === this.link) {
+          link.parentElement?.classList.add('docs-hl')
+        }
+      })
+    }
+  }
+
+  customElements.define('docs-toc', DocsTOC)
+</script>

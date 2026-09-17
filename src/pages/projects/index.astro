@@ -1,0 +1,96 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'programs', text: '项目' },
+  { depth: 2, slug: 'learnings', text: '学习' },
+  { depth: 2, slug: 'others', text: '其他' }
+]
+---
+
+<PageLayout title='项目' {headings} view>
+  <p>GitHub 提交活动：</p>
+  <p>
+    <img
+      src='https://ghchart.rshah.org/659eb9/clerimia'
+      alt='GitHub 提交活动'
+      loading='lazy'
+      class='my-0 w-full'
+    />
+  </p>
+  <p>
+    这里挑了一些自己写的项目。完整列表见 <a href='https://github.com/clerimia?tab=repositories' target='_blank'>GitHub</a>。
+  </p>
+
+  <h2 id='programs'>项目</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '🎙 PodcastStudio',
+        description: 'AI 播客工作室，把文稿变成可听的播客。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/PodcastStudio' }]
+      },
+      {
+        name: '🤖 Amiri',
+        description: '个人 Agent：以 Pi 为 runtime 基座，Agentic RAG + 全栈实现。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/amiri' }]
+      },
+      {
+        name: '📚 Index',
+        description: '校园知识库管理系统。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/Index' }]
+      },
+      {
+        name: '🗄 RookieDB',
+        description: '基于 CS186 课程实验实现的数据库管理系统。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/RookieDB' }]
+      }
+    ]}
+  />
+
+  <h2 id='learnings'>学习</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '⚙️ PipeLineCPU',
+        description: 'Verilog 实现的流水线 CPU。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/PipeLineCPU' }]
+      },
+      {
+        name: '📦 hmdp-pro',
+        description: '黑马点评项目的进阶实现。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/hmdp-pro' }]
+      },
+      {
+        name: '🎧 AIPodCast',
+        description: 'AI 播客相关实验。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/AIPodCast' }]
+      },
+      {
+        name: '💬 chatbot',
+        description: '对话机器人实验。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/chatbot' }]
+      }
+    ]}
+  />
+
+  <h2 id='others'>其他</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '🌐 clerimia.github.io',
+        description: '本站源码（Astro + Astro Theme Pure）。',
+        links: [
+          { type: 'github', href: 'https://github.com/clerimia/clerimia.github.io' },
+          { type: 'site', href: 'https://clerimia.github.io/' }
+        ]
+      },
+      {
+        name: '🧩 astro-blog',
+        description: '早期手写的 Astro 博客脚手架（中英双语）。',
+        links: [{ type: 'github', href: 'https://github.com/clerimia/astro-blog' }]
+      }
+    ]}
+  />
+</PageLayout>

@@ -1,0 +1,87 @@
+---
+import { cn } from 'astro-pure/utils'
+
+import { GISCUS } from '@/config/giscus'
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.categoryId
+---
+
+{
+  enabled && (
+    <section id='comments' class={cn('not-prose mt-6', className)} aria-label='comments'>
+      <div class='giscus-container' />
+      <noscript>
+        <p class='text-sm text-muted-foreground'>
+          评论功能需要启用 JavaScript（基于 GitHub Discussions）。
+        </p>
+      </noscript>
+      <script
+        is:inline
+        define:vars={{
+          repo: GISCUS.repo,
+          repoId: GISCUS.repoId,
+          category: GISCUS.category,
+          categoryId: GISCUS.categoryId,
+          mapping: GISCUS.mapping,
+          reactions: GISCUS.reactionsEnabled ? '1' : '0',
+          inputPosition: GISCUS.inputPosition
+        }}
+      >
+        ;(function () {
+          function currentTheme() {
+            return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+          }
+
+          function mount() {
+            var el = document.querySelector('.giscus-container')
+            if (!el) return
+            el.innerHTML = ''
+            var s = document.createElement('script')
+            s.src = 'https://giscus.app/client.js'
+            s.setAttribute('data-repo', repo)
+            s.setAttribute('data-repo-id', repoId)
+            s.setAttribute('data-category', category)
+            s.setAttribute('data-category-id', categoryId)
+            s.setAttribute('data-mapping', mapping)
+            s.setAttribute('data-strict', '0')
+            s.setAttribute('data-reactions-enabled', reactions)
+            s.setAttribute('data-emit-metadata', '0')
+            s.setAttribute('data-input-position', inputPosition)
+            s.setAttribute('data-theme', currentTheme())
+            s.setAttribute('data-lang', 'zh-CN')
+            s.setAttribute('data-loading', 'lazy')
+            s.crossOrigin = 'anonymous'
+            s.async = true
+            el.appendChild(s)
+          }
+
+          // 站点切换主题时同步 iframe 内的主题
+          function syncTheme() {
+            var iframe = document.querySelector('iframe.giscus-frame')
+            if (!iframe || !iframe.contentWindow) return
+            iframe.contentWindow.postMessage(
+              { giscus: { setConfig: { theme: currentTheme() } } },
+              'https://giscus.app'
+            )
+          }
+
+          if (!window.__giscusBound) {
+            window.__giscusBound = true
+            new MutationObserver(syncTheme).observe(document.documentElement, {
+              attributes: true,
+              attributeFilter: ['class']
+            })
+          }
+
+          mount()
+          document.addEventListener('astro:page-load', mount)
+        })()
+      </script>
+    </section>
+  )
+}

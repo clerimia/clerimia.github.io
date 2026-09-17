@@ -1,0 +1,21 @@
+---
+import { cn } from 'astro-pure/utils'
+
+interface Props {
+  /** 兼容主题原有 API：本站未接入浏览量统计，故忽略 */
+  view?: boolean
+  /** 是否显示留言入口 */
+  comment?: boolean
+  class?: string
+}
+
+const { comment, class: className, ...props } = Astro.props
+---
+
+{
+  comment && (
+    <div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
+      <a href='#comments'>留言</a>
+    </div>
+  )
+}

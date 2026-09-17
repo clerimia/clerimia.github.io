@@ -1,0 +1,126 @@
+---
+import { Image } from 'astro:assets'
+
+import { Quote } from 'astro-pure/advanced'
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button, Card, Icon, Label } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import IntroOverlay from '@/components/IntroOverlay.astro'
+import Terminal from '@/components/home/Terminal.tsx'
+import Section from '@/components/home/Section.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import config from '@/site-config'
+
+import '@/assets/styles/terminal.css'
+
+const languages = ['TypeScript', 'Java', 'Python', 'Verilog']
+const frontend = ['Astro', 'React', 'UnoCSS', 'Vite']
+const backend = ['Node.js', 'MySQL', 'Redis', 'Spring Boot']
+
+/** 终端里可以 cd 的栏目 */
+const routes: Record<string, string> = {
+  blog: '/blog',
+  docs: '/docs',
+  projects: '/projects',
+  links: '/links',
+  about: '/about'
+}
+
+const MAX_POSTS = 6
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+
+const imagePath = config.logo.src
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
+)
+if (!images[imagePath])
+  throw new Error(
+    `"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,avif,webp}"`
+  )
+---
+
+<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
+  <IntroOverlay />
+  <main class='flex w-full flex-col items-center'>
+    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
+      <Image
+        src={images[imagePath]()}
+        alt={config.logo.alt || 'Profile'}
+        class='h-28 w-auto rounded-full border p-1'
+        loading='eager'
+        fetchpriority='high'
+      />
+
+      <div class='flex flex-col items-center gap-y-4'>
+        <h1 class='text-3xl font-medium'>{config.author}</h1>
+        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
+          <Label title='安徽 宣城'>
+            <Icon name='location' class='size-5' slot='icon' />
+          </Label>
+          <Label title='clerimia' as='a' href='https://github.com/clerimia' target='_blank'>
+            <Icon name='github' class='size-5' slot='icon' />
+          </Label>
+          <Label title='2022217375@mail.hfut.edu.cn' as='a' href='mailto:2022217375@mail.hfut.edu.cn'>
+            <Icon name='email' class='size-5' slot='icon' />
+          </Label>
+        </div>
+      </div>
+    </section>
+
+    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
+      {/* 可交互终端 */}
+      <Terminal
+        client:load
+        user='clerimia'
+        host='devserver'
+        cwd='~'
+        bannerTitle='wterm v0.1 · clerimia.sh'
+        bannerSub='一个可交互的站点终端 —— 试试 help / ls / cd blog'
+        authorName={config.author}
+        authorDesc={config.description}
+        routes={routes}
+        social={{ github: 'https://github.com/clerimia', email: 'mailto:2022217375@mail.hfut.edu.cn' }}
+      />
+
+      <Section title='关于'>
+        <p class='text-muted-foreground'>{config.description}</p>
+        <p class='text-muted-foreground'>
+          平时喜欢把想法做成能跑起来的东西，再把过程记录下来。这个站点就是其中之一。
+        </p>
+        <Button title='更多关于我' class='w-fit self-end' href='/about' variant='ahead' />
+      </Section>
+
+      {
+        allPostsByDate.length > 0 && (
+          <Section title='文章'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {allPostsByDate.map((p) => (
+                <li class='flex flex-col gap-x-2 sm:flex-row'>
+                  <PostPreview post={p} />
+                </li>
+              ))}
+            </ul>
+            <Button title='全部文章' class='w-fit self-end' href='/blog' variant='ahead' />
+          </Section>
+        )
+      }
+
+      <Section title='教育'>
+        <Card
+          heading='合肥工业大学'
+          subheading='在读，关注 AI Agent 与全栈开发。'
+          date='2022 - 至今'
+        />
+      </Section>
+
+      <Section title='技能'>
+        <SkillLayout title='语言' skills={languages} />
+        <SkillLayout title='前端' skills={frontend} />
+        <SkillLayout title='后端' skills={backend} />
+      </Section>
+    </div>
+    <Quote class='mt-12' />
+  </main>
+</PageLayout>

@@ -1,0 +1,247 @@
+/**
+ * 入场动画：全屏遮罩 + canvas 粒子「去噪」动画
+ * 视觉：深色底 + 天蓝主色，阶段 sample → refine → decode
+ */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #06090d;
+  overflow: hidden;
+  display: none;
+}
+
+/* JS 主动播放时才显示，避免 JS 关闭时永久遮挡 */
+.intro-overlay.intro-play {
+  display: block;
+  opacity: 1;
+}
+
+.intro-overlay.intro-done {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.95s ease;
+}
+
+.intro-overlay.intro-idle {
+  display: none;
+}
+
+#intro-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== 顶部阶段指示器 ===== */
+.intro-hud {
+  position: fixed;
+  left: 50%;
+  top: 8.5%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  white-space: nowrap;
+}
+
+.intro-hud.show {
+  opacity: 1;
+}
+
+.intro-pipe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-stage {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  opacity: 0.36;
+  transition: opacity 0.45s ease;
+}
+
+.intro-stage.on {
+  opacity: 1;
+}
+
+.intro-stage.done {
+  opacity: 0.64;
+}
+
+.intro-stage i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(125, 211, 252, 0.28);
+  transition: 0.45s ease;
+}
+
+.intro-stage.on i {
+  background: #7dd3fc;
+  box-shadow: 0 0 12px rgba(125, 211, 252, 0.95);
+}
+
+.intro-stage.done i {
+  background: rgba(125, 211, 252, 0.7);
+}
+
+.intro-stage span {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #7dd3fc;
+}
+
+.intro-seg {
+  width: 44px;
+  height: 1px;
+  margin: 0 12px;
+  background: rgba(125, 211, 252, 0.16);
+  position: relative;
+}
+
+.intro-seg b {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: #7dd3fc;
+  box-shadow: 0 0 8px rgba(125, 211, 252, 0.7);
+}
+
+/* ===== 中央卡片 ===== */
+.intro-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -44%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.intro-card.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+
+.intro-av {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  padding: 4px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #0b1016;
+  box-shadow:
+    0 0 0 4px rgba(125, 211, 252, 0.1),
+    0 0 60px rgba(125, 211, 252, 0.35);
+}
+
+.intro-nm {
+  font-family: Satoshi, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  color: #faf9f8;
+}
+
+.intro-enter {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  color: #dbeefb;
+  background: rgba(125, 211, 252, 0.06);
+  border: 1px solid rgba(125, 211, 252, 0.4);
+  border-radius: 10px;
+  padding: 11px 18px;
+  cursor: pointer;
+  transition: 0.25s;
+  animation: intro-breathe 2.4s ease-in-out infinite;
+}
+
+.intro-enter:hover {
+  background: rgba(125, 211, 252, 0.14);
+  border-color: rgba(125, 211, 252, 0.8);
+  box-shadow: 0 0 28px -6px rgba(125, 211, 252, 0.8);
+}
+
+/* ===== 跳过 / 重播 ===== */
+.intro-skip {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  z-index: 2;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: rgba(154, 166, 178, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.intro-skip:hover {
+  color: #faf9f8;
+  border-color: rgba(125, 211, 252, 0.5);
+}
+
+.intro-replay {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 50;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: hsl(var(--muted-foreground) / 0.7);
+  background: hsl(var(--card) / 0.5);
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  opacity: 0.55;
+  backdrop-filter: blur(6px);
+  transition: 0.25s;
+}
+
+.intro-replay:hover {
+  opacity: 1;
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+@keyframes intro-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(125, 211, 252, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px -4px rgba(125, 211, 252, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-enter {
+    animation: none;
+  }
+  .intro-overlay {
+    display: none;
+  }
+}
