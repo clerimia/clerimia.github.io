@@ -7,9 +7,9 @@ export const theme: ThemeUserConfig = {
   /** Will be used in index page & copyright declaration */
   author: 'clerimia',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: '合肥工业大学在读，关注 AI Agent 与全栈开发。',
+  description: 'Hefei University of Technology student building AI agents and full-stack products.',
   /** The tagline for your website. */
-  tagline: 'Stay hungry, stay foolish',
+  tagline: 'Stay curious, build useful things',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */
@@ -43,11 +43,11 @@ export const theme: ThemeUserConfig = {
   /** Configure the header of your site. */
   header: {
     menu: [
-      { title: '博客', link: '/blog' },
-      { title: '笔记', link: '/docs' },
-      { title: '项目', link: '/projects' },
-      { title: '友链', link: '/links' },
-      { title: '关于', link: '/about' }
+      { title: 'Blog', link: '/blog' },
+      { title: 'Notes', link: '/docs' },
+      { title: 'Projects', link: '/projects' },
+      { title: 'Links', link: '/links' },
+      { title: 'About', link: '/about' }
     ]
   },
 
@@ -98,7 +98,7 @@ export const integ: IntegrationUserConfig = {
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
       { name: 'Link', val: 'https://clerimia.github.io/' },
-      { name: 'Avatar', val: 'https://github.com/clerimia.png' }
+      { name: 'Avatar', val: 'https://avatars.githubusercontent.com/u/128227262?v=4' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false

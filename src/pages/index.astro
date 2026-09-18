@@ -2,8 +2,6 @@
 import { Image } from 'astro:assets'
 
 import { Quote } from 'astro-pure/advanced'
-import { PostPreview } from 'astro-pure/components/pages'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
@@ -14,22 +12,37 @@ import config from '@/site-config'
 
 import '@/assets/styles/terminal.css'
 
-const languages = ['TypeScript', 'Java', 'Python', 'Verilog']
+const languages = ['TypeScript', 'JavaScript', 'Python', 'Java']
 const frontend = ['Astro', 'React', 'UnoCSS', 'Vite']
-const backend = ['Node.js', 'MySQL', 'Redis', 'Spring Boot']
+const backend = ['Node.js', 'Spring Boot', 'MySQL', 'Redis']
 
-/** 终端里可以 cd 的栏目 */
 const routes: Record<string, string> = {
   blog: '/blog',
-  docs: '/docs',
+  notes: '/docs',
   projects: '/projects',
   links: '/links',
   about: '/about'
 }
 
-const MAX_POSTS = 6
-const allPosts = await getBlogCollection()
-const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+const entries = [
+  { meta: '2026.09.14', title: 'A quiet place for ideas to become systems' },
+  { meta: '2026.09.12', title: 'Designing interfaces that feel calm and useful' },
+  { meta: '2026.07.25', title: 'Notes from building small things with care' },
+  { meta: '2026.06.15', title: 'A field guide to thoughtful software' }
+]
+
+const notes = [
+  { meta: 'research', title: 'A visual language for personal tools' },
+  { meta: 'notes', title: 'Patterns for making complexity legible' },
+  { meta: 'lab', title: 'Experiments in motion, type, and space' }
+]
+
+const projects = [
+  { name: 'pi', meta: 'TypeScript', title: 'AI agent toolkit with a unified LLM API and coding CLI', href: 'https://github.com/clerimia/pi' },
+  { name: 'amiri', meta: 'TypeScript', title: 'Personal agent built on a Pi runtime with Agentic RAG', href: 'https://github.com/clerimia/amiri' },
+  { name: 'akashic-agent', meta: 'Python', title: 'An experiment in personal memory and agent systems', href: 'https://github.com/clerimia/akashic-agent' },
+  { name: 'AIPodCast', meta: 'TypeScript', title: 'A small AI podcast studio', href: 'https://github.com/clerimia/AIPodCast' }
+]
 
 const imagePath = config.logo.src
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -44,25 +57,25 @@ if (!images[imagePath])
 <PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
   <IntroOverlay />
   <main class='flex w-full flex-col items-center'>
-    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
+    <section class='animate relative z-50 mb-10 flex flex-col items-center gap-y-7' id='content-header'>
       <Image
         src={images[imagePath]()}
-        alt={config.logo.alt || 'Profile'}
+        alt='clerimia'
         class='h-28 w-auto rounded-full border p-1'
         loading='eager'
         fetchpriority='high'
       />
 
       <div class='flex flex-col items-center gap-y-4'>
-        <h1 class='text-3xl font-medium'>{config.author}</h1>
+        <h1 class='text-3xl font-bold'>{config.author}</h1>
         <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='安徽 宣城'>
+          <Label title='安徽省宣城市'>
             <Icon name='location' class='size-5' slot='icon' />
           </Label>
-          <Label title='clerimia' as='a' href='https://github.com/clerimia' target='_blank'>
+          <Label title='clerimia · 17 public repositories' as='a' href='https://github.com/clerimia' target='_blank'>
             <Icon name='github' class='size-5' slot='icon' />
           </Label>
-          <Label title='2022217375@mail.hfut.edu.cn' as='a' href='mailto:2022217375@mail.hfut.edu.cn'>
+          <Label title='1937049668@qq.com' as='a' href='mailto:1937049668@qq.com'>
             <Icon name='email' class='size-5' slot='icon' />
           </Label>
         </div>
@@ -70,54 +83,104 @@ if (!images[imagePath])
     </section>
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-      {/* 可交互终端 */}
+      <div class='home-intro'>
+        <span class='home-intro__tag'>/ hello</span>
+        <span>合肥工业大学 · AI agent &amp; 全栈开发者。</span>
+      </div>
+
       <Terminal
         user='clerimia'
         host='devserver'
         cwd='~'
         bannerTitle='wterm v0.1 · clerimia.sh'
-        bannerSub='一个可交互的站点终端 —— 试试 help / ls / cd blog'
+        bannerSub='an interactive shell into this site — try help, ls, or cd projects'
         authorName={config.author}
-        authorDesc={config.description}
+        authorDesc='合肥工业大学在校生，主攻 AI Agent 与全栈开发。'
         routes={routes}
-        social={{ github: 'https://github.com/clerimia', email: 'mailto:2022217375@mail.hfut.edu.cn' }}
+        social={{ github: 'https://github.com/clerimia', email: '1937049668@qq.com' }}
       />
 
-      <Section title='关于'>
-        <p class='text-muted-foreground'>{config.description}</p>
+      <Section title='About'>
+        <p class='text-muted-foreground'>AI Agent &amp; Full-Stack Developer</p>
         <p class='text-muted-foreground'>
-          平时喜欢把想法做成能跑起来的东西，再把过程记录下来。这个站点就是其中之一。
+          合肥工业大学在读，关注 AI Agent、全栈开发和能真正跑起来的产品。平时记录技术实践，也把一些实验做成开源项目。
         </p>
-        <Button title='更多关于我' class='w-fit self-end' href='/about' variant='ahead' />
+        <Button title='More about this space' class='w-fit self-end' href='/about' variant='ahead' />
       </Section>
 
-      {
-        allPostsByDate.length > 0 && (
-          <Section title='文章'>
-            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-              {allPostsByDate.map((p) => (
-                <li class='flex flex-col gap-x-2 sm:flex-row'>
-                  <PostPreview post={p} />
-                </li>
-              ))}
-            </ul>
-            <Button title='全部文章' class='w-fit self-end' href='/blog' variant='ahead' />
-          </Section>
-        )
-      }
+      <section aria-labelledby='product-heading'>
+        <h2 id='product-heading' class='sr-only'>Featured project</h2>
+        <a class='home-promo group flex flex-col gap-3 p-5 no-underline sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-6' href='/projects'>
+          <div class='relative min-w-0'>
+            <div class='flex flex-wrap items-center gap-2 text-xs'>
+              <span class='home-promo__badge'>开源项目 · 持续更新</span>
+              <span class='text-sm opacity-70'>github.com/clerimia</span>
+            </div>
+            <h3 class='home-promo__title mt-3 text-2xl sm:text-3xl'>构建真正能跑起来的 Agent</h3>
+            <p class='mt-2 max-w-xl text-sm leading-relaxed opacity-80'>围绕统一 LLM API、个人记忆系统和 Agent 工具链，记录一些面向实践的 AI 实验。</p>
+          </div>
+          <span class='home-promo__cta shrink-0 self-start sm:self-center'>查看项目 <span aria-hidden='true'>→</span></span>
+        </a>
+      </section>
 
-      <Section title='教育'>
-        <Card
-          heading='合肥工业大学'
-          subheading='在读，关注 AI Agent 与全栈开发。'
-          date='2022 - 至今'
-        />
+      <Section title='Blog'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+          {entries.map((entry) => (
+            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/blog'>
+                <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{entry.meta}</span>
+                <span class='flex flex-1 justify-between gap-4 py-1'>
+                  <span>{entry.title}</span>
+                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <Button title='More posts' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
-      <Section title='技能'>
-        <SkillLayout title='语言' skills={languages} />
-        <SkillLayout title='前端' skills={frontend} />
-        <SkillLayout title='后端' skills={backend} />
+      <Section title='Notes'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+          {notes.map((note) => (
+            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/docs'>
+                <span class='min-w-[95px] py-1 text-xs text-muted-foreground'>{note.meta}</span>
+                <span class='flex flex-1 justify-between gap-4 py-1'>
+                  <span>{note.title}</span>
+                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title='Open Source'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+          {projects.map((project) => (
+            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={project.href} target='_blank' rel='noreferrer'>
+                <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{project.meta}</span>
+                <span class='flex flex-1 justify-between gap-4 py-1'>
+                  <span><span class='font-medium'>{project.name}</span><span class='text-muted-foreground'> · {project.title}</span></span>
+                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>↗</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <Button title='View GitHub profile' class='w-fit self-end' href='https://github.com/clerimia' target='_blank' variant='ahead' />
+      </Section>
+
+      <Section title='Education'>
+        <Card heading='合肥工业大学' subheading='计算机科学与技术专业。' date='2022 - 在读' />
+      </Section>
+
+      <Section title='Skills'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Frontend' skills={frontend} />
+        <SkillLayout title='Backend' skills={backend} />
       </Section>
     </div>
     <Quote class='mt-12' />

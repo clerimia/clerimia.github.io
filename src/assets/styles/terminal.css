@@ -5,7 +5,9 @@
 
 .wt-shell {
   --wt-radius: 0.85rem;
-  --wt-accent: var(--primary);
+  --wt-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --wt-grid: 1px;
+  --wt-accent: 205 85% 28%;
   --wt-ring: 210 20% 22%;
   --wt-ring-alpha: 0.32;
   --wt-after-opacity: 0.22;
@@ -31,7 +33,7 @@
     0 24px 48px -28px hsl(var(--foreground) / 0.28),
     0 8px 24px -16px hsl(var(--foreground) / 0.18);
   overflow: hidden;
-  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--wt-mono);
   color: hsl(var(--foreground));
   isolation: isolate;
   transition:
@@ -40,6 +42,7 @@
 }
 
 html.dark .wt-shell {
+  --wt-accent: var(--primary);
   --wt-ring: 0 0% 100%;
   --wt-ring-alpha: 0.08;
   --wt-after-opacity: 0.5;
@@ -141,10 +144,37 @@ html.dark .wt-shell {
 }
 
 .wt-title {
+  position: absolute;
+  inset-inline: 0;
+  text-align: center;
+  pointer-events: none;
+  font-feature-settings: 'tnum';
+}
+
+.wt-title--peek {
+  position: static;
   display: inline-flex;
+  flex: 1 1 auto;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
+  min-width: 0;
+  margin: 0 14px;
+  overflow: hidden;
+  text-align: left;
+  white-space: nowrap;
   font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.wt-title--peek .wt-prompt-sigil {
+  margin: 0;
+  color: hsl(var(--wt-accent));
+}
+
+.wt-title--peek .wt-caret {
+  width: 7px;
+  height: 0.95em;
+  margin-left: 2px;
 }
 
 .wt-hint {
@@ -168,30 +198,41 @@ html.dark .wt-shell {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 14px 16px 12px;
+  flex: 1 1 auto;
+  height: 420px;
+  max-height: 60vh;
+  padding: 16px 18px 8px;
   font-size: 13px;
   line-height: 1.65;
-  max-height: 380px;
   overflow-y: auto;
+  scroll-behavior: smooth;
+  transition: max-height 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), padding 0.28s ease, opacity 0.18s ease;
 }
 
 .wt-shell--collapsed .wt-body {
-  display: none;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .wt-banner {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed hsl(var(--border));
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed hsl(var(--border) / 0.7);
+  animation: wt-fade-up 0.36s ease both;
 }
 
 .wt-banner-title {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   background: linear-gradient(
     90deg,
     hsl(var(--wt-accent)),
@@ -392,6 +433,17 @@ html.dark .wt-shell {
   }
 }
 
+@keyframes wt-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .wt-entry {
   animation: wt-pop 0.2s ease both;
 }
@@ -399,6 +451,7 @@ html.dark .wt-shell {
 @media (prefers-reduced-motion: reduce) {
   .wt-caret,
   .wt-banner-title,
+  .wt-banner,
   .wt-entry {
     animation: none;
   }

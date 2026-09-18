@@ -50,7 +50,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
       ></button>
     </div>
 
-    <div class='wt-title' data-wt='title'></div>
+    <div class='wt-title wt-title--peek' data-wt='title'></div>
     <div class='wt-hint' data-wt='hint'></div>
   </div>
 
@@ -75,7 +75,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
         <span class='wt-tone-fg' data-wt='input-text'></span>
         <span class='wt-caret'></span>
         <span class='wt-input-hint' data-wt='input-hint'
-          >类型 <span class='wt-tone-primary'>help</span> 查看命令</span
+          >输入 <span class='wt-tone-primary'>help</span> 开始探索</span
         >
       </span>
       <input
@@ -127,7 +127,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
           '</span>'
         hintEl.innerHTML = typed ? '<span class="wt-tone-muted">输入 help 开始</span>' : ''
       } else {
-        titleEl.innerHTML = '<span class="wt-prompt-sigil">$</span><span class="wt-caret wt-caret--idle"></span>'
+        titleEl.innerHTML = '<span class="wt-prompt-sigil">$</span><span class="wt-tone-fg"></span><span class="wt-caret wt-caret--idle"></span>'
         hintEl.innerHTML = '点击或按 <span class="wt-kbd">`</span> 打开'
       }
     }
