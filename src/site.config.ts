@@ -111,8 +111,17 @@ export const integ: IntegrationUserConfig = {
   quote: {
     // - Hitokoto
     // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
-    server: 'https://v1.hitokoto.cn/?c=i',
-    target: `(data) => (data.hitokoto || 'Error')`
+    // 分类: a=动画 b=漫画 c=游戏 d=文学 i=诗词 j=网易云 k=哲学 l=抖机灵
+    server: 'https://v1.hitokoto.cn/?c=a',
+    // 句子后附出处：有作者时显示「——作者《作品》」，否则只显示作品名
+    target: `(data) => {
+      if (!data.hitokoto) return 'Error'
+      let source = ''
+      if (data.from_who && data.from) source = ' ——' + data.from_who + '《' + data.from + '》'
+      else if (data.from_who) source = ' ——' + data.from_who
+      else if (data.from) source = ' ——' + data.from
+      return data.hitokoto + source
+    }`
   },
   // [Typography]
   // https://unocss.dev/presets/typography

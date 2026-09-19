@@ -55,8 +55,10 @@ span.katex-display {
 .astro-code {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  border-radius: 0.75rem;
-  background-color: hsl(var(--muted) / var(--un-bg-opacity, 1)) !important;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1)) !important;
+  color: hsl(var(--code-fg));
   display: flex;
   flex-direction: column;
 
@@ -68,6 +70,7 @@ span.katex-display {
     padding-inline: 0;
     background: none;
     overflow-x: scroll;
+    color: inherit;
     & code {
       display: block;
       width: fit-content;
@@ -83,7 +86,7 @@ span.katex-display {
         bottom: 0;
         content: '';
         display: block;
-        background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
+        background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1));
         z-index: 1;
       }
       & .line {
@@ -92,8 +95,8 @@ span.katex-display {
           position: sticky;
           content: counter(step);
           counter-increment: step;
-          color: hsl(var(--muted-foreground) / 0.6);
-          background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
+          color: hsl(var(--muted-foreground) / 0.7);
+          background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1));
           inset-inline-start: 0;
           justify-content: end;
           display: inline-flex;
@@ -113,6 +116,12 @@ span.katex-display {
 .dark {
   .astro-code pre span {
     color: var(--shiki-dark) !important;
+  }
+  :not(pre) > code {
+    color: hsl(var(--foreground));
+  }
+  :not(.astro-code) > code span {
+    color: var(--shiki-dark, hsl(var(--foreground))) !important;
   }
 }
 
@@ -261,7 +270,7 @@ span.katex-display {
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        hsl(var(--muted) / var(--un-bg-opacity, 1)) 60%
+        hsl(var(--code-bg) / var(--un-bg-opacity, 1)) 60%
       );
     }
   }
@@ -269,15 +278,31 @@ span.katex-display {
 
 /* Scroll bar */
 :root {
-  --scrollbar-thumb: hsl(var(--muted-foreground) / var(--un-bg-opacity, 0.3));
+  --scrollbar-width: 6px;
+  --scrollbar-bg: #e0e0e0;
+  --scrollbar-thumb-bg: #c0c0c0;
 }
-:not(html) {
-  & ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-  & ::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: 999px;
-  }
+html.dark {
+  --scrollbar-bg: #2e2e2e;
+  --scrollbar-thumb-bg: #4e4e4e;
+}
+body::-webkit-scrollbar {
+  height: 0;
+}
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+  background: #0000;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-bg);
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-thumb-bg);
+  opacity: 0.5;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }

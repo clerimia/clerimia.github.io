@@ -1,6 +1,4 @@
 ---
-import { Font } from 'astro:assets'
-
 import { prod } from 'astro-pure/server'
 import type { SiteMeta } from 'astro-pure/types'
 import config from 'virtual:config'
@@ -34,11 +32,11 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
   href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap'
 />
 
-{/* Font preloads */}
-<Font cssVariable='--font-satoshi' preload={[{ subset: 'latin', style: 'normal' }]} />
+{/* Font preloads (self-hosted, same as the template site) */}
+<link rel='preload' href='/fonts/Satoshi-Variable.ttf' as='font' type='font/ttf' crossorigin />
 <style>
   body {
-    font-family: var(--font-satoshi);
+    font-family: Satoshi, system-ui, sans-serif;
   }
 </style>
 

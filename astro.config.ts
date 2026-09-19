@@ -1,6 +1,6 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import AstroPureIntegration from 'astro-pure'
-import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
+import { defineConfig, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
@@ -48,23 +48,9 @@ export default defineConfig({
     // domains: ['ghchart.rshah.org'],
     remotePatterns: [{ protocol: 'https' }]
   },
-  // Enable font preloading and optimization
-  // https://docs.astro.build/en/guides/fonts/
-  fonts: [
-    {
-      provider: fontProviders.fontshare(),
-      name: 'Satoshi',
-      cssVariable: '--font-satoshi',
-      // Default included:
-      // weights: [400],
-      // styles: ["normal", "italics"],
-      // subsets: ["cyrillic-ext", "cyrillic", "greek-ext", "greek", "vietnamese", "latin-ext", "latin"],
-      // fallbacks: ["sans-serif"],
-      styles: ['normal', 'italic'],
-      weights: [400, 500],
-      subsets: ['latin']
-    }
-  ],
+  // [Fonts]
+  // Satoshi 改为自托管（public/fonts/ + app.css 中的 @font-face），
+  // 与模板站一致，避免构建期依赖 fontshare CDN。
 
   // [Markdown]
   markdown: {
