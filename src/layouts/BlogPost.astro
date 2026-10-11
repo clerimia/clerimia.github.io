@@ -35,6 +35,8 @@ const {
   comment: enableComment
 } = data
 
+const sectionPath = `/${data.section}`
+
 const socialImage = heroImage
   ? typeof heroImage.src === 'string'
     ? heroImage.src
@@ -47,7 +49,7 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
 <PageLayout
   meta={{ articleDate, description, ogImage: socialImage, title }}
   highlightColor={primaryColor}
-  back='/blog'
+  back={sectionPath}
 >
   {!!headings.length && <TOC {headings} slot='sidebar' />}
 

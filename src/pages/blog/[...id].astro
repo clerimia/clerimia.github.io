@@ -1,14 +1,15 @@
 ---
 import { type CollectionEntry, render } from 'astro:content'
 
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { getPosts, getPostUrl } from '@/utils/posts'
 import PostLayout from '@/layouts/BlogPost.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = sortMDByDate(await getBlogCollection())
-  return posts.map((post) => ({
+  const allPosts = await getPosts()
+  const posts = allPosts.filter((post) => post.data.section === 'blog')
+  return allPosts.map((post) => ({
     params: { id: post.id },
     props: { post, posts }
   }))
@@ -20,6 +21,8 @@ type Props = {
 }
 
 const { post, posts } = Astro.props
+// Keep previously published links working after a post moves to the essays section.
+if (post.data.section === 'essays') return Astro.redirect(getPostUrl(post), 301)
 const { Content, headings, remarkPluginFrontmatter } = await render(post)
 ---
 

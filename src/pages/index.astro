@@ -3,7 +3,7 @@ import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
 
 import { Quote } from 'astro-pure/advanced'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { getPosts, getPostUrl } from '@/utils/posts'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
@@ -20,14 +20,15 @@ const backend = ['Node.js', 'Spring Boot', 'MySQL', 'Redis']
 
 const routes: Record<string, string> = {
   blog: '/blog',
+  essays: '/essays',
   notes: '/docs',
   projects: '/projects',
   links: '/links',
   about: '/about'
 }
 
-const posts = sortMDByDate(await getBlogCollection()) as CollectionEntry<'blog'>[]
-const entries = posts
+const posts = await getPosts()
+const toEntries = (posts: CollectionEntry<'blog'>[]) => posts
   .slice(0, 6)
   .map((post) => ({
     meta: post.data.publishDate.toLocaleDateString(config.locale.dateLocale, {
@@ -35,8 +36,10 @@ const entries = posts
       timeZone: 'Asia/Shanghai'
     }),
     title: post.data.title,
-    href: `/blog/${post.id}`
+    href: getPostUrl(post)
   }))
+const entries = toEntries(posts.filter((post) => post.data.section === 'blog'))
+const essays = toEntries(posts.filter((post) => post.data.section === 'essays'))
 
 const notes = [
   { meta: 'research', title: 'A visual language for personal tools' },
@@ -130,7 +133,7 @@ if (!images[imagePath])
         </a>
       </section>
 
-      <Section title='文章'>
+      <Section title='博客'>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {entries.map((entry) => (
             <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
@@ -144,7 +147,24 @@ if (!images[imagePath])
             </li>
           ))}
         </ul>
-        <Button title='全部文章' class='w-fit self-end' href='/blog' variant='ahead' />
+        <Button title='全部博客' class='w-fit self-end' href='/blog' variant='ahead' />
+      </Section>
+
+      <Section title='随笔'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+          {essays.map((entry) => (
+            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={entry.href}>
+                <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{entry.meta}</span>
+                <span class='flex flex-1 justify-between gap-4 py-1'>
+                  <span>{entry.title}</span>
+                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <Button title='全部随笔' class='w-fit self-end' href='/essays' variant='ahead' />
       </Section>
 
       <Section title='Notes'>

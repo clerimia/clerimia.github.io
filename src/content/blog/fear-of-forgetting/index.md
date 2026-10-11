@@ -2,6 +2,7 @@
 title: '我还没有开始遗忘，就已经开始害怕遗忘'
 description: '一场关于记忆力的内心探索：从阅读中的自我审视，到理解文字之间的联系，在表达中重建思想，最后学着允许自己遗忘。'
 publishDate: '2026-10-11'
+section: 'essays'
 tags: ['随笔', '阅读', '记忆']
 language: '中文'
 draft: false

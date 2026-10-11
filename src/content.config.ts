@@ -34,6 +34,7 @@ const blog = defineCollection({
         })
         .optional(),
       tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+      section: z.enum(['blog', 'essays']).default('blog'),
       language: z.string().optional(),
       draft: z.boolean().default(false),
       // Special fields
