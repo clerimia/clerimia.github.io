@@ -1,7 +1,9 @@
 ---
 import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
 
 import { Quote } from 'astro-pure/advanced'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
@@ -24,12 +26,17 @@ const routes: Record<string, string> = {
   about: '/about'
 }
 
-const entries = [
-  { meta: '2026.09.14', title: 'A quiet place for ideas to become systems' },
-  { meta: '2026.09.12', title: 'Designing interfaces that feel calm and useful' },
-  { meta: '2026.07.25', title: 'Notes from building small things with care' },
-  { meta: '2026.06.15', title: 'A field guide to thoughtful software' }
-]
+const posts = sortMDByDate(await getBlogCollection()) as CollectionEntry<'blog'>[]
+const entries = posts
+  .slice(0, 6)
+  .map((post) => ({
+    meta: post.data.publishDate.toLocaleDateString(config.locale.dateLocale, {
+      ...config.locale.dateOptions,
+      timeZone: 'Asia/Shanghai'
+    }),
+    title: post.data.title,
+    href: `/blog/${post.id}`
+  }))
 
 const notes = [
   { meta: 'research', title: 'A visual language for personal tools' },
@@ -123,11 +130,11 @@ if (!images[imagePath])
         </a>
       </section>
 
-      <Section title='Blog'>
+      <Section title='文章'>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {entries.map((entry) => (
             <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/blog'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={entry.href}>
                 <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{entry.meta}</span>
                 <span class='flex flex-1 justify-between gap-4 py-1'>
                   <span>{entry.title}</span>
@@ -137,7 +144,7 @@ if (!images[imagePath])
             </li>
           ))}
         </ul>
-        <Button title='More posts' class='w-fit self-end' href='/blog' variant='ahead' />
+        <Button title='全部文章' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
       <Section title='Notes'>
@@ -173,7 +180,7 @@ if (!images[imagePath])
         <Button title='View GitHub profile' class='w-fit self-end' href='https://github.com/clerimia' target='_blank' variant='ahead' />
       </Section>
 
-      <Section title='Education'>
+      <Section title='教育经历'>
         <Card heading='合肥工业大学' subheading='计算机科学与技术专业。' date='2022 - 在读' />
       </Section>
 
