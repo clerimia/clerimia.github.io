@@ -12,7 +12,7 @@
 | 框架 | Astro 6（默认零 JS，静态输出） |
 | 交互 | 原生 JS（`is:inline` script，**不使用任何前端框架**） |
 | 样式 | UnoCSS + 主题内置排版（typography） |
-| 内容 | Content Collections（`blog` / `docs`） |
+| 内容 | Content Collections（`blog` / `docs` / `musings`） |
 | 代码高亮 | Shiki（自带行号、语言标签、复制按钮、折叠） |
 | 数学公式 | KaTeX |
 | 全文搜索 | Pagefind |
@@ -34,8 +34,9 @@ src/
 ├── site.config.ts          ★ 站点配置（标题/导航/页脚/友链/评论开关）
 ├── content.config.ts         内容集合 schema
 ├── content/
-│   ├── blog/<slug>/index.md  博客文章
-│   └── docs/<slug>/index.md  笔记
+│   ├── blog/<slug>/index.md  博客文章 / 长随笔（section: essays）
+│   ├── docs/<slug>/index.md  笔记
+│   └── musings/<YYYY-MM-DD-slug>/index.md  随笔（短随想 / 语录）
 ├── config/giscus.ts        ★ Giscus 评论参数
 ├── components/
 │   ├── comments/             Giscus 评论与留言入口
@@ -79,6 +80,19 @@ draft: false
 
 笔记放 `src/content/docs/`，额外支持 `order` 字段控制目录中的排序。
 
+长随笔同样放在 `src/content/blog/`，增加 `section: 'essays'`。页面统一发布在 `/musings/<slug>`，
+首页、标签和 RSS 使用这个地址；旧 `/essays/<slug>` 与 `/blog/<slug>` 随笔地址保留跳转。
+
+短随笔放 `src/content/musings/`，目录名建议用 `<YYYY-MM-DD-短slug>`，与长随笔一起显示在 Musings 栏目：
+
+```yaml
+---
+title: '开随笔'        # 可省略，省略时列表只显示日期与正文预览
+publishDate: '2026-10-04'
+---
+
+正文一两段即可。
+```
 ## 自定义
 
 - **站点信息 / 导航 / 社交**：`src/site.config.ts`

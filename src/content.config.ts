@@ -58,4 +58,17 @@ const docs = defineCollection({
     })
 })
 
-export const collections = { blog, docs }
+// Define musings collection（随笔：短随想 / 日记随感 / 语录）
+// 一个条目就是一个日期下的短文本，列表页按日期倒序平铺。
+const musings = defineCollection({
+  loader: glob({ base: './src/content/musings', pattern: '**/*.{md,mdx}' }),
+  schema: () =>
+    z.object({
+      title: z.string().max(60).optional(),
+      publishDate: z.coerce.date(),
+      tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+      draft: z.boolean().default(false)
+    })
+})
+
+export const collections = { blog, docs, musings }

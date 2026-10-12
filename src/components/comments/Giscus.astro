@@ -5,15 +5,19 @@ import { GISCUS } from '@/config/giscus'
 
 interface Props {
   class?: string
+  /** Keep discussions attached to their original term when an article URL changes. */
+  discussionTerm?: string
 }
 
-const { class: className } = Astro.props
+const { class: className, discussionTerm } = Astro.props
 const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.categoryId
 ---
 
 {
   enabled && (
-    <section id='comments' class={cn('not-prose mt-6', className)} aria-label='comments'>
+    <section id='comments' class={cn('not-prose mt-6', className)} aria-labelledby='comments-heading' tabindex='-1'>
+      <h2 id='comments-heading' class='mb-2 text-xl font-medium text-foreground'>评论</h2>
+      <p class='mb-5 text-sm text-muted-foreground'>欢迎分享你的想法，使用 GitHub 账号参与讨论。</p>
       <div class='giscus-container' />
       <noscript>
         <p class='text-sm text-muted-foreground'>
@@ -27,7 +31,8 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
           repoId: GISCUS.repoId,
           category: GISCUS.category,
           categoryId: GISCUS.categoryId,
-          mapping: GISCUS.mapping,
+          mapping: discussionTerm ? 'specific' : GISCUS.mapping,
+          term: discussionTerm ?? '',
           reactions: GISCUS.reactionsEnabled ? '1' : '0',
           inputPosition: GISCUS.inputPosition
         }}
@@ -48,6 +53,7 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
             s.setAttribute('data-category', category)
             s.setAttribute('data-category-id', categoryId)
             s.setAttribute('data-mapping', mapping)
+            if (term) s.setAttribute('data-term', term)
             s.setAttribute('data-strict', '0')
             s.setAttribute('data-reactions-enabled', reactions)
             s.setAttribute('data-emit-metadata', '0')
@@ -85,3 +91,8 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
     </section>
   )
 }
+
+<style>
+  #comments { scroll-margin-top: 7rem; }
+  #comments:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 8px; border-radius: 0.75rem; }
+</style>

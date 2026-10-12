@@ -1,0 +1,65 @@
+---
+import { Button, FormattedDate } from 'astro-pure/user'
+import PostPreview from '@/components/PostPreview.astro'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { getMusings, type MusingEntry } from '@/utils/posts'
+
+export const prerender = true
+const meta = { title: 'Musings', description: '记录阅读、生活与思考，长短皆可。' }
+
+function snippet(body: string | undefined, limit = 120): string {
+  const text = (body ?? '')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/!\[.*?\]\(.*?\)/g, ' ')
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[*_~>|-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return text.length > limit ? text.slice(0, limit) + '…' : text
+}
+
+const entries = await getMusings()
+const byYear = new Map<number, MusingEntry[]>()
+for (const entry of entries) {
+  const year = entry.data.publishDate.getFullYear()
+  const group = byYear.get(year) ?? []
+  group.push(entry)
+  byYear.set(year, group)
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-4 text-3xl font-medium'>Musings</h1>
+      <p class='mb-6 text-muted-foreground'>{meta.description}</p>
+    </div>
+    <section id='content' class='animate' aria-label='随笔列表'>
+      {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
+      {Array.from(byYear).map(([year, musings]) => (
+        <div class='mt-8 first:mt-0'>
+          <div class='mb-4 flex items-baseline gap-3'>
+            <h2 class='text-xl font-medium'>{year}</h2>
+            <span class='text-xs text-muted-foreground'>{musings.length} 篇随笔</span>
+          </div>
+          <ul class='flex flex-col gap-4'>
+            {musings.map((post) => post.collection === 'blog' ? (
+              <PostPreview {post} detailed />
+            ) : (
+              <li>
+                <a class='group block rounded-2xl border bg-background px-5 py-4 transition-colors hover:bg-muted hover:text-primary' href={`/musings/${post.id}`} data-astro-prefetch>
+                  <FormattedDate class='text-xs text-muted-foreground' date={post.data.publishDate} />
+                  {post.data.title && <p class='mt-2 font-medium'>{post.data.title}</p>}
+                  <p class='mt-2 text-sm leading-6 text-muted-foreground'>{snippet(post.body)}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+  </main>
+</PageLayout>

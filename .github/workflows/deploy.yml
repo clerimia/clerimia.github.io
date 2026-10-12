@@ -35,6 +35,9 @@ jobs:
       - name: Build site
         run: npm run build
 
+      - name: Verify post sections and redirects
+        run: node --test tests/post-sections.test.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

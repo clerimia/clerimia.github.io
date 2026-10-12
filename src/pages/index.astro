@@ -3,7 +3,7 @@ import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
 
 import { Quote } from 'astro-pure/advanced'
-import { getPosts, getPostUrl } from '@/utils/posts'
+import { getMusings, getPosts, getPostUrl } from '@/utils/posts'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
@@ -20,7 +20,7 @@ const backend = ['Node.js', 'Spring Boot', 'MySQL', 'Redis']
 
 const routes: Record<string, string> = {
   blog: '/blog',
-  essays: '/essays',
+  musings: '/musings',
   notes: '/docs',
   projects: '/projects',
   links: '/links',
@@ -39,7 +39,11 @@ const toEntries = (posts: CollectionEntry<'blog'>[]) => posts
     href: getPostUrl(post)
   }))
 const entries = toEntries(posts.filter((post) => post.data.section === 'blog'))
-const essays = toEntries(posts.filter((post) => post.data.section === 'essays'))
+const musings = (await getMusings()).slice(0, 4).map((post) => ({
+  meta: new Intl.DateTimeFormat('zh-CN').format(post.data.publishDate),
+  title: post.data.title || '随笔',
+  href: `/musings/${post.id}`
+}))
 
 const notes = [
   { meta: 'research', title: 'A visual language for personal tools' },
@@ -133,7 +137,7 @@ if (!images[imagePath])
         </a>
       </section>
 
-      <Section title='博客'>
+      <Section title='Blog'>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {entries.map((entry) => (
             <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
@@ -147,12 +151,12 @@ if (!images[imagePath])
             </li>
           ))}
         </ul>
-        <Button title='全部博客' class='w-fit self-end' href='/blog' variant='ahead' />
+        <Button title='All posts' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
-      <Section title='随笔'>
+      <Section title='Musings'>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-          {essays.map((entry) => (
+          {musings.map((entry) => (
             <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
               <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={entry.href}>
                 <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{entry.meta}</span>
@@ -164,7 +168,7 @@ if (!images[imagePath])
             </li>
           ))}
         </ul>
-        <Button title='全部随笔' class='w-fit self-end' href='/essays' variant='ahead' />
+        <Button title='All musings' class='w-fit self-end' href='/musings' variant='ahead' />
       </Section>
 
       <Section title='Notes'>

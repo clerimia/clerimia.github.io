@@ -1,59 +1,10 @@
 ---
-import type { GetStaticPaths, Page } from 'astro'
-import type { CollectionEntry } from 'astro:content'
-
-import { Paginator } from 'astro-pure/components/pages'
-import PostPreview from '@/components/PostPreview.astro'
-import { getPosts } from '@/utils/posts'
-import { Button } from 'astro-pure/user'
-import PageLayout from '@/layouts/BaseLayout.astro'
+import type { GetStaticPaths } from 'astro'
 import config from '@/site-config'
-
+import { getPosts } from '@/utils/posts'
 export const prerender = true
-
 export const getStaticPaths = (async ({ paginate }) => {
-  const essays = await getPosts('essays')
-  return paginate(essays, {
-    pageSize: config.content.blogPageSize,
-    props: { essaysCount: essays.length }
-  })
+  return paginate(await getPosts('essays'), { pageSize: config.content.blogPageSize })
 }) satisfies GetStaticPaths
-
-interface Props {
-  page: Page<CollectionEntry<'blog'>>
-  essaysCount: number
-}
-
-const { page, essaysCount } = Astro.props
-const meta = {
-  title: '随笔',
-  description: '记录阅读、生活与思考中的片段。'
-}
-const paginationProps = {
-  ...(page.url.prev && { prevUrl: { text: '← 上一页', url: page.url.prev } }),
-  ...(page.url.next && { nextUrl: { text: '下一页 →', url: page.url.next } })
-}
+return Astro.redirect('/musings', 301)
 ---
-
-<PageLayout {meta}>
-  <Button title='返回首页' href='/' variant='back' />
-  <main class='mt-6 lg:mt-10'>
-    <div id='content-header' class='animate'>
-      <h1 class='mb-4 mt-6 text-3xl font-medium sm:mt-10'>随笔</h1>
-      <p class='mb-6 text-muted-foreground'>{meta.description}</p>
-    </div>
-    <section id='content' class='animate' aria-label='随笔文章列表'>
-      <p class='mb-4 text-sm text-muted-foreground'>共 {essaysCount} 篇随笔</p>
-      {
-        page.data.length === 0 ? (
-          <p>暂时还没有随笔。</p>
-        ) : (
-          <ul class='flex flex-col gap-y-4 text-start'>
-            {page.data.map((post) => <PostPreview {post} detailed />)}
-          </ul>
-        )
-      }
-      <Paginator {...paginationProps} />
-    </section>
-  </main>
-</PageLayout>
