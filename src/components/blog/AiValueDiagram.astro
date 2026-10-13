@@ -1,0 +1,339 @@
+---
+interface Props {
+  kind: 'bottleneck' | 'amplifier' | 'cycle'
+}
+
+const { kind } = Astro.props
+const titles = {
+  bottleneck: '从实现受限，到判断与验证承压',
+  amplifier: '执行更快，不等于价值更高',
+  cycle: '创造的飞轮，推动个人积累增长'
+}
+const steps = [
+  ['理解问题', '识别需求与约束'],
+  ['形成判断', '写下假设与预期'],
+  ['AI 辅助生产', '实现可检验的方案'],
+  ['真实反馈', '用结果检验判断'],
+  ['复盘修正', '让下一次选择不同']
+]
+const cells = [
+  ['high-low', '好想法，落地受限', '约束：实现能力', '方向有价值，但实现能力跟不上。'],
+  ['high-high', '更有机会创造价值', '仍需验证：实际效果', '判断与执行相互配合，价值要由现实检验。'],
+  ['low-low', '价值实现受限', '约束：方向与实现', '方向与实现能力都需要改善。'],
+  ['low-high', '快速产出，价值存疑', '约束：判断质量', '做得很快，却可能解决了错误的问题。']
+]
+const wheelNodes = steps.map(([title, subtitle], index) => {
+  const angle = (-90 + index * 72) * Math.PI / 180
+  return { title, subtitle, x: (330 + 214 * Math.cos(angle)) / 660 * 100, y: (300 + 214 * Math.sin(angle)) / 600 * 100 }
+})
+const wheelArcs = steps.map((_, index) => {
+  const start = (-90 + index * 72 + 24) * Math.PI / 180
+  const end = (-90 + (index + 1) * 72 - 24) * Math.PI / 180
+  return `M ${330 + 214 * Math.cos(start)} ${300 + 214 * Math.sin(start)} A 214 214 0 0 1 ${330 + 214 * Math.cos(end)} ${300 + 214 * Math.sin(end)}`
+})
+---
+
+<ai-value-diagram id={`diagram-${kind}`} class='value-diagram not-prose' data-kind={kind} data-pressure='review' data-step='4'>
+  <figure aria-label={titles[kind]}>
+    <div class='figure-heading'><span class='figure-index'>{kind === 'bottleneck' ? '01' : kind === 'amplifier' ? '02' : '03'}</span><strong>{titles[kind]}</strong></div>
+
+    {kind === 'bottleneck' && (
+      <>
+        <div class='compare'>
+          <section class='lane baseline' aria-label='原先，瓶颈在实现'>
+            <div class='lane-heading'><span>原先</span><strong>想法卡在实现之前</strong></div>
+            <div class='stage execution is-bottleneck'>
+              <span class='bottleneck-label'>瓶颈 · 实现能力</span>
+              <strong>开发与实现</strong>
+              <div class='capacity' aria-hidden='true'><span style='width:34%'></span></div>
+              <p>约束点：专业技能、时间、协作资源</p>
+            </div>
+            <div class='down' aria-hidden='true'>↓</div>
+            <div class='pool'>
+              <div class='pool-heading'><strong>可验证的方案较少</strong></div>
+              <div class='papers' aria-label='少量候选方案，数量仅作示意'>{Array.from({length:12}, (_, index) => <span class:list={['paper', { 'paper-empty': index >= 3 }]} aria-hidden='true'><svg viewBox='0 0 20 24'><path d='M12 2H3v20h14V7Zm0 0v6h5M6 12h8m-8 4h8'/></svg></span>)}</div>
+              <span class='queue-caption'>多数想法还没进入验证阶段</span>
+            </div>
+            <div class='down' aria-hidden='true'>↓</div>
+            <div class='stage review'>
+              <span class='stage-label'>同样需要验证</span>
+              <strong>判断与验证</strong>
+              <div class='capacity' aria-hidden='true'><span style='width:60%'></span></div>
+              <p>评价方向，检验实际效果</p>
+            </div>
+          </section>
+          <section class='lane assisted' aria-label='AI 辅助后，瓶颈可能转移'>
+            <div class='lane-heading'><span>AI 辅助后</span><strong data-output='lane-title'>方案卡在验证之前</strong></div>
+            <div class='stage execution'>
+              <span class='stage-label' data-output='execution-label'>约束缓解</span>
+              <strong>AI 辅助生成与实现</strong>
+              <label class='production-control'><span class='control-title'>拖动：生成能力 <output data-output='production'>生成加速</output></span><input type='range' min='0' max='100' value='100' data-control='production' aria-label='右侧的生成能力' aria-valuetext='生成较快，判断与验证成为主要约束' /></label>
+              <div class='range-ends'><span>实现仍受限</span><span>生成更容易</span></div>
+              <p data-output='execution-note'>更多方案，更快进入下一关</p>
+            </div>
+            <div class='down' aria-hidden='true'>↓</div>
+            <div class='pool'>
+              <div class='pool-heading'><strong data-output='pool-title'>候选方案积压</strong><span class='queue-badge' data-output='queue-badge'>等待验证</span></div>
+              <div class='papers' aria-label='候选方案随生成能力增加，数量仅作示意'>{Array.from({length:12}, (_, index) => <span class:list={['paper', { waiting: index >= 5 }]} data-paper={index} aria-hidden='true'><svg viewBox='0 0 20 24'><path d='M12 2H3v20h14V7Zm0 0v6h5M6 12h8m-8 4h8'/></svg></span>)}</div>
+              <span class='queue-caption' data-output='queue-note'>生成得更多，来不及逐一确认价值</span>
+            </div>
+            <div class='down' aria-hidden='true'>↓</div>
+            <div class='stage review is-bottleneck'>
+              <span class='bottleneck-label' data-output='review-label'>新瓶颈 · 判断与验证</span>
+              <strong>值得做？真的有效？</strong>
+              <div class='capacity' aria-hidden='true'><span style='width:60%'></span></div>
+              <p>约束点：需求判断、质量标准、真实反馈</p>
+            </div>
+          </section>
+        </div>
+        <div class='takeaway' role='status' aria-live='polite'><span class='takeaway-label'>当前重点</span><strong data-output='insight'>生成加速，但验证能力没有同步提高，瓶颈就可能后移。</strong></div>
+        <figcaption>观察前提：左侧固定作对照，右侧的判断与验证能力暂不提高。<span class='legend-dot'></span>红色标出瓶颈与积压；宽度、数量均为概念示意。</figcaption>
+      </>
+    )}
+
+    {kind === 'amplifier' && (
+      <>
+        <p class='figure-intro'>向右，执行能力提高；向上，判断质量提高。各象限标出对应的约束或验证重点。</p>
+        <div class='coordinate-plot' role='group' aria-label='判断质量与执行能力的四象限'>
+          <div class='axis-title y-title'>判断质量</div>
+          <div class='quadrant-field'>{cells.map(([id, title, constraint, text]) => <div class='quadrant' data-cell={id}><strong>{title}</strong><span><b class='quadrant-constraint'>{constraint}</b>{text}</span></div>)}</div>
+          <div class='coordinate-axis horizontal-axis' aria-hidden='true'></div>
+          <div class='coordinate-axis vertical-axis' aria-hidden='true'></div>
+          <span class='axis-end x-low'>低</span><span class='axis-end x-high'>高</span>
+          <span class='axis-end y-low'>低</span><span class='axis-end y-high'>高</span>
+          <div class='axis-title x-title'>执行能力 / 交付效率</div>
+        </div>
+        <figcaption>坐标表示能力的相对高低，不是数值评分；实际价值仍需验证。</figcaption>
+      </>
+    )}
+
+    {kind === 'cycle' && (
+      <>
+        <p class='figure-intro'>每轮实践经过反馈与复盘，沉淀为个人积累，再支持下一轮创造。点击环节查看重点。</p>
+        <div class='flywheel' role='group' aria-label='围绕个人积累的五步创造飞轮'>
+          <svg class='wheel-paths' viewBox='0 0 660 600' aria-hidden='true'>
+            <defs><marker id='flywheel-direction' viewBox='0 0 10 10' refX='7' refY='5' markerWidth='5' markerHeight='5' orient='auto-start-reverse'><path d='M 0 1 L 8 5 L 0 9 Z' fill='currentColor'/></marker></defs>
+            <circle class='wheel-guide' cx='330' cy='300' r='214'/>
+            {wheelArcs.map(path => <path class='wheel-arc' d={path} marker-end='url(#flywheel-direction)' />)}
+            <path class='wheel-deposit' d='M 202 247 Q 219 261 226 280' marker-end='url(#flywheel-direction)' />
+            <path class='wheel-deposit' d='M 330 193 L 330 143' marker-end='url(#flywheel-direction)' />
+          </svg>
+          <div class='accumulation-core'><span class='core-eyebrow'>每轮沉淀</span><strong>个人积累</strong><span class='core-assets'>理解 · 品味 · 判断<br />实践经验</span><span class='core-focus' data-output='accumulation'>沉淀可复用判断</span></div>
+          {wheelNodes.map(({title, subtitle, x, y}, index) => <button class:list={['wheel-node', { checkpoint: index >= 3 }]} style={`left:${x}%;top:${y}%`} data-node={index} aria-pressed={index === 4 ? 'true' : 'false'}><span class='node-index'>0{index + 1}{index >= 3 && <span class='key-tag'>关键</span>}</span><strong>{title}</strong><small>{subtitle}</small></button>)}
+        </div>
+        <div class='flywheel-principle'><strong>积累 → 指导创造 → 反馈与复盘 → 新的积累</strong></div>
+        <div class='step-detail' role='status' aria-live='polite'><div><span>这一环节要回答</span><strong data-output='question'>下一轮，具体要改什么？</strong></div><div><span>应留下的证据</span><p data-output='evidence'>预期与结果的差异、可能的解释，以及下一次准备检验什么。</p></div></div>
+        <div class='takeaway'><span class='takeaway-label'>增长的核心</span><strong>经过验证、能够用于下一次选择的个人积累。反馈与复盘决定这一轮能留下什么。</strong></div>
+        <figcaption>AI 降低实践成本，个人通过有效反馈与复盘积累认知。飞轮表达积累机制，不代表每一轮都必然增长。</figcaption>
+      </>
+    )}
+  </figure>
+</ai-value-diagram>
+
+<style>
+  .value-diagram {
+    --ink:#15263d; --muted:#526278; --line:#ccd6e3; --bg:#f5f7fb; --card:#fff;
+    --teal:#08796d; --teal-bg:#e2f4ee; --red:#aa351f; --red-bg:#fff0e8; --red-line:#cb553a;
+    --blue:#4653af; --blue-bg:#edf0ff;
+    display:block; margin:2rem 0; scroll-margin-top:96px; color:var(--ink); font-family:inherit; line-height:1.5;
+  }
+  :global(.dark) .value-diagram {
+    --ink:#eef4fc; --muted:#b0bfd2; --line:#40516a; --bg:#152031; --card:#1d2b3e;
+    --teal:#7fdfc5; --teal-bg:#183e36; --red:#ffb79d; --red-bg:#432b27; --red-line:#ef9879;
+    --blue:#b3c0ff; --blue-bg:#2b3453;
+  }
+  figure { margin:0; padding:24px; background:var(--bg); border:1px solid var(--line); border-radius:16px; }
+  .figure-heading { display:flex; align-items:baseline; gap:12px; margin-bottom:18px; font-size:21px; line-height:1.5; }
+  .figure-index { color:var(--blue); font-size:14px; font-weight:750; flex:none; }
+  .figure-intro { color:var(--muted); font-size:13px; margin:0 0 20px; }
+  .production-control { margin-top:10px; }
+  label { display:block; min-width:0; }
+  .control-title { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; font-weight:700; }
+  .control-title output { color:var(--teal); font-weight:700; white-space:nowrap; }
+  input[type=range] { display:block; width:100%; height:28px; margin:6px 0 0; padding:0; accent-color:var(--teal); cursor:ew-resize; }
+  input:focus-visible,button:focus-visible { outline:3px solid var(--blue); outline-offset:4px; }
+  .range-ends { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:12px; }
+  .compare { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .lane { min-width:0; padding:16px; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+  .lane-heading { margin-bottom:14px; }
+  .lane-heading>span { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .lane-heading>strong { display:block; font-size:17px; }
+  .assisted .lane-heading>span { color:var(--teal); font-weight:700; }
+  .stage { min-height:128px; border:1px solid var(--line); border-radius:9px; background:var(--bg); padding:11px 12px; }
+  .stage.execution { min-height:190px; }
+  .stage>strong { display:block; font-size:16px; margin:6px 0; }
+  .stage-label,.bottleneck-label { display:inline-block; font-size:12px; font-weight:750; padding:3px 7px; border-radius:4px; }
+  .stage-label { color:var(--teal); background:var(--teal-bg); }
+  .stage p { font-size:12px; color:var(--muted); margin:7px 0 0; line-height:1.7; }
+  .is-bottleneck { border:2px solid var(--red-line); background:var(--red-bg); padding:10px 11px; }
+  .is-bottleneck>strong { color:var(--red); }
+  .bottleneck-label { background:var(--red); color:var(--card); }
+  :global(.dark) .bottleneck-label { color:#261712; }
+  .capacity { height:9px; margin:9px 0; border-radius:3px; background:var(--line); }
+  .capacity>span { display:block; height:100%; background:var(--teal); border-radius:3px; }
+  .is-bottleneck .capacity>span { background:var(--red-line); }
+  .down { height:25px; line-height:25px; text-align:center; color:var(--muted); font-size:20px; }
+  .pool { min-height:126px; display:flex; flex-direction:column; justify-content:center; }
+  .pool-heading { display:flex; align-items:center; justify-content:space-between; gap:6px; min-height:22px; font-size:13px; margin-bottom:8px; }
+  .queue-badge { color:var(--red); font-size:11px; font-weight:700; white-space:nowrap; }
+  .papers { display:grid; grid-template-columns:repeat(6,1fr); gap:5px; }
+  .paper { height:26px; display:grid; place-items:center; background:var(--teal-bg); border:1px solid var(--teal); border-radius:4px; color:var(--teal); }
+  .paper svg { width:12px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linejoin:round; }
+  .paper.waiting { background:var(--red-bg); border-color:var(--red-line); color:var(--red); }
+  .paper.paper-empty { background:transparent; border:1px dashed var(--line); }
+  .paper-empty svg { visibility:hidden; }
+  .queue-caption { margin-top:8px; min-height:36px; color:var(--muted); font-size:12px; }
+  [data-pressure=review] .assisted .pool-heading strong { color:var(--red); }
+  .takeaway { display:flex; align-items:flex-start; gap:10px; background:var(--card); border-left:4px solid var(--red-line); padding:13px 14px; margin-top:18px; }
+  .takeaway-label { color:var(--red); white-space:nowrap; font-size:12px; font-weight:700; padding-top:2px; }
+  .takeaway>strong { font-size:14px; line-height:1.7; }
+  figcaption { color:var(--muted); font-size:12px; line-height:1.7; margin-top:13px; }
+  .legend-dot { display:inline-block; height:8px; width:8px; border-radius:2px; background:var(--red-line); margin-right:4px; }
+  .coordinate-plot { position:relative; height:430px; margin:12px 0 20px; }
+  .quadrant-field { position:absolute; inset:44px 27px 44px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:30px; }
+  .quadrant { min-width:0; display:flex; flex-direction:column; justify-content:center; gap:9px; border:2px solid transparent; border-radius:3px; padding:20px; text-align:left; font:inherit; color:var(--ink); background:var(--card); }
+  .quadrant>strong { font-size:17px; line-height:1.5; }
+  .quadrant>span { font-size:13px; color:var(--muted); line-height:1.7; }
+  .quadrant-constraint { display:block; color:var(--red); margin-bottom:4px; font-weight:750; }
+  .quadrant[data-cell=high-low] { background:var(--blue-bg); }
+  .quadrant[data-cell=high-high] { background:var(--teal-bg); }
+  .quadrant[data-cell=low-high] { background:var(--red-bg); }
+  .quadrant[data-cell=high-high]>strong,.quadrant[data-cell=high-high] .quadrant-constraint { color:var(--teal); }
+  .quadrant[data-cell=low-high]>strong { color:var(--red); }
+  .coordinate-axis { position:absolute; pointer-events:none; background:var(--ink); }
+  .horizontal-axis { left:10px; right:8px; top:50%; height:2px; }
+  .vertical-axis { top:30px; bottom:27px; left:50%; width:2px; }
+  .coordinate-axis:after { content:''; position:absolute; width:0; height:0; }
+  .horizontal-axis:after { right:-1px; top:-4px; border-left:8px solid var(--ink); border-top:5px solid transparent; border-bottom:5px solid transparent; }
+  .vertical-axis:after { top:-1px; left:-4px; border-bottom:8px solid var(--ink); border-left:5px solid transparent; border-right:5px solid transparent; }
+  .axis-title { position:absolute; font-size:13px; font-weight:750; }
+  .y-title { top:0; left:50%; transform:translateX(-50%); }
+  .x-title { bottom:0; right:0; }
+  .axis-end { position:absolute; color:var(--muted); font-size:11px; }
+  .x-low { top:calc(50% + 5px); left:4px; }
+  .x-high { top:calc(50% + 5px); right:0; }
+  .y-high { left:calc(50% + 8px); top:30px; }
+  .y-low { left:calc(50% + 8px); bottom:27px; }
+  .flywheel { position:relative; width:100%; max-width:720px; aspect-ratio:660 / 600; margin:0 auto; container-type:inline-size; }
+  .wheel-paths { position:absolute; inset:0; width:100%; height:100%; color:var(--teal); overflow:visible; }
+  .wheel-guide { fill:none; stroke:var(--line); stroke-width:1; }
+  .wheel-arc { fill:none; stroke:var(--teal); stroke-width:3; }
+  .wheel-deposit { fill:none; stroke:var(--teal); stroke-width:2; stroke-dasharray:4 4; }
+  .accumulation-core { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:31%; aspect-ratio:1; border-radius:50%; border:2px solid var(--teal); background:var(--teal-bg); box-shadow:0 0 0 8px var(--bg),0 0 0 9px var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .core-eyebrow { color:var(--teal); font-size:clamp(10px,1.8cqw,13px); margin-bottom:3px; }
+  .accumulation-core>strong { font-size:clamp(15px,3.6cqw,26px); color:var(--teal); letter-spacing:.05em; }
+  .core-assets { font-size:clamp(10px,1.9cqw,13px); color:var(--muted); margin-top:5px; line-height:1.7; }
+  .core-focus { font-size:clamp(9px,1.7cqw,12px); font-weight:700; color:var(--teal); margin-top:7px; }
+  .wheel-node { position:absolute; transform:translate(-50%,-50%); width:26%; min-height:92px; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--card); text-align:center; color:var(--ink); font:inherit; cursor:pointer; }
+  .node-index { display:flex; justify-content:center; align-items:center; gap:5px; color:var(--muted); font-size:12px; font-weight:700; margin-bottom:5px; }
+  .key-tag { font-size:10px; background:var(--red-bg); color:var(--red); padding:2px 3px; border-radius:3px; white-space:nowrap; }
+  .wheel-node>strong { display:block; font-size:clamp(12px,2.5cqw,17px); line-height:1.6; }
+  .wheel-node>small { display:block; margin-top:5px; color:var(--muted); font-size:clamp(10px,1.8cqw,12px); line-height:1.6; }
+  .checkpoint { border-color:var(--red-line); }
+  .wheel-node[aria-pressed=true] { outline:2px solid var(--teal); outline-offset:2px; background:var(--teal-bg); }
+  .flywheel-principle { text-align:center; color:var(--teal); font-size:13px; margin:0 0 20px; }
+  .step-detail { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:16px; border:1px solid var(--teal); border-radius:10px; background:var(--card); }
+  .step-detail>div>span { display:block; margin-bottom:8px; color:var(--teal); font-size:12px; font-weight:700; }
+  .step-detail strong { display:block; font-size:16px; line-height:1.7; }
+  .step-detail p { font-size:13px; color:var(--muted); line-height:1.7; margin:0; }
+  @media(max-width:640px) {
+    figure { padding:16px; }
+    .figure-heading { font-size:18px; gap:9px; }
+    .compare { grid-template-columns:1fr; gap:16px; }
+    .lane { padding:14px; }
+    .stage { min-height:123px; }
+    .stage p { font-size:12px; }
+    .takeaway { flex-direction:column; gap:4px; }
+    .coordinate-plot { height:485px; }
+    .quadrant-field { inset:44px 10px; gap:28px 20px; }
+    .quadrant { padding:10px 7px; gap:8px; }
+    .quadrant>strong { font-size:14px; }
+    .quadrant>span { font-size:12px; }
+    .wheel-node { padding:8px 3px; min-height:65px; }
+    .wheel-node>small { display:none; }
+    .node-index { font-size:10px; gap:3px; }
+    .key-tag { font-size:9px; padding:1px 2px; }
+    .core-eyebrow,.core-focus { display:none; }
+    .core-assets { margin-top:2px; line-height:1.5; }
+    .accumulation-core { box-shadow:0 0 0 4px var(--bg),0 0 0 5px var(--line); }
+    .flywheel-principle { font-size:12px; margin-top:12px; }
+    .step-detail { grid-template-columns:1fr; gap:15px; }
+  }
+  @media(max-width:360px) {
+    .wheel-node { width:28%; min-height:54px; padding:5px 2px; }
+    .wheel-node>strong { font-size:11px; }
+    .accumulation-core { width:29%; }
+    .accumulation-core>strong { font-size:14px; }
+    .core-assets { font-size:9px; }
+  }
+</style>
+
+<script>
+  class AiValueDiagram extends HTMLElement {
+    private initialized = false
+
+    connectedCallback() {
+      if (this.initialized) return
+      this.initialized = true
+      this.addEventListener('input', event => {
+        if (!(event.target instanceof HTMLInputElement)) return
+        const control = event.target.dataset.control
+        if (control === 'production') this.production(Number(event.target.value))
+      })
+      this.addEventListener('click', event => {
+        const button = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('button') : null
+        if (!button || !this.contains(button)) return
+        if (button.dataset.node !== undefined) this.cycle(Number(button.dataset.node))
+      })
+    }
+
+    private output(name: string, text: string) {
+      const element = this.querySelector<HTMLElement>(`[data-output="${name}"]`)
+      if (element) element.textContent = text
+    }
+
+    private production(value: number) {
+      const pressure = value < 35 ? 'execution' : value < 65 ? 'balanced' : 'review'
+      const reviewing = pressure === 'review'
+      const executing = pressure === 'execution'
+      this.dataset.pressure = pressure
+      const count = Math.round(3 + value * 9 / 100)
+      this.querySelectorAll<HTMLElement>('[data-paper]').forEach(paper => {
+        const index = Number(paper.dataset.paper)
+        paper.classList.toggle('paper-empty', index >= count)
+        paper.classList.toggle('waiting', reviewing && index >= 5 && index < count)
+      })
+      this.querySelector('.assisted .execution')?.classList.toggle('is-bottleneck', executing)
+      this.querySelector('.assisted .review')?.classList.toggle('is-bottleneck', reviewing)
+      const executionLabel = this.querySelector('[data-output="execution-label"]')
+      executionLabel?.classList.toggle('bottleneck-label', executing)
+      executionLabel?.classList.toggle('stage-label', !executing)
+      const reviewLabel = this.querySelector('[data-output="review-label"]')
+      reviewLabel?.classList.toggle('bottleneck-label', reviewing)
+      reviewLabel?.classList.toggle('stage-label', !reviewing)
+      this.output('production', executing ? '仍受限' : reviewing ? '生成加速' : '逐渐提高')
+      this.output('lane-title', executing ? '想法仍卡在实现之前' : reviewing ? '方案卡在验证之前' : '两道关口开始接近')
+      this.output('execution-label', executing ? '瓶颈 · 实现能力' : '实现约束缓解')
+      this.output('execution-note', executing ? '可执行范围仍较窄，方案不易落地' : '更多方案，更快进入下一关')
+      this.output('pool-title', executing ? '可验证的方案较少' : reviewing ? '候选方案积压' : '候选方案逐渐增多')
+      this.output('queue-badge', reviewing ? '等待验证' : '尚未明显积压')
+      this.output('queue-note', reviewing ? '生成得更多，来不及逐一确认价值' : '生成与验证之间的压力正在变化')
+      this.output('review-label', reviewing ? '新瓶颈 · 判断与验证' : '验证能力保持不变')
+      this.output('insight', executing ? '实现能力仍是主要约束：多数想法还来不及成为可验证的方案。' : reviewing ? '生成加速，但验证能力没有同步提高，瓶颈就可能后移。' : '实现约束逐渐缓解，判断与验证开始承受更多压力。')
+      this.querySelector<HTMLInputElement>('[data-control="production"]')?.setAttribute('aria-valuetext', executing ? '生成受限，主要瓶颈在实现' : reviewing ? '生成较快，判断与验证成为主要约束' : '生成能力提高，约束正在转移')
+    }
+
+    private cycle(index: number) {
+      const accumulation = ['拓展问题理解', '形成可检验预期', '积累实现经验', '增加现实证据', '沉淀可复用判断']
+      const questions = ['谁遇到了什么困难？', '为什么认为这个方案会有效？', '能否把判断变成可检验的方案？', '实际结果符合原先的预期吗？', '下一轮，具体要改什么？']
+      const evidence = ['具体的使用情境、真实需求，以及现实约束。', '判断的依据、预期效果，以及准备怎样验证。', '可以运行、使用或测试的最小成果。', '测试结果、实际使用情况与用户反馈，而不只是生成的结论。', '预期与结果的差异、可能的解释，以及下一次准备检验什么。']
+      this.dataset.step = String(index)
+      this.querySelectorAll<HTMLButtonElement>('[data-node]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.node) === index)))
+      this.output('accumulation', accumulation[index])
+      this.output('question', questions[index])
+      this.output('evidence', evidence[index])
+    }
+  }
+
+  if (!customElements.get('ai-value-diagram')) customElements.define('ai-value-diagram', AiValueDiagram)
+</script>
