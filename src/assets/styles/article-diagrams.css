@@ -1,0 +1,39 @@
+/* Article figures share the page palette and leave its background visible. */
+.value-diagram,
+.scion-diagram {
+  --diagram-ink: hsl(var(--foreground));
+  --diagram-muted: hsl(var(--muted-foreground));
+  --diagram-line: hsl(var(--border) / 0.65);
+  --diagram-surface: hsl(var(--muted) / 0.28);
+  --diagram-card: hsl(var(--background) / 0.7);
+  --diagram-blue: hsl(var(--primary));
+  --diagram-blue-soft: hsl(var(--primary) / 0.06);
+  --diagram-teal: #23786a;
+  --diagram-teal-soft: rgb(35 120 106 / 0.06);
+  --diagram-red: #a84b38;
+  --diagram-red-soft: rgb(168 75 56 / 0.06);
+  --diagram-amber: #94612d;
+  --diagram-amber-soft: rgb(148 97 45 / 0.06);
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  margin: 1.5rem auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--diagram-ink);
+  font-family: inherit;
+  line-height: 1.5;
+  scroll-margin-top: 96px;
+}
+
+.dark .value-diagram,
+.dark .scion-diagram {
+  --diagram-teal: #8dcabb;
+  --diagram-teal-soft: rgb(141 202 187 / 0.06);
+  --diagram-red: #e4a28d;
+  --diagram-red-soft: rgb(228 162 141 / 0.07);
+  --diagram-amber: #d3b38a;
+  --diagram-amber-soft: rgb(211 179 138 / 0.06);
+}

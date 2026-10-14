@@ -1,0 +1,202 @@
+---
+import '@/assets/styles/article-diagrams.css'
+
+interface Props {
+  variant: 'workload' | 'diff' | 'economics'
+}
+
+const { variant } = Astro.props
+const figures = {
+  workload: ['01', 'AI 带来的工作负载变化'],
+  diff: ['02', '设计取舍如何变化？'],
+  economics: ['03', 'AI 如何同时改变重新设计的必要性和可行性？']
+}
+const [number, title] = figures[variant]
+const ticks = ['32,000', '24,000', '16,000', '8,000', '0']
+const workflows = [
+  {
+    name: '典型 Git 工作流',
+    className: 'git',
+    label: '本地计算',
+    steps: ['远程 Git 仓库', '本地仓库数据', '本地计算 Diff'],
+    links: ['获取必要的仓库对象', '计算提交之间的差异']
+  },
+  {
+    name: 'Scion 工作流',
+    className: 'scion',
+    label: '服务端计算',
+    steps: ['Agent / CI 任务', 'Scion 服务端', '返回结果'],
+    links: ['直接请求 Diff API', '服务端计算 Diff']
+  }
+]
+---
+
+<figure class={`scion-diagram not-prose ${variant}`} aria-labelledby={`scion-${variant}-title`}>
+  <figcaption class='figure-heading' id={`scion-${variant}-title`}>
+    <span class='figure-index'>图 {number}</span>
+    <strong>{title}</strong>
+  </figcaption>
+
+  {variant === 'workload' && (
+    <>
+      <div class='chart-heading'>
+        <strong>Anthropic 每日合并代码变更次数</strong>
+        <span>次 / 日</span>
+      </div>
+      <div class='chart'>
+        <div class='y-axis' aria-hidden='true'>
+          {ticks.map((tick, index) => <span style={`top:${index * 25}%`}>{tick}</span>)}
+        </div>
+        <div class='plot'>
+          <svg class='bar-chart' viewBox='0 0 480 240' preserveAspectRatio='none' role='img' aria-labelledby='scion-chart-title scion-chart-desc'>
+            <title id='scion-chart-title'>每日合并次数在四个月内增长超过十二倍</title>
+            <desc id='scion-chart-desc'>2026 年 5 月约 2,500 次，9 月超过 30,000 次。两根柱子的高度按 2,500 和 30,000 绘制，后者为保守下限。</desc>
+            {[0, 60, 120, 180, 240].map(y => <line class='gridline' x1='0' x2='480' y1={y} y2={y} vector-effect='non-scaling-stroke' />)}
+            <rect class='bar may' x='58' y='221.25' width='100' height='18.75' rx='5' />
+            <rect class='bar september' x='322' y='15' width='100' height='225' rx='5' />
+          </svg>
+          <span class='bar-value may-value'>2,500</span>
+          <span class='bar-value september-value'>30,000<span class='plus'>+</span></span>
+          <div class='x-axis' aria-hidden='true'><span>2026 年 5 月</span><span>2026 年 9 月</span></div>
+        </div>
+      </div>
+      <div class='stats'>
+        <div><strong>12×<span>+</span></strong><span>四个月内增长倍数</span></div>
+        <div><strong>2,500 <span>万</span></strong><span>每日 CI Checkout 量级</span></div>
+      </div>
+      <p class='figure-note'>数据来源：Anthropic Engineering，2026 年 10 月 13 日。9 月实际超过 30,000 次，图中以 30,000 次作为保守下限。</p>
+    </>
+  )}
+
+  {variant === 'diff' && (
+    <>
+      <p class='figure-intro'>同样一个需求：CI 任务只需要获取某次代码变更的 Diff。</p>
+      <div class='workflows'>
+        {workflows.map(flow => (
+          <section class={`workflow ${flow.className}`} aria-label={flow.name}>
+            <div class='workflow-heading'><span>{flow.label}</span><strong>{flow.name}</strong></div>
+            <ol class='steps'>
+              {flow.steps.map((step, index) => (
+                <li>
+                  <div class='step'><span class='step-number' aria-hidden='true'>{index + 1}</span><strong>{step}</strong></div>
+                  {index < 2 && <div class='connector'><span aria-hidden='true'>↓</span><span>{flow.links[index]}</span></div>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </div>
+      <p class='figure-note'>示意图展示的是典型的本地 Git 操作与 Scion 服务端 API 的差异。Git 平台也可能提供服务端 Diff API，并非所有 Git 操作都必须完整克隆仓库。</p>
+    </>
+  )}
+
+  {variant === 'economics' && (
+    <>
+      <div class='forces'>
+        <div class='force pressure'>
+          <div class='force-label'><span aria-hidden='true'>↗</span><span>必要性上升</span></div>
+          <strong>旧架构的压力上升</strong>
+          <p>更高的变更吞吐量、更大的数据规模、更复杂的扩展与维护</p>
+        </div>
+        <div class='force feasibility'>
+          <div class='force-label'><span aria-hidden='true'>↘</span><span>可行性上升</span></div>
+          <strong>新架构的实现成本下降</strong>
+          <p>AI 辅助编码、测试、优化，使新系统的构建更可行</p>
+        </div>
+      </div>
+      <div class='converging' aria-hidden='true'><span>↘</span><span>↙</span></div>
+      <div class='decision'>
+        <span class='decision-label'>重新衡量</span>
+        <strong>继续优化 <span class='versus'>vs.</span> 重新设计</strong>
+        <p>两种方案的相对经济性发生变化</p>
+      </div>
+      <div class='conclusion-arrow' aria-hidden='true'>↓</div>
+      <div class='conclusion'><strong>重新设计成为更有吸引力的选项</strong><p>前提是迁移风险、运行成本和长期维护成本仍可接受</p></div>
+    </>
+  )}
+</figure>
+
+<style>
+  .figure-heading { display:flex; align-items:baseline; gap:10px; margin:0 0 16px; }
+  .figure-index { flex:none; font-size:11px; font-weight:700; color:var(--diagram-blue); }
+  .figure-heading > strong { font-size:16px; line-height:1.5; }
+  .figure-intro { margin:0 0 14px; color:var(--diagram-muted); font-size:13px; }
+  .figure-note { margin:14px 0 0; padding-top:10px; border-top:1px solid var(--diagram-line); color:var(--diagram-muted); font-size:12px; line-height:1.7; }
+  .chart-heading { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px; }
+  .chart-heading > strong { font-size:14px; }
+  .chart-heading > span { font-size:11px; color:var(--diagram-muted); }
+  .chart { display:grid; grid-template-columns:46px minmax(0,1fr); gap:10px; margin:30px 0 38px; }
+  .y-axis,.plot { position:relative; height:160px; }
+  .y-axis > span { position:absolute; right:0; transform:translateY(-50%); font-size:11px; color:var(--diagram-muted); font-variant-numeric:tabular-nums; }
+  .bar-chart { display:block; width:100%; height:100%; overflow:visible; }
+  .gridline { stroke:var(--diagram-line); stroke-width:1; stroke-dasharray:3 5; }
+  .gridline:last-of-type { stroke-dasharray:none; }
+  .bar { fill:var(--diagram-blue); transition:filter 160ms ease; }
+  .may { opacity:.6; }
+  .bar:hover { filter:brightness(1.15); }
+  .bar-value { position:absolute; transform:translateX(-50%); font-size:14px; font-weight:700; color:var(--diagram-blue); font-variant-numeric:tabular-nums; pointer-events:none; white-space:nowrap; }
+  .may-value { left:22.5%; top:calc(92.1875% - 24px); }
+  .september-value { left:77.5%; top:calc(6.25% - 24px); }
+  .plus { font-size:.8em; padding-left:2px; }
+  .x-axis { position:absolute; top:calc(100% + 8px); left:0; right:0; font-size:11px; color:var(--diagram-muted); }
+  .x-axis > span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+  .x-axis > span:first-child { left:22.5%; }
+  .x-axis > span:last-child { left:77.5%; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .stats > div { display:flex; flex-direction:column; gap:2px; }
+  .stats > div:last-child { text-align:right; }
+  .stats strong { font-size:23px; line-height:1.2; color:var(--diagram-blue); }
+  .stats strong > span { font-size:.7em; }
+  .stats div > span { color:var(--diagram-muted); font-size:12px; }
+  .workflows,.forces { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; }
+  .workflow { min-width:0; padding:0; }
+  .workflow-heading { display:flex; flex-direction:column; gap:2px; margin-bottom:12px; }
+  .workflow-heading > span { font-size:11px; color:var(--diagram-muted); }
+  .workflow-heading > strong { font-size:15px; }
+  .scion .workflow-heading > span,.scion .workflow-heading > strong { color:var(--diagram-teal); }
+  .steps { list-style:none; padding:0; margin:0; }
+  .step { display:flex; align-items:center; gap:8px; min-height:42px; padding:8px 10px; border-left:2px solid var(--diagram-line); background:var(--diagram-surface); transition:border-color 160ms ease,background-color 160ms ease; }
+  .scion .step { border-left-color:var(--diagram-teal); }
+  .step:hover { border-left-color:var(--diagram-blue); background:var(--diagram-blue-soft); }
+  .scion .step:hover { background:var(--diagram-teal-soft); }
+  .step-number { flex:none; color:var(--diagram-muted); font-size:11px; font-weight:700; }
+  .scion .step-number { color:var(--diagram-teal); }
+  .step > strong { font-size:13px; font-weight:650; }
+  .connector { display:flex; align-items:center; justify-content:center; min-height:32px; gap:6px; text-align:center; color:var(--diagram-muted); }
+  .connector > span:first-child { font-size:18px; line-height:1; }
+  .connector > span:last-child { font-size:11px; }
+  .force { padding:10px 0 0; border-top:2px solid var(--diagram-line); }
+  .pressure { border-top-color:var(--diagram-amber); }
+  .feasibility { border-top-color:var(--diagram-teal); }
+  .force-label { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:11px; font-weight:700; }
+  .pressure .force-label { color:var(--diagram-amber); }
+  .feasibility .force-label { color:var(--diagram-teal); }
+  .force-label > span:first-child { font-size:20px; line-height:1; }
+  .force > strong { font-size:15px; }
+  .force p { margin:6px 0 0; font-size:12px; color:var(--diagram-muted); }
+  .converging { display:grid; grid-template-columns:1fr 1fr; text-align:center; padding:3px 0; font-size:20px; color:var(--diagram-muted); }
+  .decision { padding:10px 8px; border-block:1px solid var(--diagram-line); text-align:center; }
+  .decision-label { display:block; color:var(--diagram-blue); font-size:11px; margin-bottom:3px; }
+  .decision > strong { font-size:17px; }
+  .versus { padding:0 6px; color:var(--diagram-muted); font-size:.8em; font-weight:500; }
+  .decision p,.conclusion p { margin:5px 0 0; font-size:12px; color:var(--diagram-muted); }
+  .conclusion-arrow { text-align:center; font-size:20px; padding:3px 0; color:var(--diagram-muted); }
+  .conclusion { padding:6px 0 0; text-align:center; }
+  .conclusion > strong { font-size:15px; }
+  @media(max-width:480px) {
+    .workflows { gap:12px; }
+    .workflow-heading { min-height:44px; }
+    .workflow-heading > strong { font-size:14px; }
+    .step { min-height:54px; gap:6px; padding:6px 8px; }
+    .step > strong { font-size:12px; }
+    .connector { min-height:48px; flex-direction:column; gap:2px; }
+    .forces { grid-template-columns:minmax(0,1fr); gap:18px; }
+    .y-axis,.plot { height:150px; }
+    .chart { grid-template-columns:42px minmax(0,1fr); gap:8px; }
+    .converging { display:block; padding:5px 0; }
+    .converging > span:first-child { font-size:0; }
+    .converging > span:first-child::after { content:'↓'; font-size:20px; }
+    .converging > span:last-child { display:none; }
+  }
+  @media(prefers-reduced-motion:reduce) { .bar,.step { transition:none; } }
+</style>
