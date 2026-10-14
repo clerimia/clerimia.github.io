@@ -155,7 +155,7 @@ export const integ: IntegrationUserConfig = {
 }
 
 export const terms: CardListData = {
-  title: '站点条款',
+  title: 'Site Policies',
   list: [
     {
       title: '隐私政策',

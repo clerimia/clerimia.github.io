@@ -7,9 +7,9 @@ import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
 
 const headings = [
-  { depth: 2, slug: 'common-links', text: '友情链接' },
-  { depth: 2, slug: 'special-links', text: '特别推荐' },
-  { depth: 2, slug: 'apply-links', text: '申请友链' }
+  { depth: 2, slug: 'common-links', text: 'Friends' },
+  { depth: 2, slug: 'special-links', text: 'Featured Links' },
+  { depth: 2, slug: 'apply-links', text: 'Exchange Links' }
 ]
 
 const { friends } = links
@@ -17,21 +17,21 @@ const linksConf = config.integ.links
 const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/public/links.json'
 ---
 
-<PageLayout title='友链' {headings} comment>
+<PageLayout title='Links' {headings} comment>
   <p>顺序随机。</p>
-  <h2 id='common-links'>友情链接</h2>
+  <h2 id='common-links'>Friends</h2>
   <FriendList list={friends[0]} />
-  <Collapse title='暂时失联的站点'>
+  <Collapse title='Inactive Sites'>
     <FriendList list={friends[1]} />
   </Collapse>
-  <Collapse title='友链日志'>
+  <Collapse title='Changelog'>
     <Timeline events={linksConf.logbook} />
   </Collapse>
 
-  <h2 id='special-links'>特别推荐</h2>
+  <h2 id='special-links'>Featured Links</h2>
   <FriendList list={friends[2]} />
 
-  <h2 id='apply-links'>申请友链</h2>
+  <h2 id='apply-links'>Exchange Links</h2>
   <p>本站信息（点击复制）：</p>
   <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
     {

@@ -38,13 +38,13 @@ const meta = {
 const paginationProps = {
   ...(page.url.prev && {
     prevUrl: {
-      text: `← Previous Posts`,
+      text: `← 上一页`,
       url: page.url.prev
     }
   }),
   ...(page.url.next && {
     nextUrl: {
-      text: `Next Posts →`,
+      text: `下一页 →`,
       url: page.url.next
     }
   })
@@ -52,7 +52,7 @@ const paginationProps = {
 ---
 
 <PageLayout {meta}>
-  <Button title='Back' href='/' variant='back' />
+  <Button title='返回' href='/' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
       <h1 class='mb-6 mt-6 text-3xl font-medium sm:mt-10'>Blog</h1>
@@ -69,7 +69,7 @@ const paginationProps = {
                 Page {page.currentPage} - Showing {page.data.length} of {collectionsCount} posts
               </span>
               <a aria-label='View all blog by years' href='/archives' data-astro-prefetch>
-                View all posts by years →
+                按年份查看全部文章 →
               </a>
             </div>
             {/* posts */}
@@ -100,7 +100,7 @@ const paginationProps = {
               </ul>
               <span class='mt-4 block sm:text-end'>
                 <a aria-label='View all blog categories' href='/tags' data-astro-prefetch>
-                  View all →
+                  查看全部 →
                 </a>
               </span>
             </aside>

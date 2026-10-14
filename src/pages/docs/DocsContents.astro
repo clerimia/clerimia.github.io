@@ -15,7 +15,7 @@ const DEFAULT_CATE = '_root'
 /** 分类显示名：未登记的目录名直接以原文显示 */
 const cateTitles: Record<string, string> = {
   _root: '',
-  notes: '笔记',
+  notes: 'Notes',
   setup: 'Setup',
   integrations: 'Integrations',
   advanced: 'Advanced'
@@ -53,7 +53,7 @@ const { title = true, class: className, ...props } = Astro.props
 ---
 
 <docs-toc class={cn('not-prose', className)} {...props}>
-  {title && <h2 class='text-foreground font-medium'>目录</h2>}
+  {title && <h2 class='text-foreground font-medium'>Contents</h2>}
 
   {
     flat && (

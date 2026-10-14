@@ -3,13 +3,13 @@ import PageLayout from '@/layouts/CommonPage.astro'
 import ProjectSection from '@/components/projects/ProjectSection.astro'
 
 const headings = [
-  { depth: 2, slug: 'programs', text: '项目' },
-  { depth: 2, slug: 'learnings', text: '学习' },
-  { depth: 2, slug: 'others', text: '其他' }
+  { depth: 2, slug: 'programs', text: 'Projects' },
+  { depth: 2, slug: 'learnings', text: 'Learning' },
+  { depth: 2, slug: 'others', text: 'Other' }
 ]
 ---
 
-<PageLayout title='项目' {headings} view>
+<PageLayout title='Projects' {headings} view>
   <p>GitHub 提交活动：</p>
   <p>
     <img
@@ -23,7 +23,7 @@ const headings = [
     这里挑了一些自己写的项目。完整列表见 <a href='https://github.com/clerimia?tab=repositories' target='_blank'>GitHub</a>。
   </p>
 
-  <h2 id='programs'>项目</h2>
+  <h2 id='programs'>Projects</h2>
   <ProjectSection
     projects={[
       {
@@ -49,7 +49,7 @@ const headings = [
     ]}
   />
 
-  <h2 id='learnings'>学习</h2>
+  <h2 id='learnings'>Learning</h2>
   <ProjectSection
     projects={[
       {
@@ -75,7 +75,7 @@ const headings = [
     ]}
   />
 
-  <h2 id='others'>其他</h2>
+  <h2 id='others'>Other</h2>
   <ProjectSection
     projects={[
       {

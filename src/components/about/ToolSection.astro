@@ -12,7 +12,7 @@ interface Props {
     name: string
     description: string
     href: string
-    icon: Promise<typeof import('*.svg?raw')> | ImageMetadata
+    icon: Promise<typeof import('*.svg?raw')> | ImageMetadata | string
     darkIcon?: Promise<typeof import('*.svg?raw')> | ImageMetadata
   }[]
 }
@@ -39,7 +39,11 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
           target='_blank'
         >
           <div class='flex items-center gap-x-3 rounded-lg border border-transparent px-1.5 py-1 transition-colors hover:border-border hover:bg-muted'>
-            {tool.darkIcon ? (
+            {typeof tool.icon === 'string' ? (
+              <div class='flex size-10 shrink-0 items-center justify-center rounded-lg bg-card font-mono text-xs font-semibold text-foreground' aria-hidden='true'>
+                {tool.icon}
+              </div>
+            ) : tool.darkIcon ? (
               <>
                 {isImageMetadata(tool.icon) ? (
                   <div class='size-10 rounded-lg bg-card p-2 dark:hidden'>
@@ -78,7 +82,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
                 )}
               </>
             )}
-            <div class='z-20 flex flex-col'>
+            <div class='z-20 flex min-w-0 flex-col'>
               <div class='font-medium text-foreground'>{tool.name}</div>
               <div class='font-normal'>{tool.description}</div>
             </div>
