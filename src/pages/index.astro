@@ -4,7 +4,7 @@ import type { CollectionEntry } from 'astro:content'
 
 import { Quote } from 'astro-pure/advanced'
 import { getFormattedDate } from 'astro-pure/utils'
-import { getMusings, getPosts, getPostUrl } from '@/utils/posts'
+import { getMusingUrl, getMusings, getPosts, getPostUrl } from '@/utils/posts'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import IntroOverlay from '@/components/IntroOverlay.astro'
@@ -15,14 +15,24 @@ import config from '@/site-config'
 
 import '@/assets/styles/terminal.css'
 
-const languages = ['TypeScript', 'JavaScript', 'Python', 'Java']
+const languages = ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'Verilog']
 const frontend = ['Astro', 'React', 'UnoCSS', 'Vite']
 const backend = ['Node.js', 'Spring Boot', 'MySQL', 'Redis']
+const aiAgent = [
+  'Claude Code',
+  'Codex',
+  'LLM',
+  'Multi-Agent',
+  'Agentic RAG',
+  'Function Calling',
+  'Prompt Engineering'
+]
+const tools = ['Cursor', 'VS Code', 'Git', 'Docker', 'npm', 'Maven']
 
 const routes: Record<string, string> = {
   blog: '/blog',
   musings: '/musings',
-  notes: '/docs',
+  notes: '/notes',
   projects: '/projects',
   links: '/links',
   about: '/about'
@@ -40,7 +50,7 @@ const entries = toEntries(posts.filter((post) => post.data.section === 'blog'))
 const musings = (await getMusings()).slice(0, 4).map((post) => ({
   meta: getFormattedDate(post.data.publishDate, { timeZone: 'Asia/Shanghai' }),
   title: post.data.title || '随笔',
-  href: `/musings/${post.id}`
+  href: getMusingUrl(post)
 }))
 
 const notes = [
@@ -158,7 +168,7 @@ if (!images[imagePath])
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {notes.map((note) => (
             <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/docs'>
+              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/notes'>
                 <span class='min-w-[95px] py-1 text-xs text-muted-foreground'>{note.meta}</span>
                 <span class='flex flex-1 justify-between gap-4 py-1'>
                   <span>{note.title}</span>
@@ -195,6 +205,8 @@ if (!images[imagePath])
         <SkillLayout title='Languages' skills={languages} />
         <SkillLayout title='Frontend' skills={frontend} />
         <SkillLayout title='Backend' skills={backend} />
+        <SkillLayout title='AI & Agent' skills={aiAgent} />
+        <SkillLayout title='Tools' skills={tools} />
       </Section>
     </div>
     <Quote class='mt-12' />

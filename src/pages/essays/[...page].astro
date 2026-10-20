@@ -1,10 +1,11 @@
 ---
-import type { GetStaticPaths } from 'astro'
-import config from '@/site-config'
-import { getPosts } from '@/utils/posts'
+import { getCollection } from 'astro:content'
+
 export const prerender = true
-export const getStaticPaths = (async ({ paginate }) => {
-  return paginate(await getPosts('essays'), { pageSize: config.content.blogPageSize })
-}) satisfies GetStaticPaths
+export async function getStaticPaths() {
+  // Essays moved to the musings collection; keep old /essays/<page> links working via 301.
+  const essays = await getCollection('musings', ({ data }) => data.section === 'essays')
+  return essays.map(() => ({ params: { page: undefined } }))
+}
 return Astro.redirect('/musings', 301)
 ---

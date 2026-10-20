@@ -3,11 +3,11 @@ import { Image } from 'astro:assets'
 import { type CollectionEntry, render } from 'astro:content'
 
 import { cn } from 'astro-pure/utils'
-import { getPostUrl } from '@/utils/posts'
+import { getMusingUrl } from '@/utils/posts'
 import { Button, FormattedDate, Icon } from 'astro-pure/user'
 
 type Props = {
-  post: CollectionEntry<'blog'>
+  post: CollectionEntry<'blog'> | CollectionEntry<'musings'>
   detailed?: boolean
   class?: string
 }
@@ -31,13 +31,13 @@ const postDate = data.updatedDate ?? data.publishDate
       detailed && 'max-sm:px-4 sm:py-5',
       detailed && data.heroImage && 'max-md:pt-24'
     )}
-    href={getPostUrl(post)}
+    href={getMusingUrl(post)}
     data-astro-prefetch
   >
     {
       detailed && data.heroImage && (
         <Image
-          alt={data.heroImage.alt || data.title}
+          alt={data.heroImage.alt ?? data.title ?? ''}
           class='cover-image absolute end-0 top-0 z-0 h-2/3 w-full rounded-2xl object-cover opacity-50 transition-opacity duration-300 group-hover:opacity-70 md:h-full md:w-3/5'
           loading='eager'
           {...data.heroImage}

@@ -1,31 +1,33 @@
 ---
-import { type CollectionEntry, render } from 'astro:content'
+import { type CollectionEntry, getCollection, render } from 'astro:content'
 
-import { getPosts, getPostUrl } from '@/utils/posts'
+import { getPosts } from '@/utils/posts'
 import PostLayout from '@/layouts/BlogPost.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
   const allPosts = await getPosts()
-  const posts = allPosts.filter((post) => post.data.section === 'blog')
-  return allPosts.map((post) => ({
+  // Essays moved to the musings collection; keep their old /blog/<id> links working via 301.
+  const essayIds = (await getCollection('musings')).map((essay) => essay.id)
+  return [...allPosts, ...essayIds.map((id) => ({ id }))].map((post) => ({
     params: { id: post.id },
-    props: { post, posts }
+    props: { post }
   }))
 }
 
 type Props = {
-  post: CollectionEntry<'blog'>
-  posts: CollectionEntry<'blog'>[]
+  post: CollectionEntry<'blog'> | { id: string }
 }
 
-const { post, posts } = Astro.props
-// Keep previously published links working after a post moves to the essays section.
-if (post.data.section === 'essays') return Astro.redirect(getPostUrl(post), 301)
+const { post } = Astro.props
+// Redirect old links for posts that moved to the essays section (/musings/<id>).
+if (!('collection' in post)) return Astro.redirect(`/musings/${post.id}`, 301)
+if (post.data.section === 'essays') return Astro.redirect(`/musings/${post.id}`, 301)
+const posts = await getPosts()
 const { Content, headings, remarkPluginFrontmatter } = await render(post)
 ---
 
-<PostLayout {post} {posts} {headings} {remarkPluginFrontmatter}>
+<PostLayout {post} posts={posts.filter((p) => p.data.section === 'blog')} {headings} {remarkPluginFrontmatter}>
   <Content />
 </PostLayout>

@@ -5,22 +5,25 @@ import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import PostLayout from '@/layouts/BlogPost.astro'
 import { integ } from '@/site-config'
-import { getMusings, type MusingEntry } from '@/utils/posts'
+import { getMusings } from '@/utils/posts'
 
 export const prerender = true
 
 export async function getStaticPaths() {
   const entries = await getMusings()
-  const posts = entries.filter((post): post is CollectionEntry<'blog'> => post.collection === 'blog')
-  return entries.map((post) => ({
+  // Only entries from the musings collection get a page here; blog entries render at /blog/<id>.
+  const posts = entries.filter(
+    (post): post is CollectionEntry<'musings'> => post.collection === 'musings'
+  )
+  return posts.map((post) => ({
     params: { id: post.id },
     props: { post, posts }
   }))
 }
 
 type Props = {
-  post: MusingEntry
-  posts: CollectionEntry<'blog'>[]
+  post: CollectionEntry<'musings'>
+  posts: CollectionEntry<'musings'>[]
 }
 
 const { post, posts } = Astro.props
@@ -29,12 +32,12 @@ const { title, publishDate } = post.data
 
 const meta = {
   title: title || '随笔',
-  description: '日记随感与短随想。'
+  description: post.data.description || '日记随感与短随想。'
 }
 ---
 
-{post.collection === 'blog' ? (
-  <PostLayout {post} {posts} {headings} {remarkPluginFrontmatter}>
+{post.data.section === 'essays' ? (
+  <PostLayout post={post as unknown as CollectionEntry<'blog'>} posts={posts as unknown as CollectionEntry<'blog'>[]} {headings} {remarkPluginFrontmatter}>
     <Content />
   </PostLayout>
 ) : (

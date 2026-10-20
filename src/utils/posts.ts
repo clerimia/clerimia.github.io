@@ -8,8 +8,10 @@ export async function getPosts(section?: PostSection) {
   return section ? posts.filter((post) => post.data.section === section) : posts
 }
 
+// Long essays live in the musings collection (section: 'essays'); short notes don't set it.
+
 export function getPostUrl(post: CollectionEntry<'blog'>) {
-  return `${getPostSectionUrl(post)}/${post.id}`
+  return `/blog/${post.id}`
 }
 
 export function getPostSectionUrl(post: CollectionEntry<'blog'>) {
@@ -18,10 +20,14 @@ export function getPostSectionUrl(post: CollectionEntry<'blog'>) {
 
 export type MusingEntry = CollectionEntry<'blog'> | CollectionEntry<'musings'>
 
+export function getMusingUrl(post: MusingEntry) {
+  return post.collection === 'blog' ? `/blog/${post.id}` : `/musings/${post.id}`
+}
+
 export async function getMusings(): Promise<MusingEntry[]> {
   const [essays, shortMusings] = await Promise.all([
-    getPosts('essays'),
-    getCollection('musings', ({ data }) => !data.draft)
+    getCollection('musings', ({ data }) => !data.draft && data.section === 'essays'),
+    getCollection('musings', ({ data }) => !data.draft && !data.section)
   ])
   return [...essays, ...shortMusings].sort(
     (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()

@@ -7,9 +7,9 @@ import { cn } from 'astro-pure/utils'
 export const prerender = true
 export const partial = true
 
-const docsCollection = (await getBlogCollection('docs')) as CollectionEntry<'docs'>[]
+const docsCollection = (await getBlogCollection('notes')) as CollectionEntry<'notes'>[]
 
-/** 直接放在 docs 根目录下的文章归入该分类 */
+/** 直接放在 notes 根目录下的文章归入该分类 */
 const DEFAULT_CATE = '_root'
 
 /** 分类显示名：未登记的目录名直接以原文显示 */
@@ -29,7 +29,7 @@ const docsByCate = docsCollection.reduce(
     acc[cate].push(doc)
     return acc
   },
-  {} as Record<string, CollectionEntry<'docs'>[]>
+  {} as Record<string, CollectionEntry<'notes'>[]>
 )
 
 /** 组内按 order 排序；组之间按最小 order 排序 */
@@ -60,7 +60,7 @@ const { title = true, class: className, ...props } = Astro.props
       <ul class='mt-4 flex flex-col'>
         {groups[0].docs.map((doc) => (
           <li class='docs-item flex relative ms-2 px-3 py-1 text-foreground/75 transition-all rounded-2xl'>
-            <a class='flex-1 hover:text-foreground' href={`/docs/${doc.id}`}>
+            <a class='flex-1 hover:text-foreground' href={`/notes/${doc.id}`}>
               {doc.data.title}
             </a>
           </li>
@@ -80,7 +80,7 @@ const { title = true, class: className, ...props } = Astro.props
             <ul class='mt-2 flex flex-col'>
               {docs.map((doc) => (
                 <li class='docs-item flex relative ms-2 px-3 py-1 text-foreground/75 transition-all rounded-2xl'>
-                  <a class='flex-1 hover:text-foreground' href={`/docs/${doc.id}`}>
+                  <a class='flex-1 hover:text-foreground' href={`/notes/${doc.id}`}>
                     {doc.data.title}
                   </a>
                 </li>

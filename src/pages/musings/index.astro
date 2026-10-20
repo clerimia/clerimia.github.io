@@ -2,7 +2,7 @@
 import { Button, FormattedDate } from 'astro-pure/user'
 import PostPreview from '@/components/PostPreview.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { getMusings, type MusingEntry } from '@/utils/posts'
+import { getMusingUrl, getMusings, type MusingEntry } from '@/utils/posts'
 
 export const prerender = true
 const meta = { title: 'Musings', description: '记录阅读、生活与思考，长短皆可。' }
@@ -50,7 +50,7 @@ for (const entry of entries) {
               <PostPreview {post} detailed />
             ) : (
               <li>
-                <a class='group block rounded-2xl border bg-background px-5 py-4 transition-colors hover:bg-muted hover:text-primary' href={`/musings/${post.id}`} data-astro-prefetch>
+                <a class='group block rounded-2xl border bg-background px-5 py-4 transition-colors hover:bg-muted hover:text-primary' href={getMusingUrl(post)} data-astro-prefetch>
                   <FormattedDate class='text-xs text-muted-foreground' date={post.data.publishDate} />
                   {post.data.title && <p class='mt-2 font-medium'>{post.data.title}</p>}
                   <p class='mt-2 text-sm leading-6 text-muted-foreground'>{snippet(post.body)}</p>

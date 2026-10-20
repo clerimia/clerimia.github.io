@@ -1,0 +1,136 @@
+---
+import '@/assets/styles/article-diagrams.css'
+
+interface Props {
+  kind: 'persistence' | 'loop'
+}
+
+const { kind } = Astro.props
+const titles = {
+  persistence: '持久单位，从会话换成人',
+  loop: '公开学习循环：把上下文留在外面'
+}
+---
+
+<ai-persistent-diagram class="value-diagram not-prose" data-kind={kind}>
+  <figure aria-label={titles[kind]}>
+    <div class='figure-heading'><span class='figure-index'>{kind === 'persistence' ? '01' : '02'}</span><strong>{titles[kind]}</strong></div>
+
+    {kind === 'persistence' && (
+      <>
+        <p class='figure-intro'>左右两侧的区别不在记忆多少，而在「回来时，对面是不是同一个存在」。</p>
+        <div class='compare'>
+          <section class='lane' aria-label='一次性会话'>
+            <div class='lane-heading'><span>会话为主对象</span><strong>用完就抛</strong></div>
+            <div class='flow' aria-hidden='true'>
+              <div class='chip'>会话 A</div><span class='arrow'>→</span>
+              <div class='chip'>会话 B</div><span class='arrow'>→</span>
+              <div class='chip'>会话 C</div>
+            </div>
+            <ul class='notes'>
+              <li>每次都要重新介绍背景与约束</li>
+              <li>记忆库记住事实，但关系不连续</li>
+              <li>适合一问一答，不适合长期协作</li>
+            </ul>
+            <div class='loss' aria-hidden='true'>
+              <span class='loss-label'>被抛掉</span>
+              <span>判断的路径 · 踩过的坑 · 协作的关系</span>
+            </div>
+          </section>
+          <section class='lane' aria-label='常驻 Bot'>
+            <div class='lane-heading'><span>Bot 为主对象</span><strong>回来是同一个它</strong></div>
+            <div class='flow' aria-hidden='true'>
+              <div class='chip is-solid'>同一个 Bot</div>
+              <span class='arrow'>⟳</span>
+              <div class='chip'>私聊</div>
+              <span class='arrow'>/</span>
+              <div class='chip'>群聊</div>
+            </div>
+            <ul class='notes'>
+              <li>人格、视角、做事方式保持一致</li>
+              <li>记忆与 Routine 跟随角色</li>
+              <li>可以被指认，因此可以承担责任</li>
+            </ul>
+            <div class='keep'>
+              <span class='keep-label'>留下来</span>
+              <span>能力账号级共享 · 上下文留给角色</span>
+            </div>
+          </section>
+        </div>
+        <figcaption>概念示意：区别在于持久单位，而非是否具备记忆功能。</figcaption>
+      </>
+    )}
+
+    {kind === 'loop' && (
+      <>
+        <p class='figure-intro'>把做过的尝试留在外面，把协作的关系留在里面——两者都在对抗「上下文被一次性抛掉」。</p>
+        <div class='loop' role='group' aria-label='四步公开学习循环'>
+          <div class='loop-track' aria-hidden='true'></div>
+          {[
+            ['做个小东西', '碰一个真实问题'],
+            ['公开出来', '输出判断与路径'],
+            ['反馈 / 直接下一个', '要么被追问，要么重启'],
+            ['沉淀成文', '理解为什么发生']
+          ].map(([title, subtitle], index) => (
+            <div class:list={['loop-node', { 'loop-start': index === 0 }]}>
+              <span class='node-index'>0{index + 1}</span>
+              <strong>{title}</strong>
+              <small>{subtitle}</small>
+            </div>
+          ))}
+        </div>
+        <div class='loop-core'><span class='core-eyebrow'>越转越快</span><strong>公开 → 反馈 → 下一个</strong></div>
+        <figcaption>循环表达机制，不代表每一轮都必然有外部反馈；没有反馈时，直接进入下一个。</figcaption>
+      </>
+    )}
+  </figure>
+</ai-persistent-diagram>
+
+<style>
+  figure { margin:0; padding:0; border:0; background:transparent; }
+  .figure-heading { display:flex; align-items:baseline; gap:10px; margin-bottom:14px; font-size:16px; line-height:1.5; }
+  .figure-index { color:var(--diagram-blue); font-size:11px; font-weight:700; flex:none; }
+  .figure-intro { color:var(--diagram-muted); font-size:13px; margin:0 0 12px; }
+
+  .compare { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
+  .lane { min-width:0; }
+  .lane-heading { margin-bottom:10px; }
+  .lane-heading > span { display:block; font-size:11px; color:var(--diagram-muted); margin-bottom:3px; }
+  .lane-heading > strong { display:block; font-size:15px; }
+
+  .flow { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:10px; background:var(--diagram-surface); min-height:44px; }
+  .flow .arrow { color:var(--diagram-muted); font-size:12px; }
+  .chip { display:inline-block; padding:3px 8px; border:1px dashed var(--diagram-line); border-radius:3px; font-size:12px; color:var(--diagram-muted); background:transparent; }
+  .chip.is-solid { border-style:solid; border-color:var(--diagram-teal); color:var(--diagram-teal); background:var(--diagram-teal-soft); font-weight:650; }
+
+  .notes { margin:10px 0 0; padding:0; list-style:none; }
+  .notes li { position:relative; padding-left:13px; font-size:12px; line-height:1.7; color:var(--diagram-ink); }
+  .notes li::before { content:''; position:absolute; left:0; top:9px; width:4px; height:4px; border-radius:50%; background:var(--diagram-muted); }
+
+  .loss,.keep { margin-top:12px; padding:6px 10px; font-size:12px; line-height:1.6; border-left:2px solid var(--diagram-line); }
+  .loss { border-left-color:var(--diagram-red); background:var(--diagram-red-soft); }
+  .keep { border-left-color:var(--diagram-teal); background:var(--diagram-teal-soft); }
+  .loss-label { color:var(--diagram-red); font-weight:650; margin-right:6px; }
+  .keep-label { color:var(--diagram-teal); font-weight:650; margin-right:6px; }
+
+  figcaption { color:var(--diagram-muted); font-size:12px; line-height:1.7; margin-top:12px; }
+
+  .loop { position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 20px; max-width:440px; margin:8px auto 0; }
+  .loop-track { position:absolute; inset:32px 40px; border:1px dashed var(--diagram-line); border-radius:50%; }
+  .loop-node { position:relative; min-height:64px; padding:8px; border:1px solid var(--diagram-line); border-radius:4px; background:var(--diagram-card); text-align:center; }
+  .loop-start { border-color:var(--diagram-teal); background:var(--diagram-teal-soft); }
+  .node-index { display:block; font-size:10px; font-weight:650; color:var(--diagram-muted); margin-bottom:3px; }
+  .loop-start .node-index { color:var(--diagram-teal); }
+  .loop-node > strong { display:block; font-size:13px; line-height:1.5; }
+  .loop-node > small { display:block; margin-top:3px; color:var(--diagram-muted); font-size:10px; line-height:1.4; }
+  .loop-core { margin-top:14px; text-align:center; }
+  .loop-core .core-eyebrow { display:block; font-size:10px; font-weight:650; color:var(--diagram-teal); margin-bottom:3px; }
+  .loop-core > strong { font-size:13px; color:var(--diagram-teal); }
+
+  @media(max-width:480px) {
+    .compare { gap:12px; }
+    .flow { gap:4px; padding:8px; }
+    .chip { font-size:11px; }
+    .loop { gap:12px; }
+  }
+</style>

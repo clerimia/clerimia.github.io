@@ -1,9 +1,12 @@
 ---
-import { getPosts, getPostUrl } from '@/utils/posts'
+import { getCollection } from 'astro:content'
+
+import { getMusingUrl } from '@/utils/posts'
 export const prerender = true
 export async function getStaticPaths() {
-  const posts = await getPosts('essays')
-  return posts.map((post) => ({ params: { id: post.id }, props: { target: getPostUrl(post) } }))
+  // Essays moved to the musings collection; keep old /essays/<id> links working via 301.
+  const essays = await getCollection('musings', ({ data }) => data.section === 'essays')
+  return essays.map((post) => ({ params: { id: post.id }, props: { target: getMusingUrl(post) } }))
 }
 const { target } = Astro.props
 return Astro.redirect(target, 301)

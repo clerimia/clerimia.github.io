@@ -1,6 +1,4 @@
 ---
-import { Button } from 'astro-pure/user'
-
 type Props = {
   title: string
   skills: string[]
@@ -9,9 +7,56 @@ type Props = {
 const { title, skills } = Astro.props
 ---
 
-<div class='flex flex-col gap-y-2 md:flex-row md:gap-x-5 md:gap-y-0'>
-  <h3 class='w-1/5 font-medium'>{title}</h3>
-  <div class='flex flex-row flex-wrap gap-x-4 gap-y-2 md:w-4/5'>
-    {skills.map((skill: string) => <Button as='button' title={skill} variant='pill' />)}
-  </div>
+<div class='skill-row'>
+  <h3 class='skill-title'>{title}</h3>
+  <ul class='skill-list' role='list' aria-label={title}>
+    {skills.map((skill) => <li class='skill-tag'>{skill}</li>)}
+  </ul>
 </div>
+
+<style>
+  .skill-row {
+    display: grid;
+    gap: 0.625rem;
+  }
+
+  .skill-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .skill-list {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.625rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skill-tag {
+    max-width: 100%;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    background: hsl(var(--muted));
+    padding: 0.3125rem 0.6875rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 1.125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 640px) {
+    .skill-row {
+      grid-template-columns: minmax(7rem, 24%) minmax(0, 1fr);
+      column-gap: 1.25rem;
+    }
+
+    .skill-title {
+      padding-top: 0.3125rem;
+    }
+  }
+</style>

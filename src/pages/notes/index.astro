@@ -4,7 +4,7 @@ import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
 
-import DocsContents from './DocsContents.astro'
+import NotesContents from './_NotesContents.astro'
 
 const meta = {
   title: 'Notes',
@@ -20,7 +20,7 @@ const meta = {
     </div>
 
     <div id='content' class={cn('animate mt-8 max-w-none md:min-w-[45ch]', integ.typography.class)}>
-      <DocsContents title={false} />
+      <NotesContents title={false} />
     </div>
   </main>
 </PageLayout>
