@@ -1,10 +1,13 @@
 ---
 import { Image } from 'astro:assets'
-import { Quote } from 'astro-pure/advanced'
+
 import { Icon } from 'astro-pure/user'
-import avatar from '@/assets/avatar.png'
+import DailyQuote from '@/components/home/DailyQuote.astro'
 import darkAvatar from '@/assets/avatar-dark.png'
+import avatar from '@/assets/avatar.png'
+
 import '@/assets/styles/home.css'
+
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, getPostUrl } from '@/utils/posts'
 
@@ -17,27 +20,36 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
       <div class='home-hero__main'>
         <div class='home-intro'>
           <h1 id='home-hero-heading'>
-            你好，我是<br />
-            <span class='home-name'>clerimia<span class='home-cursor' aria-hidden='true'>_</span></span>
+            <span class='home-greeting'>你好，我是</span>
+            <span class='home-name'>clerimia</span>
           </h1>
           <p class='home-description'>
             合肥工业大学在读，关注 <strong>AI Agent</strong> 与 <strong>全栈开发</strong>。
           </p>
+          <div class='home-actions'>
+            <a class='home-reading-link' href='/blog' data-astro-prefetch>
+              阅读文章 <span aria-hidden='true'>↗</span>
+            </a>
+            <a class='home-notes-link' href='/notes' data-astro-prefetch>
+              翻翻笔记 <span aria-hidden='true'>↗</span>
+            </a>
+          </div>
           <button
-            class='home-terminal-launcher'
+            class='home-terminal-peek'
             data-terminal-trigger
             type='button'
             aria-haspopup='dialog'
             aria-controls='terminal-dialog'
             aria-expanded='false'
           >
-            <span class='home-launcher-icon' aria-hidden='true'>&gt;_</span>
-            <span class='home-launcher-copy'>
-              <strong>探索这个站点</strong>
-              <span>打开终端，认识这个小站</span>
+            <span class='home-peek-title' aria-hidden='true'>clerimia.sh</span>
+            <span class='home-peek-line' aria-hidden='true'>
+              <span class='home-peek-prompt'>❯</span>
+              <span class='home-peek-cmd'>help</span>
+              <span class='home-peek-caret'></span>
             </span>
-            <kbd aria-hidden='true'>`</kbd>
-            <span class='home-launcher-arrow' aria-hidden='true'>↗</span>
+            <span class='home-peek-action' aria-hidden='true'>打开终端 ↗</span>
+            <span class='visually-hidden'>打开站点终端</span>
           </button>
         </div>
 
@@ -69,25 +81,19 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
               href='https://github.com/clerimia'
               target='_blank'
               rel='noopener noreferrer'
-              aria-label='GitHub'
-            ><Icon name='github' /></a>
-            <a class='home-social-button' href='mailto:1937049668@qq.com' aria-label='发送邮件'
+              aria-label='GitHub'><Icon name='github' /></a
+            >
+            <a class='home-social-button' href='mailto:1525258693@qq.com' aria-label='发送邮件'
               ><Icon name='email' /></a
             >
-            <a class='home-social-button' href='/rss.xml' aria-label='订阅 RSS'><Icon name='rss' /></a>
+            <a class='home-social-button' href='/rss.xml' aria-label='订阅 RSS'
+              ><Icon name='rss' /></a
+            >
             <a class='home-about-link' href='/about' data-astro-prefetch>
               更多关于我 <span aria-hidden='true'>↗</span>
             </a>
           </div>
         </aside>
-      </div>
-
-      <div class='home-daily-note'>
-        <div class='home-daily-label'>
-          <span class='home-quote-symbol' aria-hidden='true'>“</span>
-          <span>每日一言</span>
-        </div>
-        <div class='home-daily-content'><Quote /></div>
       </div>
     </section>
 
@@ -116,19 +122,17 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
                 <h3>{post.data.title}</h3>
                 <p>{post.data.description}</p>
               </div>
-              <span class='home-post-arrow' aria-hidden='true'>↗</span>
+              <span class='home-post-arrow' aria-hidden='true'>
+                ↗
+              </span>
             </a>
           ))
         }
       </div>
     </section>
+
+    <aside class='home-daily-note' aria-label='每日一言'>
+      <DailyQuote />
+    </aside>
   </main>
 </PageLayout>
-
-<script is:inline>
-  const quoteSentence = document.getElementById('quote-sentence')
-  if (quoteSentence && quoteSentence.textContent?.includes('Loading')) {
-    quoteSentence.textContent =
-      '我相信十年后的八月，我们还能再相遇。 ——secret base ～君がくれたもの～'
-  }
-</script>

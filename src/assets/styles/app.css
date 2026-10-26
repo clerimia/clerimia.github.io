@@ -19,7 +19,9 @@
   --paper: #fbfdf6;
   --surface: #fbfcf5;
   --ink: #303b28;
-  --quiet: #77816a;
+  --quiet: #68745e;
+  --reading-size: 16px;
+  --reading-leading: 1.75;
   --rule: #dce3cb;
   --wash: #f0f4e4;
   --leaf: #637d43;
@@ -35,7 +37,7 @@
   --secondary: 80 30% 95%;
   --secondary-foreground: 95 19% 19%;
   --muted: 80 30% 95%;
-  --muted-foreground: 86 10% 46%;
+  --muted-foreground: 92 10% 41%;
   --accent: 80 30% 95%;
   --accent-foreground: 95 19% 19%;
   --destructive: 0 65% 48%;
@@ -220,7 +222,7 @@ input:focus-visible,
   left: 50%;
   z-index: 90;
   padding: 8px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--leaf);
   color: #fff;
   font-size: 13px;
@@ -306,7 +308,7 @@ input:focus-visible,
   height: 35px;
   padding: 0;
   border: 1px solid var(--panel-edge);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink);
   text-decoration: none;
@@ -370,6 +372,13 @@ input:focus-visible,
 .site-content--inner .toc-item.highlight-bg-translucent {
   background: var(--active-tint);
   border-radius: 8px;
+}
+
+/* Long-form text shares one reading rhythm; code keeps its own line height. */
+.site-content--inner .prose {
+  color: var(--ink);
+  font-size: var(--reading-size);
+  line-height: var(--reading-leading);
 }
 
 .site-content--inner .prose :where(h2, h3, h4) {
@@ -632,8 +641,9 @@ html.terminal-modal-open {
 
   .site-content--inner {
     margin-top: 15px;
-    padding: 24px 20px 30px;
-    border-radius: 20px;
+    /* The outer shell already supplies 16px on each side. */
+    padding: 24px 4px 30px;
+    border-radius: var(--radius-lg);
   }
 
   .site-footer {

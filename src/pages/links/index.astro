@@ -32,22 +32,31 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
   <FriendList list={friends[2]} />
 
   <h2 id='apply-links'>申请友链</h2>
-  <p>本站信息（点击复制）：</p>
-  <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
+  <p>本站信息：</p>
+  <dl class='friend-info not-prose'>
     {
-      linksConf.applyTip.map(({ name, val }) => {
-        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'已复制：${val}'}}))`
-        return (
-          <>
-            <span class='text-end'>{name}:</span>
-            <samp class='cursor-pointer' onclick={script}>
-              {val}
-            </samp>
-          </>
-        )
-      })
+      linksConf.applyTip.map(({ name, val }) => (
+        <>
+          <dt>{name}:</dt>
+          <dd>
+            <button
+              class='friend-info__copy'
+              type='button'
+              data-copy-value={val}
+              data-copy-label={name}
+              aria-label={`复制 ${name}：${val}`}
+              aria-describedby='friend-copy-status'
+            >
+              <samp>{val}</samp>
+            </button>
+          </dd>
+        </>
+      ))
     }
-  </blockquote>
+  </dl>
+  <p class='friend-copy-status' id='friend-copy-status' role='status' aria-atomic='true'>
+    点击或用键盘 Enter / Space 复制以上信息。
+  </p>
 
   <p>
     可以通过下方留言，或到 <a href={linkEditPage} target='_blank'>仓库</a> 提交 PR 申请友链。要求：
@@ -58,3 +67,82 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     <li>内容合规</li>
   </ul>
 </PageLayout>
+
+<script>
+  const status = document.getElementById('friend-copy-status')
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-value]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      if (button.getAttribute('aria-busy') === 'true') return
+      button.setAttribute('aria-busy', 'true')
+      if (status) status.textContent = '正在复制…'
+
+      try {
+        await navigator.clipboard.writeText(button.dataset.copyValue ?? '')
+        if (status) status.textContent = `已复制 ${button.dataset.copyLabel}。`
+      } catch {
+        if (status) status.textContent = '复制失败，请选中上方内容手动复制。'
+      } finally {
+        button.removeAttribute('aria-busy')
+      }
+    })
+  })
+</script>
+
+<style>
+  .friend-info {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 4px 8px;
+    margin: 20px 0 12px;
+    padding-inline-start: 12px;
+    border-inline-start: 3px solid var(--rule);
+    color: var(--ink);
+    font-size: 14px;
+    font-style: normal;
+  }
+
+  .friend-info dt {
+    padding-block: 6px;
+    text-align: end;
+  }
+
+  .friend-info dd {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .friend-info__copy {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  .friend-info__copy samp {
+    font-family: ui-monospace, Consolas, monospace;
+    user-select: text;
+  }
+
+  .friend-info__copy:hover {
+    border-color: var(--card-edge-hover);
+    background: var(--chip-tint);
+  }
+
+  .friend-info__copy:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .friend-copy-status {
+    min-height: 2em;
+    font-size: 13px;
+  }
+</style>

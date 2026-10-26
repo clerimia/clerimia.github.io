@@ -10,12 +10,13 @@ import { Button, FormattedDate, Icon } from 'astro-pure/user'
 type Props = {
   post: CollectionEntry<'blog'> | CollectionEntry<'musings'>
   detailed?: boolean
+  description?: string
   /** Bare row without a card surface, e.g. for year archives. */
   plain?: boolean
   class?: string
 }
 
-const { post, detailed = false, plain = false, class: className } = Astro.props
+const { post, detailed = false, description = post.data.description, plain = false, class: className } = Astro.props
 const { data } = post
 const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
@@ -91,7 +92,7 @@ const postDate = data.updatedDate ?? data.publishDate
                 data.heroImage && 'sm:me-24'
               )}
             >
-              {data.description}
+              {description}
             </p>
             <div class='py-2 flex items-center gap-2 text-sm italic leading-4 text-muted-foreground'>
               {/* reading time */}

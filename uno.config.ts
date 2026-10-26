@@ -13,7 +13,7 @@ const radius = 'var(--radius)'
 
 const typographyConfig: TypographyOptions = {
   colorScheme: {
-    body: fgMuted,
+    body: fg,
     headings: fg,
     // "lead": [600, 400],
     links: fg,
@@ -21,7 +21,7 @@ const typographyConfig: TypographyOptions = {
     counters: 'hsl(var(--muted-foreground) / 0.6)',
     bullets: 'hsl(var(--muted-foreground) / 0.4)',
     hr: 'hsl(var(--muted-foreground) / 0.4)',
-    quotes: fgMuted,
+    quotes: fg,
     // 'quote-borders': [200, 700],
     // captions: [500, 400],
     kbd: fg,

@@ -54,6 +54,7 @@
 .wt-shell--panel .wt-help-list dd { margin: 0; color: hsl(var(--muted-foreground)); font-size: 12px; }
 .wt-shell--panel .wt-input-row { position: static; flex: 0 0 auto; gap: 0; min-height: 62px; padding: 13px 26px; border-top: 1px solid var(--panel-edge); background: var(--chip-tint); }
 .wt-shell--panel .wt-input { flex: 1; min-width: 0; width: 0; padding: 4px 0; border: 0; outline: none; background: transparent; color: hsl(var(--foreground)); caret-color: hsl(var(--primary)); font: 13px/1.6 ui-monospace, Consolas, monospace; }
+.wt-shell--panel .wt-input:focus-visible { outline: none; }
 .wt-shell--panel .wt-input::placeholder { color: hsl(var(--muted-foreground) / 0.7); font: 12px Satoshi, system-ui, sans-serif; }
 .wt-shell--panel .wt-submit-hint { margin-left: 10px; color: hsl(var(--muted-foreground)); font: 10px ui-monospace, monospace; }
 @media (max-width: 590px) {

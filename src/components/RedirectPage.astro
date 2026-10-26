@@ -19,7 +19,7 @@ const target = new URL(to, Astro.site)
 ---
 
 <!doctype html>
-<html lang='zh-CN'>
+<html lang='zh-CN' class='redirect-doc'>
   <head>
     <meta charset='utf-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -27,52 +27,60 @@ const target = new URL(to, Astro.site)
     <meta http-equiv='refresh' content={`0;url=${to}`} />
     <meta name='robots' content='noindex' />
     <link rel='canonical' href={target.href} />
-    <style>
-      :root {
-        color-scheme: light dark;
-        --ink: #303b28;
-        --quiet: #77816a;
-        --leaf: #637d43;
-        --paper: #fbfdf6;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --ink: #e8ecde;
-          --quiet: #9aa78c;
-          --leaf: #a8c97f;
-          --paper: #1c251b;
-        }
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-        background: var(--paper);
-        color: var(--ink);
-        font: 15px/1.7 "Satoshi", "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-        text-align: center;
-      }
-      a {
-        color: var(--leaf);
-        text-underline-offset: 3px;
-      }
-      p {
-        margin: 0 0 6px;
-      }
-      small {
-        color: var(--quiet);
-      }
-    </style>
   </head>
   <body data-pagefind-ignore>
     <main>
       <p>这个页面已经搬到 <a href={to}>{label}</a>，正在跳转…</p>
       <small>如果没有自动跳转，请点上面的链接。</small>
     </main>
+    <style is:global>
+      /* 注意：这里必须用 is:global，否则 Astro 会给样式加作用域属性，
+         而 <head> 里的 <style> 会被 Vite 提升进共享 CSS chunk 供全站使用，
+         未加作用域的 body 规则会污染整个站点（曾导致全站正文居中）。 */
+      .redirect-doc,
+      .redirect-doc body {
+        height: 100%;
+      }
+
+      .redirect-doc body {
+        margin: 0;
+        display: grid;
+        place-items: start center;
+        align-content: center;
+        padding: 24px;
+        background: #fbfdf6;
+        color: #303b28;
+        font: 15px/1.7 "Satoshi", "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+        text-align: center;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .redirect-doc body {
+          background: #1c251b;
+          color: #e8ecde;
+        }
+
+        .redirect-doc a {
+          color: #a8c97f;
+        }
+
+        .redirect-doc small {
+          color: #9aa78c;
+        }
+      }
+
+      .redirect-doc a {
+        color: #637d43;
+        text-underline-offset: 3px;
+      }
+
+      .redirect-doc p {
+        margin: 0 0 6px;
+      }
+
+      .redirect-doc small {
+        color: #77816a;
+      }
+    </style>
   </body>
 </html>

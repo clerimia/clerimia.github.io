@@ -2,8 +2,8 @@
   max-width: 760px;
   margin-inline: auto;
   color: var(--ink);
-  font-size: 15px;
-  line-height: 1.9;
+  font-size: var(--reading-size);
+  line-height: var(--reading-leading);
 }
 
 .about-profile {

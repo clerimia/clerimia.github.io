@@ -14,11 +14,10 @@
   animation: 300ms fade-in-up;
   animation-fill-mode: forwards;
 }
-@media (prefers-reduced-motion) {
+@media (prefers-reduced-motion: reduce) {
   .animate {
-    opacity: 0;
-    animation: 100ms fade-in-up;
-    animation-fill-mode: forwards;
+    opacity: 1;
+    animation: none !important;
   }
 }
 #content-header {

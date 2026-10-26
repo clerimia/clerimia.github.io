@@ -152,4 +152,14 @@ const { meta, back = '/', ...props } = Astro.props
       min-width: 55vw !important;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    #sidebar,
+    #sidebar-shade {
+      animation: none !important;
+      animation-delay: 0s !important;
+      opacity: 1;
+      transform: none !important;
+    }
+  }
 </style>

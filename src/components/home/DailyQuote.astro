@@ -1,0 +1,130 @@
+---
+/**
+ * 每日一言。
+ *
+ * 不用 astro-pure 的 <Quote />，因为它只渲染一个 <p>，出处只能拼在句子后面
+ * （原来的实现是 `句子 + ' ——' + 作者 + '《作品》'`），前端拿到的是一个不可拆分的
+ * 字符串，排版上无法把「谁说的」和「说了什么」分开。
+ *
+ * 这里直接读接口的三个字段，渲染成两个节点：
+ *   <p class="daily-quote__text">   ← 句子
+ *   <cite class="daily-quote__source"> ← 出处（作者《作品》）
+ *
+ * 出处靠字号、颜色和右对齐与句子区分，不再用破折号。
+ */
+import { integ } from '../../site.config'
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+const { server } = integ.quote
+
+// 接口不可用时的兜底：仍然保持「句子 / 出处」两段结构。
+const fallback = {
+  text: '如果书像是寻宝一样被发现，书会比较高兴。',
+  from: '我想吃掉你的胰脏'
+}
+---
+
+<figure class:list={['daily-quote', className]} data-daily-quote data-endpoint={server}>
+  <figcaption class='daily-quote__label'>
+    <span class='daily-quote__mark' aria-hidden='true'>“</span>
+    每日一言
+  </figcaption>
+
+  <blockquote class='daily-quote__body'>
+    <p class='daily-quote__text' data-quote-text>{fallback.text}</p>
+    <cite class='daily-quote__source' data-quote-source>{fallback.from}</cite>
+  </blockquote>
+</figure>
+
+<script>
+  // 只在数据到达后替换文本；失败就保留兜底内容，不显示「Loading」之类的占位。
+  const figure = document.querySelector('[data-daily-quote]')
+  const endpoint = figure?.getAttribute('data-endpoint')
+
+  if (figure && endpoint) {
+    fetch(endpoint)
+      .then((response) => response.json())
+      .then((data: { hitokoto?: string; from_who?: string; from?: string }) => {
+        const text = figure.querySelector<HTMLElement>('[data-quote-text]')
+        const source = figure.querySelector<HTMLElement>('[data-quote-source]')
+        if (text && data.hitokoto) text.textContent = data.hitokoto
+
+        if (source) {
+          // 作者与作品分开收，避免出现「作者《作品》」贴着书名号却没有间隔的情况。
+          const parts = [data.from_who, data.from].filter(Boolean)
+          if (parts.length) {
+            source.textContent = parts.join('《') + (data.from ? '》' : '')
+          }
+        }
+      })
+      .catch(() => {
+        /* 保留兜底 */
+      })
+  }
+</script>
+
+<style>
+  .daily-quote {
+    margin: 0;
+  }
+
+  .daily-quote__label {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    margin-bottom: 8px;
+    color: var(--quiet);
+    font-size: var(--text-micro);
+    letter-spacing: 0.14em;
+  }
+
+  .daily-quote__mark {
+    color: var(--leaf);
+    font: 20px/0.7 Georgia, serif;
+    opacity: 0.6;
+    transform: translateY(2px);
+  }
+
+  .daily-quote__body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* 句子：被阅读的内容，比正文略大，行高放宽 */
+  .daily-quote__text {
+    margin: 0;
+    max-width: 34em;
+    color: var(--ink);
+    font-family: Georgia, 'Songti SC', 'Noto Serif SC', 'Source Han Serif SC', serif;
+    font-size: 18px;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+  }
+
+  /* 出处：同一块之内、更小更淡，靠字号与间距说明是来源。
+     不做整段右对齐——那会把一句话和它的出处扯成两半。 */
+  .daily-quote__source {
+    display: block;
+    margin-top: 6px;
+    color: var(--quiet);
+    font-size: var(--text-small);
+    font-style: normal;
+    letter-spacing: 0.02em;
+  }
+
+  .daily-quote__source:empty {
+    display: none;
+  }
+
+  @media (max-width: 680px) {
+    .daily-quote__text {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+  }
+</style>

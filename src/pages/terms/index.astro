@@ -5,8 +5,8 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ, terms } from '@/site-config'
 
 const meta = {
-  title: 'Site policy',
-  description: 'Site policy documentation'
+  title: '站点政策',
+  description: '了解本站的隐私政策、使用条款、版权声明与免责声明。'
 }
 ---
 
@@ -14,14 +14,12 @@ const meta = {
   <Button title='返回' href='/' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
-      <h1 class='mb-6 text-3xl font-medium'>Site Policy</h1>
+      <h1 class='mb-6 text-3xl font-medium'>站点政策</h1>
     </div>
 
     <div id='content' class={cn('animate mt-8 max-w-none md:min-w-[45ch]', integ.typography.class)}>
-      <h2 class='text-xl font-medium'>Site policy documentation</h2>
-      <CardList {...terms} />
-      <h2 class='text-xl font-medium'>Help Information</h2>
-      <p>You need to add md files in this directory.</p>
+      <p>以下页面说明本站如何处理隐私、内容使用与版权等事项。</p>
+      <CardList {...terms} title='政策与说明' />
     </div>
   </main>
 </PageLayout>
