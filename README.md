@@ -41,13 +41,12 @@ src/
 ├── components/
 │   ├── comments/             Giscus 评论与留言入口
 │   ├── home/Terminal.astro   首页可交互终端（原生 JS）
-│   ├── IntroOverlay.astro    入场粒子动画（原生 JS + canvas）
 │   └── links/ projects/ about/ home/
 ├── layouts/                  BaseLayout / CommonPage / BlogPost …
 ├── pages/                    路由（含 docs / tags / archives / search）
 └── assets/
     ├── avatar.png            首页头像
-    └── styles/terminal.css · intro.css   自建组件样式
+    └── styles/terminal.css   终端组件样式
 public/
 └── links.json                友链数据
 ```
@@ -100,7 +99,6 @@ publishDate: '2026-10-04'
 - **评论**：`src/config/giscus.ts`（参数取自 <https://giscus.app>）
 - **头像**：替换 `src/assets/avatar.png`
 - **终端文案 / 可跳转栏目**：`src/pages/index.astro` 中 `<Terminal />` 的 props
-- **入场动画**：`src/components/IntroOverlay.astro`（24 小时冷却，尊重 `prefers-reduced-motion`）
 
 ## 部署
 

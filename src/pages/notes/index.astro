@@ -2,6 +2,7 @@
 import { Button } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import TagSidebar from '@/components/tags/TagSidebar.astro'
 import { integ } from '@/site-config'
 
 import NotesContents from './_NotesContents.astro'
@@ -19,8 +20,11 @@ const meta = {
       <h1 class='mb-6 text-3xl font-medium'>Notes</h1>
     </div>
 
-    <div id='content' class={cn('animate mt-8 max-w-none md:min-w-[45ch]', integ.typography.class)}>
-      <NotesContents title={false} />
+    <div class='grid gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-8'>
+      <div id='content' class={cn('animate min-w-0 max-w-none', integ.typography.class)}>
+        <NotesContents title={false} />
+      </div>
+      <TagSidebar section='notes' />
     </div>
   </main>
 </PageLayout>

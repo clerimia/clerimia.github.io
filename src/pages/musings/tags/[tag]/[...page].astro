@@ -1,0 +1,13 @@
+---
+import type { GetStaticPaths, Page } from 'astro'
+import TagResults from '@/components/tags/TagResults.astro'
+import { getTagPaths, type TaggedEntry } from '@/utils/tags'
+
+export const getStaticPaths = (async ({ paginate }) => getTagPaths('musings', paginate)) satisfies GetStaticPaths
+
+interface Props {
+  page: Page<TaggedEntry>
+}
+---
+
+<TagResults section='musings' page={Astro.props.page} />

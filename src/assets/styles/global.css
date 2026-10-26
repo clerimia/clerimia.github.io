@@ -56,7 +56,7 @@ span.katex-display {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--card-edge);
   background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1)) !important;
   color: hsl(var(--code-fg));
   display: flex;
@@ -161,7 +161,7 @@ span.katex-display {
     right: 0.75rem;
     user-select: none;
     & .success::before {
-      content: 'Copied!';
+      content: '已复制';
       position: absolute;
       right: 100%;
       top: 0;

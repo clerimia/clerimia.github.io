@@ -1,0 +1,106 @@
+---
+import { Icon } from 'astro-pure/user'
+import { theme } from '@/site-config'
+
+const pathname = Astro.url.pathname
+const isActive = (link: string) => pathname === link || pathname.startsWith(`${link}/`)
+---
+
+<header class='site-header'>
+  <a class='site-brand' href='/' aria-label='clerimia 首页' data-astro-prefetch>
+    <span class='site-brand__mark' aria-hidden='true'>c.</span>
+    <span>clerimia</span>
+    <span class='site-brand__suffix'>/ 随写与构建</span>
+  </a>
+
+  <nav class='site-nav' aria-label='主导航'>
+    {
+      theme.header.menu?.map((item) => (
+        <a
+          href={item.link}
+          class:list={{ active: isActive(item.link) }}
+          aria-current={isActive(item.link) ? 'page' : undefined}
+          data-astro-prefetch
+        >
+          {item.title}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class='site-header__actions'>
+    <a class='site-square-button site-search-button' href='/search' aria-label='搜索' title='搜索'>
+      <Icon name='search' />
+    </a>
+    <button
+      class='site-square-button site-terminal-button'
+      data-terminal-trigger
+      type='button'
+      aria-label='打开终端'
+      title='打开终端 (`)'
+      aria-haspopup='dialog'
+      aria-controls='terminal-dialog'
+      aria-expanded='false'
+    >
+      <span aria-hidden='true'>&gt;_</span>
+    </button>
+    <button
+      class='site-square-button site-theme-button'
+      id='site-theme-toggle'
+      type='button'
+      aria-label='切换深浅色'
+      title='切换深浅色'
+    >
+      <Icon class='theme-icon theme-icon--sun' name='sun' />
+      <Icon class='theme-icon theme-icon--moon' name='moon' />
+    </button>
+  </div>
+</header>
+
+<script>
+  const themeButton = document.getElementById('site-theme-toggle')
+
+  // 说明：<head> 里的内联脚本负责「首屏无闪烁」的初始着色（astro-pure ThemeProvider）；
+  // 这里负责后续的重新同步——预渲染激活、往返缓存（bfcache）、以及其它标签页改了主题。
+  // 两处都读同一个 localStorage.theme，行为一致。
+  function applyStoredTheme() {
+    try {
+      const saved = localStorage.getItem('theme')
+      const isDark =
+        saved === 'dark' ||
+        ((!saved || saved === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      document.documentElement.classList.toggle('dark', isDark)
+    } catch {
+      // 浏览器禁用存储时保持当前主题
+    }
+    syncThemeButton()
+  }
+
+  function syncThemeButton() {
+    const isDark = document.documentElement.classList.contains('dark')
+    themeButton?.setAttribute('aria-pressed', String(isDark))
+    themeButton?.setAttribute('title', isDark ? '切换到浅色' : '切换到深色')
+
+    // 主题色跟随站点配色；astro-pure 默认写的 #0B0B10 / #FCFCFD 和本站的绿调不搭。
+    const meta =
+      typeof document.querySelector === 'function'
+        ? document.querySelector('meta[name="theme-color"]')
+        : null
+    meta?.setAttribute('content', isDark ? '#1c251b' : '#fbfdf6')
+  }
+
+  applyStoredTheme()
+  document.addEventListener('prerenderingchange', applyStoredTheme)
+  window.addEventListener('pageshow', applyStoredTheme)
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'theme' || event.key === null) applyStoredTheme()
+  })
+
+  themeButton?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark')
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light')
+    } catch {}
+    syncThemeButton()
+  })
+</script>

@@ -4,22 +4,25 @@ import { type CollectionEntry, render } from 'astro:content'
 
 import { cn } from 'astro-pure/utils'
 import { getMusingUrl } from '@/utils/posts'
+import { getEntrySection, getTagUrl } from '@/utils/tags'
 import { Button, FormattedDate, Icon } from 'astro-pure/user'
 
 type Props = {
   post: CollectionEntry<'blog'> | CollectionEntry<'musings'>
   detailed?: boolean
+  /** Bare row without a card surface, e.g. for year archives. */
+  plain?: boolean
   class?: string
 }
 
-const { post, detailed = false, class: className } = Astro.props
+const { post, detailed = false, plain = false, class: className } = Astro.props
 const { data } = post
 const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
 ---
 
 <li
-  class={cn('post-preview', className)}
+  class:list={['post-preview', { 'post-preview--plain': plain }, className]}
   style={detailed &&
     data.heroImage?.color &&
     `--preview-highlight:color-mix(in srgb,${data.heroImage.color} 40%,hsl(var(--foreground)/var(--un-text-opacity,1)));
@@ -27,7 +30,7 @@ const postDate = data.updatedDate ?? data.publishDate
 >
   <a
     class={cn(
-      'block w-full relative group rounded-2xl border bg-background transition-colors ease-in-out px-5 py-2.5 hover:bg-muted hover:text-primary',
+      'post-preview__card block w-full relative group rounded-2xl border transition-colors ease-in-out px-5 py-2.5 hover:text-primary',
       detailed && 'max-sm:px-4 sm:py-5',
       detailed && data.heroImage && 'max-md:pt-24'
     )}
@@ -53,7 +56,7 @@ const postDate = data.updatedDate ?? data.publishDate
       {/* title */}
       <div class='flex justify-between flex-grow'>
         <div class={detailed ? 'font-medium' : undefined}>
-          {data.draft && <span class='text-red-500'>(Draft) </span>}
+          {data.draft && <span class='text-red-500'>(草稿) </span>}
           {data.title}
         </div>
         <svg
@@ -109,7 +112,7 @@ const postDate = data.updatedDate ?? data.publishDate
                 <ul class='tag-list mt-1 flex flex-wrap gap-1.5'>
                   {data.tags.map((tag: string) => (
                     <li>
-                      <Button as='a' title={tag} href={`/tags/${tag}`} variant='pill' />
+                      <Button as='a' title={tag} href={getTagUrl(getEntrySection(post), tag)} variant='pill' />
                     </li>
                   ))}
                 </ul>
@@ -126,17 +129,31 @@ const postDate = data.updatedDate ?? data.publishDate
       --preview-highlight-final: var( --preview-highlight, hsl(var(--primary) / var(--un-text-opacity, 1))
       );
     }
+    /* Cards are the same paper, slightly shaded; bare rows are plain. */
+    .post-preview .post-preview__card {
+      background: var(--card-tint);
+      border-color: var(--card-edge);
+      transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+    }
     .tag-list :global(a) {
       padding: 0.125rem 0.5rem;
       border-radius: 0.5rem;
-      background-color: transparent;
+      background: var(--chip-tint);
+      border-color: transparent;
       font-size: 0.75rem;
       line-height: 1.25rem;
     }
+    .post-preview:hover .post-preview__card {
+      background: var(--card-tint-hover);
+      border-color: var(--card-edge-hover);
+    }
     .post-preview:hover {
-      & > a,
       & .tag-list a {
-        background-color: var( --preview-highlight-bg, hsl(var(--muted) / var(--un-bg-opacity, 1))) !important;
+        background-color: var(--preview-highlight-bg, var(--chip-tint-hover)) !important;
+        border-color: var(--card-edge-hover);
       }
       & > a,
       & .tag-list a:hover {

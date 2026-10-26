@@ -1,5 +1,6 @@
 ---
 import '@/assets/styles/terminal.css'
+import '@/assets/styles/terminal-panel.css'
 
 interface Props {
   user?: string
@@ -12,6 +13,8 @@ interface Props {
   /** 可 cd 的栏目：{ blog: '/blog', ... } */
   routes?: Record<string, string>
   social?: Record<string, string>
+  /** panel 用于弹窗：固定输入区、独立滚动输出和直接输入。 */
+  variant?: 'window' | 'panel'
 }
 
 const {
@@ -23,18 +26,20 @@ const {
   authorName = '',
   authorDesc = '',
   routes = {},
-  social = {}
+  social = {},
+  variant = 'window'
 } = Astro.props
 
 const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 help 查看可用命令。`
+const isPanel = variant === 'panel'
 ---
 
 <div
   id='wt-shell'
-  class='wt-shell wt-shell--collapsed'
-  role='button'
-  tabindex='0'
-  aria-expanded='false'
+  class:list={['wt-shell', { 'wt-shell--collapsed': !isPanel, 'wt-shell--panel': isPanel }]}
+  role={isPanel ? undefined : 'button'}
+  tabindex={isPanel ? undefined : '0'}
+  aria-expanded={isPanel ? 'true' : 'false'}
 >
   <div class='wt-titlebar'>
     <div class='wt-lights' aria-hidden='true'>
@@ -55,43 +60,56 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
   </div>
 
   <div class='wt-body' data-wt='body'>
-    <div class='wt-banner'>
+    <div class='wt-banner' hidden={isPanel}>
       <span class='wt-banner-title'>{bannerTitle}</span>
       {bannerSub && <span class='wt-banner-sub'>{bannerSub}</span>}
     </div>
 
-    <div class='wt-output' data-wt='output'>
-      <span class='wt-line wt-tone-muted' data-wt='typed'><span class='wt-caret' data-wt='typed-caret'
-        ></span></span>
+    <div class='wt-output' data-wt='output' role={isPanel ? 'log' : undefined} aria-label={isPanel ? '终端输出' : undefined} aria-live={isPanel ? 'polite' : undefined}>
+      {isPanel ? (
+        <div class='wt-panel-welcome' data-wt='welcome'>
+          <span class='wt-panel-eyebrow'>HELLO, VISITOR</span>
+          <h3>欢迎来逛逛。</h3>
+          <p>用几条简单的命令，认识这个小站。</p>
+          <div class='wt-suggestions'>
+            <button type='button' data-wt-command='whoami'><code>whoami</code><span>关于我</span></button>
+            <button type='button' data-wt-command='ls'><code>ls</code><span>站点栏目</span></button>
+            <button type='button' data-wt-command='help'><code>help</code><span>所有命令</span></button>
+          </div>
+        </div>
+      ) : (
+        <span class='wt-line wt-tone-muted' data-wt='typed'><span class='wt-caret' data-wt='typed-caret'></span></span>
+      )}
     </div>
 
     <div class='wt-input-row' data-wt='input-row'>
-      <span class='wt-prompt' data-wt='prompt'
+      {isPanel ? <span class='wt-prompt' data-wt='prompt' aria-hidden='true'>❯</span> : <span class='wt-prompt' data-wt='prompt'
         ><span class='wt-prompt-user'>{user}</span><span class='wt-prompt-at'>@</span><span
           class='wt-prompt-host'>{host}</span
-        ><span class='wt-prompt-cwd'> {cwd}</span><span class='wt-prompt-sigil'>$</span></span
-      >
-      <span class='wt-input-display'>
+        ><span class='wt-prompt-cwd'> {cwd}</span><span class='wt-prompt-sigil'>$</span></span>}
+      {!isPanel && <span class='wt-input-display'>
         <span class='wt-tone-fg' data-wt='input-text'></span>
         <span class='wt-caret'></span>
         <span class='wt-input-hint' data-wt='input-hint'
           >输入 <span class='wt-tone-primary'>help</span> 开始探索</span
         >
-      </span>
+      </span>}
       <input
-        class='wt-input-hidden'
+        class={isPanel ? 'wt-input' : 'wt-input-hidden'}
         data-wt='input'
         spellcheck='false'
         autocomplete='off'
         autocapitalize='off'
         autocorrect='off'
         aria-label='终端输入'
+        placeholder={isPanel ? '输入命令，例如 help' : undefined}
       />
+      {isPanel && <kbd class='wt-submit-hint' aria-hidden='true'>Enter ↵</kbd>}
     </div>
   </div>
 </div>
 
-<script is:inline define:vars={{ user, host, cwd, bannerTitle, welcome, routes, social, authorName, authorDesc }}>
+<script is:inline define:vars={{ user, host, cwd, bannerTitle, welcome, routes, social, authorName, authorDesc, isPanel }}>
   ;(function () {
     var shell = document.getElementById('wt-shell')
     if (!shell) return
@@ -107,8 +125,9 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
     var inputTextEl = shell.querySelector('[data-wt="input-text"]')
     var inputHintEl = shell.querySelector('[data-wt="input-hint"]')
     var promptEl = shell.querySelector('[data-wt="prompt"]')
+    var panelWelcome = shell.querySelector('[data-wt="welcome"]')
 
-    var open = false
+    var open = isPanel
     var typed = ''
     var typeTimer = 0
     var histIdx = -1
@@ -146,7 +165,12 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
         el.textContent = text
       }
       outputEl.appendChild(el)
-      bodyEl.scrollTop = bodyEl.scrollHeight
+      scrollOutput()
+    }
+
+    function scrollOutput() {
+      var scrollEl = isPanel ? outputEl : bodyEl
+      scrollEl.scrollTop = scrollEl.scrollHeight
     }
 
     /* ===== 打字机欢迎语 ===== */
@@ -177,6 +201,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
 
     function run(raw) {
       var cmd = String(raw || '').trim()
+      if (isPanel && cmd) panelWelcome.hidden = true
       appendLine(cmd, 'fg', true)
       if (!cmd) return
 
@@ -186,18 +211,32 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
       var key = name.toLowerCase()
 
       switch (key) {
-        case 'help':
-          emit('可用命令：', 'muted')
-          emit('  help                      显示帮助', 'muted')
-          emit('  whoami                    关于我', 'muted')
-          emit('  ls                        列出站点栏目', 'muted')
-          emit('  cd <栏目>                 跳转（如 cd blog）', 'muted')
-          emit('  theme [dark|light|system] 切换主题', 'muted')
-          emit('  social                    社交与联系方式', 'muted')
-          emit('  date                      当前时间', 'muted')
-          emit('  echo <文本>               回显文本', 'muted')
-          emit('  clear                     清屏', 'muted')
+        case 'help': {
+          var commands = [
+            ['help', '显示帮助'], ['whoami', '关于我'], ['ls', '列出站点栏目'],
+            ['cd <栏目>', '跳转，例如 cd blog'], ['theme [dark|light|system]', '切换主题'],
+            ['social', '联系方式'], ['date', '当前时间'], ['echo <文本>', '回显文本'], ['clear', '清屏']
+          ]
+          if (isPanel) {
+            var list = document.createElement('dl')
+            list.className = 'wt-help-list wt-line'
+            commands.forEach(function (command) {
+              var row = document.createElement('div')
+              var term = document.createElement('dt')
+              var desc = document.createElement('dd')
+              term.textContent = command[0]
+              desc.textContent = command[1]
+              row.append(term, desc)
+              list.appendChild(row)
+            })
+            outputEl.appendChild(list)
+            scrollOutput()
+          } else {
+            emit('可用命令：', 'muted')
+            commands.forEach(function (command) { emit('  ' + command[0].padEnd(26) + command[1], 'muted') })
+          }
           break
+        }
 
         case 'whoami':
           emit(authorName || '-', 'primary')
@@ -277,6 +316,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
           outputEl.querySelectorAll('.wt-line').forEach(function (n) {
             n.remove()
           })
+          if (isPanel) panelWelcome.hidden = false
           break
 
         case 'sudo':
@@ -310,6 +350,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
 
     /* ===== 输入 ===== */
     function syncInput() {
+      if (isPanel) return
       inputTextEl.textContent = inputEl.value
       inputHintEl.style.display = inputEl.value ? 'none' : ''
     }
@@ -317,7 +358,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
     inputEl.addEventListener('input', syncInput)
 
     inputEl.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.isComposing) {
         var value = inputEl.value
         if (value.trim()) history.push(value)
         histIdx = -1
@@ -343,6 +384,17 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
         }
         syncInput()
       }
+    })
+
+    shell.querySelectorAll('[data-wt-command]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var command = button.getAttribute('data-wt-command')
+        history.push(command)
+        histIdx = -1
+        inputEl.value = ''
+        run(command)
+        inputEl.focus()
+      })
     })
 
     inputRow.addEventListener('click', function () {
@@ -375,7 +427,7 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
 
     /* 全局 ` 键打开 */
     window.addEventListener('keydown', function (e) {
-      if (e.key !== '`' || open) return
+      if (isPanel || e.key !== '`' || open) return
       var t = e.target
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
       e.preventDefault()
@@ -383,6 +435,6 @@ const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 hel
     })
 
     /* 初始渲染 */
-    renderChrome()
+    if (!isPanel) renderChrome()
   })()
 </script>

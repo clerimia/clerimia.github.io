@@ -4,8 +4,8 @@
   --diagram-ink: hsl(var(--foreground));
   --diagram-muted: hsl(var(--muted-foreground));
   --diagram-line: hsl(var(--border) / 0.65);
-  --diagram-surface: hsl(var(--muted) / 0.28);
-  --diagram-card: hsl(var(--background) / 0.7);
+  --diagram-surface: var(--card-tint);
+  --diagram-card: var(--card-tint-hover);
   --diagram-blue: hsl(var(--primary));
   --diagram-blue-soft: hsl(var(--primary) / 0.06);
   --diagram-teal: #23786a;

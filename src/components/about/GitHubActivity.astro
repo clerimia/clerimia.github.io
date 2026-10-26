@@ -1,0 +1,219 @@
+---
+interface Props {
+  username: string
+}
+
+const { username } = Astro.props
+const profileUrl = `https://github.com/${username}`
+---
+
+<section class='github-activity not-prose' data-github-activity data-username={username} aria-label='GitHub 提交活动'>
+  <div class='activity-header'>
+    <span class='activity-title'>GitHub 提交活动</span>
+    <span class='activity-summary' data-summary aria-live='polite'>正在加载贡献记录…</span>
+  </div>
+  <div class='activity-scroll' tabindex='0' role='region' aria-label='过去一年的每日贡献，可横向滚动'>
+    <div class='activity-calendar' data-calendar hidden></div>
+    <p class='activity-message' data-message>正在获取过去一年的 GitHub 动态。</p>
+    <noscript>
+      <img src={`https://ghchart.rshah.org/659eb9/${username}`} alt={`${username} 的 GitHub 贡献热力图`} loading='lazy' />
+    </noscript>
+  </div>
+  <div class='activity-footer'>
+    <a href={profileUrl} target='_blank' rel='noopener noreferrer'>@{username} ↗</a>
+    <div class='activity-legend' aria-label='颜色越深，贡献越多'>
+      <span>少</span>
+      {[0, 1, 2, 3, 4].map((level) => <span class='activity-cell' data-level={level} aria-hidden='true'></span>)}
+      <span>多</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  interface Contribution {
+    date: string
+    count: number
+    level: number
+  }
+
+  async function loadActivity(card: HTMLElement) {
+    const username = card.dataset.username
+    const summary = card.querySelector<HTMLElement>('[data-summary]')!
+    const calendar = card.querySelector<HTMLElement>('[data-calendar]')!
+    const message = card.querySelector<HTMLElement>('[data-message]')!
+
+    try {
+      const response = await fetch(
+        `https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username!)}?y=last`,
+        { signal: AbortSignal.timeout(12000) }
+      )
+      if (!response.ok) throw new Error('Contribution request failed')
+      const data = await response.json()
+      if (!Array.isArray(data.contributions) || !data.contributions.length) {
+        throw new Error('No contribution data')
+      }
+
+      const days: Contribution[] = data.contributions
+      const firstDate = new Date(`${days[0]!.date}T00:00:00Z`)
+      const offset = firstDate.getUTCDay()
+      const weeks = Math.ceil((offset + days.length) / 7)
+      calendar.style.setProperty('--weeks', String(weeks))
+
+      const months = document.createElement('div')
+      months.className = 'activity-months'
+      let previousMonth = -1
+      for (let week = 0; week < weeks; week++) {
+        const day = days[Math.max(0, week * 7 - offset)]
+        if (!day) continue
+        const month = new Date(`${day.date}T00:00:00Z`).getUTCMonth()
+        if (month !== previousMonth) {
+          const label = document.createElement('span')
+          label.textContent = `${month + 1}月`
+          label.style.gridColumn = String(week + 1)
+          months.append(label)
+          previousMonth = month
+        }
+      }
+
+      const weekdays = document.createElement('div')
+      weekdays.className = 'activity-weekdays'
+      for (const text of ['', 'Mon', '', 'Wed', '', 'Fri', '']) {
+        const label = document.createElement('span')
+        label.textContent = text
+        weekdays.append(label)
+      }
+
+      const grid = document.createElement('div')
+      grid.className = 'activity-grid'
+      grid.setAttribute('role', 'img')
+      grid.setAttribute('aria-label', '过去一年的每日 GitHub 贡献热力图，颜色越深表示贡献越多')
+      days.forEach((day, index) => {
+        const cell = document.createElement('span')
+        cell.className = 'activity-cell'
+        cell.dataset.level = String(Math.max(0, Math.min(4, day.level)))
+        cell.title = `${day.date}：${day.count} 次贡献`
+        cell.style.gridColumn = String(Math.floor((offset + index) / 7) + 1)
+        cell.style.gridRow = String((offset + index) % 7 + 1)
+        grid.append(cell)
+      })
+
+      calendar.replaceChildren(months, weekdays, grid)
+      calendar.hidden = false
+      message.hidden = true
+      const total = days.reduce((sum, day) => sum + day.count, 0)
+      summary.textContent = `过去一年 ${total.toLocaleString('zh-CN')} 次贡献`
+      const scroll = card.querySelector<HTMLElement>('.activity-scroll')!
+      scroll.scrollLeft = scroll.scrollWidth
+    } catch {
+      summary.textContent = '暂时无法加载'
+      message.textContent = '贡献记录暂时不可用，可以通过下方链接前往 GitHub 查看。'
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-github-activity]').forEach(loadActivity)
+</script>
+
+<style is:global>
+  .github-activity {
+    --activity-0: var(--chip-tint);
+    --activity-1: #dce9b9;
+    --activity-2: #bad67f;
+    --activity-3: #87a956;
+    --activity-4: #526d34;
+    padding: 1.25rem;
+    border: 1px solid var(--card-edge);
+    border-radius: 0.75rem;
+    background: var(--card-tint);
+    font-size: 0.75rem;
+  }
+  .dark .github-activity {
+    --activity-0: hsl(var(--muted));
+    --activity-1: #37472c;
+    --activity-2: #536c3c;
+    --activity-3: #86a75a;
+    --activity-4: #c5df96;
+  }
+  .github-activity .activity-header,
+  .github-activity .activity-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .github-activity .activity-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .github-activity .activity-summary,
+  .github-activity .activity-footer {
+    color: hsl(var(--muted-foreground));
+  }
+  .github-activity .activity-scroll {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    padding: 0.25rem 0 0.5rem;
+  }
+  .github-activity .activity-calendar {
+    --cell: 10px;
+    --gap: 2px;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    grid-template-rows: 16px auto;
+    gap: 6px;
+    min-width: max-content;
+  }
+  .github-activity [hidden] {
+    display: none;
+  }
+  .github-activity .activity-months {
+    display: grid;
+    grid-template-columns: repeat(var(--weeks), var(--cell));
+    column-gap: var(--gap);
+    grid-column: 2;
+    white-space: nowrap;
+    font-size: 9px;
+    color: hsl(var(--muted-foreground));
+  }
+  .github-activity .activity-weekdays {
+    display: grid;
+    grid-template-rows: repeat(7, var(--cell));
+    gap: var(--gap);
+    grid-column: 1;
+    font-size: 9px;
+    line-height: var(--cell);
+    color: hsl(var(--muted-foreground));
+  }
+  .github-activity .activity-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--weeks), var(--cell));
+    grid-template-rows: repeat(7, var(--cell));
+    gap: var(--gap);
+  }
+  .github-activity .activity-cell {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--activity-0);
+  }
+  .github-activity .activity-cell[data-level='1'] { background: var(--activity-1); }
+  .github-activity .activity-cell[data-level='2'] { background: var(--activity-2); }
+  .github-activity .activity-cell[data-level='3'] { background: var(--activity-3); }
+  .github-activity .activity-cell[data-level='4'] { background: var(--activity-4); }
+  .github-activity .activity-grid .activity-cell:hover {
+    outline: 1px solid hsl(var(--foreground));
+    outline-offset: 1px;
+  }
+  .github-activity .activity-footer {
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 1rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.6875rem;
+  }
+  .github-activity .activity-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+</style>

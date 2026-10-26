@@ -20,14 +20,12 @@ test('blog and essay lists are disjoint', async () => {
   assert.ok(essays.includes('href="/musings/2026-10-04-kaibisheng"'))
 })
 
-test('homepage places the essay only in its own section', async () => {
+test('homepage latest posts exclude essays', async () => {
   const home = await readPage('index.html')
   const sections = [...home.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/g)].map(([html]) => html)
-  const blog = sections.find((html) => /<h2>Blog<\/h2>/.test(html))
-  const essays = sections.find((html) => /<h2>Musings<\/h2>/.test(html))
+  const blog = sections.find((html) => html.includes('id="home-latest-heading"'))
   assert.ok(blog?.includes('href="/blog/hello-world"'))
   assert.ok(!blog.includes(essayTitle))
-  assert.ok(essays?.includes(`href="${essayPath}"`))
 })
 
 test('essay detail, return link, tag links and feed use the essay URL', async () => {
@@ -38,7 +36,7 @@ test('essay detail, return link, tag links and feed use the essay URL', async ()
   assert.ok(!article.includes('<em>——一场关于记忆力的内心探索</em>'))
   assert.ok(article.includes('参与讨论'))
   assert.ok(article.includes('essays/fear-of-forgetting'))
-  const tag = await readPage('tags/随笔/index.html')
+  const tag = await readPage('musings/tags/随笔/index.html')
   assert.ok(tag.includes(`href="${essayPath}"`))
   const feed = await readPage('rss.xml')
   assert.ok(feed.includes(`https://clerimia.github.io${essayPath}`))
@@ -50,7 +48,4 @@ test('blog archive excludes the essay and the old URL only redirects', async () 
   const redirect = await readPage('blog/fear-of-forgetting/index.html')
   assert.ok(redirect.includes(`content="0;url=${essayPath}"`))
   assert.ok(redirect.includes('content="noindex"'))
-  const oldEssay = await readPage('essays/fear-of-forgetting/index.html')
-  assert.ok(oldEssay.includes(`content="0;url=${essayPath}"`))
-  assert.ok((await readPage('essays/index.html')).includes('content="0;url=/musings"'))
 })

@@ -1,0 +1,78 @@
+---
+/**
+ * 静态跳转页。
+ *
+ * 之前这些路由用 `Astro.redirect()`，纯静态输出下只会产出一个裸的
+ * `<meta http-equiv="refresh">` 片段（没有 <html>），于是每次构建 Pagefind 都会报
+ * 「21 pages found without an <html> element」。
+ * 这里显式渲染一个完整文档：有 <html>、有 canonical、有 noindex，还有一个可点的兜底链接。
+ */
+interface Props {
+  /** 目标路径，例如 /musings/fear-of-forgetting */
+  to: string
+  /** 便于阅读的目标名称，缺省用路径 */
+  label?: string
+}
+
+const { to, label = to } = Astro.props
+const target = new URL(to, Astro.site)
+---
+
+<!doctype html>
+<html lang='zh-CN'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <title>跳转中… · {label}</title>
+    <meta http-equiv='refresh' content={`0;url=${to}`} />
+    <meta name='robots' content='noindex' />
+    <link rel='canonical' href={target.href} />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --ink: #303b28;
+        --quiet: #77816a;
+        --leaf: #637d43;
+        --paper: #fbfdf6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #e8ecde;
+          --quiet: #9aa78c;
+          --leaf: #a8c97f;
+          --paper: #1c251b;
+        }
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--paper);
+        color: var(--ink);
+        font: 15px/1.7 "Satoshi", "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+        text-align: center;
+      }
+      a {
+        color: var(--leaf);
+        text-underline-offset: 3px;
+      }
+      p {
+        margin: 0 0 6px;
+      }
+      small {
+        color: var(--quiet);
+      }
+    </style>
+  </head>
+  <body data-pagefind-ignore>
+    <main>
+      <p>这个页面已经搬到 <a href={to}>{label}</a>，正在跳转…</p>
+      <small>如果没有自动跳转，请点上面的链接。</small>
+    </main>
+  </body>
+</html>

@@ -1,214 +1,134 @@
 ---
 import { Image } from 'astro:assets'
-import type { CollectionEntry } from 'astro:content'
-
 import { Quote } from 'astro-pure/advanced'
-import { getFormattedDate } from 'astro-pure/utils'
-import { getMusingUrl, getMusings, getPosts, getPostUrl } from '@/utils/posts'
-import { Button, Card, Icon, Label } from 'astro-pure/user'
+import { Icon } from 'astro-pure/user'
+import avatar from '@/assets/avatar.png'
+import darkAvatar from '@/assets/avatar-dark.png'
+import '@/assets/styles/home.css'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import IntroOverlay from '@/components/IntroOverlay.astro'
-import Terminal from '@/components/home/Terminal.astro'
-import Section from '@/components/home/Section.astro'
-import SkillLayout from '@/components/home/SkillLayout.astro'
-import config from '@/site-config'
+import { getPosts, getPostUrl } from '@/utils/posts'
 
-import '@/assets/styles/terminal.css'
-
-const languages = ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'Verilog']
-const frontend = ['Astro', 'React', 'UnoCSS', 'Vite']
-const backend = ['Node.js', 'Spring Boot', 'MySQL', 'Redis']
-const aiAgent = [
-  'Claude Code',
-  'Codex',
-  'LLM',
-  'Multi-Agent',
-  'Agentic RAG',
-  'Function Calling',
-  'Prompt Engineering'
-]
-const tools = ['Cursor', 'VS Code', 'Git', 'Docker', 'npm', 'Maven']
-
-const routes: Record<string, string> = {
-  blog: '/blog',
-  musings: '/musings',
-  notes: '/notes',
-  projects: '/projects',
-  links: '/links',
-  about: '/about'
-}
-
-const posts = await getPosts()
-const toEntries = (posts: CollectionEntry<'blog'>[]) => posts
-  .slice(0, 6)
-  .map((post) => ({
-    meta: getFormattedDate(post.data.publishDate, { timeZone: 'Asia/Shanghai' }),
-    title: post.data.title,
-    href: getPostUrl(post)
-  }))
-const entries = toEntries(posts.filter((post) => post.data.section === 'blog'))
-const musings = (await getMusings()).slice(0, 4).map((post) => ({
-  meta: getFormattedDate(post.data.publishDate, { timeZone: 'Asia/Shanghai' }),
-  title: post.data.title || '随笔',
-  href: getMusingUrl(post)
-}))
-
-const notes = [
-  { meta: 'research', title: 'A visual language for personal tools' },
-  { meta: 'notes', title: 'Patterns for making complexity legible' },
-  { meta: 'lab', title: 'Experiments in motion, type, and space' }
-]
-
-const projects = [
-  { name: 'pi', meta: 'TypeScript', title: 'AI agent toolkit with a unified LLM API and coding CLI', href: 'https://github.com/clerimia/pi' },
-  { name: 'amiri', meta: 'TypeScript', title: 'Personal agent built on a Pi runtime with Agentic RAG', href: 'https://github.com/clerimia/amiri' },
-  { name: 'akashic-agent', meta: 'Python', title: 'An experiment in personal memory and agent systems', href: 'https://github.com/clerimia/akashic-agent' },
-  { name: 'AIPodCast', meta: 'TypeScript', title: 'A small AI podcast studio', href: 'https://github.com/clerimia/AIPodCast' }
-]
-
-const imagePath = config.logo.src
-const images = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
-)
-if (!images[imagePath])
-  throw new Error(
-    `"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,avif,webp}"`
-  )
+const posts = (await getPosts()).filter((post) => post.data.section === 'blog').slice(0, 3)
 ---
 
-<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
-  <IntroOverlay />
-  <main class='flex w-full flex-col items-center'>
-    <section class='animate relative z-50 mb-10 flex flex-col items-center gap-y-7' id='content-header'>
-      <Image
-        src={images[imagePath]()}
-        alt='clerimia'
-        class='h-28 w-auto rounded-full border p-1'
-        loading='eager'
-        fetchpriority='high'
-      />
-
-      <div class='flex flex-col items-center gap-y-4'>
-        <h1 class='text-3xl font-bold'>{config.author}</h1>
-        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='安徽省宣城市'>
-            <Icon name='location' class='size-5' slot='icon' />
-          </Label>
-          <Label title='clerimia · 17 public repositories' as='a' href='https://github.com/clerimia' target='_blank'>
-            <Icon name='github' class='size-5' slot='icon' />
-          </Label>
-          <Label title='1937049668@qq.com' as='a' href='mailto:1937049668@qq.com'>
-            <Icon name='email' class='size-5' slot='icon' />
-          </Label>
+<PageLayout meta={{ title: 'Home' }}>
+  <main>
+    <section class='home-hero' aria-labelledby='home-hero-heading'>
+      <div class='home-hero__main'>
+        <div class='home-intro'>
+          <h1 id='home-hero-heading'>
+            你好，我是<br />
+            <span class='home-name'>clerimia<span class='home-cursor' aria-hidden='true'>_</span></span>
+          </h1>
+          <p class='home-description'>
+            合肥工业大学在读，关注 <strong>AI Agent</strong> 与 <strong>全栈开发</strong>。
+          </p>
+          <button
+            class='home-terminal-launcher'
+            data-terminal-trigger
+            type='button'
+            aria-haspopup='dialog'
+            aria-controls='terminal-dialog'
+            aria-expanded='false'
+          >
+            <span class='home-launcher-icon' aria-hidden='true'>&gt;_</span>
+            <span class='home-launcher-copy'>
+              <strong>探索这个站点</strong>
+              <span>打开终端，认识这个小站</span>
+            </span>
+            <kbd aria-hidden='true'>`</kbd>
+            <span class='home-launcher-arrow' aria-hidden='true'>↗</span>
+          </button>
         </div>
+
+        <aside class='home-profile' aria-label='个人名片'>
+          <div class='home-avatar-frame'>
+            <div class='home-avatar-mat'>
+              <Image
+                class='home-avatar--light'
+                src={avatar}
+                alt='clerimia 的头像'
+                width={152}
+                height={152}
+                loading='eager'
+              />
+              <Image
+                class='home-avatar--dark'
+                src={darkAvatar}
+                alt='clerimia 的深色模式头像'
+                width={darkAvatar.width}
+                height={darkAvatar.height}
+                loading='eager'
+              />
+            </div>
+          </div>
+          <div class='home-location'><Icon name='location' /><span>安徽 · 宣城</span></div>
+          <div class='home-social-links'>
+            <a
+              class='home-social-button'
+              href='https://github.com/clerimia'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='GitHub'
+            ><Icon name='github' /></a>
+            <a class='home-social-button' href='mailto:1937049668@qq.com' aria-label='发送邮件'
+              ><Icon name='email' /></a
+            >
+            <a class='home-social-button' href='/rss.xml' aria-label='订阅 RSS'><Icon name='rss' /></a>
+            <a class='home-about-link' href='/about' data-astro-prefetch>
+              更多关于我 <span aria-hidden='true'>↗</span>
+            </a>
+          </div>
+        </aside>
+      </div>
+
+      <div class='home-daily-note'>
+        <div class='home-daily-label'>
+          <span class='home-quote-symbol' aria-hidden='true'>“</span>
+          <span>每日一言</span>
+        </div>
+        <div class='home-daily-content'><Quote /></div>
       </div>
     </section>
 
-    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-      <div class='home-intro'>
-        <span class='home-intro__tag'>/ hello</span>
-        <span>合肥工业大学 · AI agent &amp; 全栈开发者。</span>
+    <section class='home-latest' aria-labelledby='home-latest-heading'>
+      <div class='home-section-heading'>
+        <div>
+          <h2 id='home-latest-heading'>最近写下的</h2>
+        </div>
+        <a href='/blog' data-astro-prefetch>全部文章 <span aria-hidden='true'>↗</span></a>
       </div>
-
-      <Terminal
-        user='clerimia'
-        host='devserver'
-        cwd='~'
-        bannerTitle='wterm v0.1 · clerimia.sh'
-        bannerSub='an interactive shell into this site — try help, ls, or cd projects'
-        authorName={config.author}
-        authorDesc='合肥工业大学在校生，主攻 AI Agent 与全栈开发。'
-        routes={routes}
-        social={{ github: 'https://github.com/clerimia', email: '1937049668@qq.com' }}
-      />
-
-      <Section title='About'>
-        <p class='text-muted-foreground'>AI Agent &amp; Full-Stack Developer</p>
-        <p class='text-muted-foreground'>
-          合肥工业大学在读，关注 AI Agent、全栈开发和能真正跑起来的产品。平时记录技术实践，也把一些实验做成开源项目。
-        </p>
-        <Button title='更多关于我' class='w-fit self-end' href='/about' variant='ahead' />
-      </Section>
-
-      <Section title='Blog'>
-        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-          {entries.map((entry) => (
-            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={entry.href}>
-                <span class='shrink-0 py-1 font-mono text-xs text-muted-foreground sm:w-32'>{entry.meta}</span>
-                <span class='flex flex-1 justify-between gap-4 py-1'>
-                  <span>{entry.title}</span>
-                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <Button title='全部文章' class='w-fit self-end' href='/blog' variant='ahead' />
-      </Section>
-
-      <Section title='Musings'>
-        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-          {musings.map((entry) => (
-            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={entry.href}>
-                <span class='shrink-0 py-1 font-mono text-xs text-muted-foreground sm:w-32'>{entry.meta}</span>
-                <span class='flex flex-1 justify-between gap-4 py-1'>
-                  <span>{entry.title}</span>
-                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <Button title='全部随笔' class='w-fit self-end' href='/musings' variant='ahead' />
-      </Section>
-
-      <Section title='Notes'>
-        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-          {notes.map((note) => (
-            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href='/notes'>
-                <span class='min-w-[95px] py-1 text-xs text-muted-foreground'>{note.meta}</span>
-                <span class='flex flex-1 justify-between gap-4 py-1'>
-                  <span>{note.title}</span>
-                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>→</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      <Section title='Open Source'>
-        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-          {projects.map((project) => (
-            <li class='home-list-card group flex flex-col gap-x-2 sm:flex-row'>
-              <a class='flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={project.href} target='_blank' rel='noreferrer'>
-                <span class='min-w-[95px] py-1 font-mono text-xs text-muted-foreground'>{project.meta}</span>
-                <span class='flex flex-1 justify-between gap-4 py-1'>
-                  <span><span class='font-medium'>{project.name}</span><span class='text-muted-foreground'> · {project.title}</span></span>
-                  <span class='text-muted-foreground transition-transform group-hover:translate-x-1'>↗</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <Button title='查看 GitHub 主页' class='w-fit self-end' href='https://github.com/clerimia' target='_blank' variant='ahead' />
-      </Section>
-
-      <Section title='Education'>
-        <Card heading='合肥工业大学' subheading='计算机科学与技术专业。' date='2022 - 在读' />
-      </Section>
-
-      <Section title='Skills'>
-        <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Frontend' skills={frontend} />
-        <SkillLayout title='Backend' skills={backend} />
-        <SkillLayout title='AI & Agent' skills={aiAgent} />
-        <SkillLayout title='Tools' skills={tools} />
-      </Section>
-    </div>
-    <Quote class='mt-12' />
+      <div class='home-post-list'>
+        {
+          posts.map((post) => (
+            <a class='home-post-row' href={getPostUrl(post)} data-astro-prefetch>
+              <div class='home-post-date'>
+                {post.data.publishDate
+                  .toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    timeZone: 'Asia/Shanghai'
+                  })
+                  .replaceAll('/', '.')}
+              </div>
+              <div class='home-post-content'>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </div>
+              <span class='home-post-arrow' aria-hidden='true'>↗</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
   </main>
 </PageLayout>
+
+<script is:inline>
+  const quoteSentence = document.getElementById('quote-sentence')
+  if (quoteSentence && quoteSentence.textContent?.includes('Loading')) {
+    quoteSentence.textContent =
+      '我相信十年后的八月，我们还能再相遇。 ——secret base ～君がくれたもの～'
+  }
+</script>

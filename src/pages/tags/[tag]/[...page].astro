@@ -1,77 +1,32 @@
 ---
-import type { GetStaticPaths, Page } from 'astro'
-import type { CollectionEntry } from 'astro:content'
+import type { GetStaticPaths } from 'astro'
+import RedirectPage from '@/components/RedirectPage.astro'
+import { contentSections, getTagPaths, getTagUrl } from '@/utils/tags'
 
-import { Paginator } from 'astro-pure/components/pages'
-import PostPreview from '@/components/PostPreview.astro'
-import { getBlogCollection, getUniqueTags, sortMDByDate } from 'astro-pure/server'
-import { getCollection } from 'astro:content'
-import { Button } from 'astro-pure/user'
-import PageLayout from '@/layouts/BaseLayout.astro'
-import config from '@/site-config'
-
-export const prerender = true
-
-export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const allPosts = [
-    ...(await getBlogCollection()),
-    ...(await getCollection('musings', ({ data }) => !data.draft))
-  ] as unknown as CollectionEntry<'blog'>[]
-  const allPostsByDate = sortMDByDate(allPosts)
-  const uniqueTags = getUniqueTags(allPostsByDate)
-
-  return uniqueTags.flatMap((tag) => {
-    const filterPosts = allPostsByDate.filter((post) => post.data.tags.includes(tag))
-    return paginate(filterPosts, {
-      pageSize: config.content.blogPageSize,
-      params: { tag }
-    })
-  })
-}
+// Old unscoped links resolve to one section, preferring Blog for shared tag names.
+export const getStaticPaths = (async ({ paginate }) => {
+  const claimedTags = new Set<string>()
+  const paths = []
+  for (const section of contentSections) {
+    const sectionPaths = await getTagPaths(section, paginate)
+    const available = sectionPaths.filter((path) => !claimedTags.has(path.params.tag!))
+    for (const path of available) {
+      const suffix = path.props.page.currentPage > 1 ? `/${path.props.page.currentPage}` : ''
+      paths.push({
+        params: path.params,
+        props: { target: getTagUrl(section, path.params.tag!) + suffix }
+      })
+    }
+    for (const path of available) claimedTags.add(path.params.tag!)
+  }
+  return paths
+}) satisfies GetStaticPaths
 
 interface Props {
-  page: Page<CollectionEntry<'blog'>>
+  target: string
 }
 
-const { page } = Astro.props
-const { tag } = Astro.params
-
-const meta = {
-  description: `View all posts with the tag - ${tag}`,
-  title: `Tag: ${tag}`
-}
-
-const paginationProps = {
-  ...(page.url.prev && {
-    prevUrl: {
-      text: `← 上一页`,
-      url: page.url.prev
-    }
-  }),
-  ...(page.url.next && {
-    nextUrl: {
-      text: `下一页 →`,
-      url: page.url.next
-    }
-  })
-}
+const { target } = Astro.props
 ---
 
-<PageLayout {meta}>
-  <Button title='返回' href='/blog' variant='back' />
-  <main class='mt-6 lg:mt-10'>
-    <div id='content-header' class='animate'>
-      <h1 class='mb-6 flex items-end gap-x-2 text-3xl font-medium'>
-        Tags:
-        <span class='text-2xl'>#{tag}</span>
-      </h1>
-    </div>
-
-    <section id='content' class='animate' aria-label='Blog post list'>
-      <ul class='flex flex-col gap-y-3 text-start'>
-        {page.data.map((post) => <PostPreview {post} detailed />)}
-      </ul>
-      <Paginator {...paginationProps} />
-    </section>
-  </main>
-</PageLayout>
+<RedirectPage to={target} label='对应标签页' />

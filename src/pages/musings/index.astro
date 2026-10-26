@@ -1,6 +1,8 @@
 ---
 import { Button, FormattedDate } from 'astro-pure/user'
 import PostPreview from '@/components/PostPreview.astro'
+import TagLinks from '@/components/tags/TagLinks.astro'
+import TagSidebar from '@/components/tags/TagSidebar.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { getMusingUrl, getMusings, type MusingEntry } from '@/utils/posts'
 
@@ -37,29 +39,33 @@ for (const entry of entries) {
       <h1 class='mb-4 text-3xl font-medium'>Musings</h1>
       <p class='mb-6 text-muted-foreground'>{meta.description}</p>
     </div>
-    <section id='content' class='animate' aria-label='随笔列表'>
-      {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
-      {Array.from(byYear).map(([year, musings]) => (
-        <div class='mt-8 first:mt-0'>
-          <div class='mb-4 flex items-baseline gap-3'>
-            <h2 class='text-xl font-medium'>{year}</h2>
-            <span class='text-xs text-muted-foreground'>{musings.length} 篇随笔</span>
+    <div class='grid gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-8'>
+      <section id='content' class='animate min-w-0' aria-label='随笔列表'>
+        {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
+        {Array.from(byYear).map(([year, musings]) => (
+          <div class='mt-8 first:mt-0'>
+            <div class='mb-4 flex items-baseline gap-3'>
+              <h2 class='text-xl font-medium'>{year}</h2>
+              <span class='text-xs text-muted-foreground'>{musings.length} 篇随笔</span>
+            </div>
+            <ul class='flex flex-col gap-4'>
+              {musings.map((post) => post.collection === 'blog' ? (
+                <PostPreview {post} detailed />
+              ) : (
+                <li>
+                  <a class='paper-card group block rounded-2xl px-5 py-4 hover:text-primary' href={getMusingUrl(post)} data-astro-prefetch>
+                    <FormattedDate class='text-xs text-muted-foreground' date={post.data.publishDate} />
+                    {post.data.title && <p class='mt-2 font-medium'>{post.data.title}</p>}
+                    <p class='mt-2 text-sm leading-6 text-muted-foreground'>{snippet(post.body)}</p>
+                  </a>
+                  <TagLinks {post} class='mt-2' />
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul class='flex flex-col gap-4'>
-            {musings.map((post) => post.collection === 'blog' ? (
-              <PostPreview {post} detailed />
-            ) : (
-              <li>
-                <a class='group block rounded-2xl border bg-background px-5 py-4 transition-colors hover:bg-muted hover:text-primary' href={getMusingUrl(post)} data-astro-prefetch>
-                  <FormattedDate class='text-xs text-muted-foreground' date={post.data.publishDate} />
-                  {post.data.title && <p class='mt-2 font-medium'>{post.data.title}</p>}
-                  <p class='mt-2 text-sm leading-6 text-muted-foreground'>{snippet(post.body)}</p>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </section>
+        ))}
+      </section>
+      <TagSidebar section='musings' />
+    </div>
   </main>
 </PageLayout>

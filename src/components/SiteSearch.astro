@@ -1,0 +1,109 @@
+---
+import '@pagefind/default-ui/css/ui.css'
+
+/**
+ * 站内搜索（Pagefind）。
+ * 基于 astro-pure 的 PFSearch 改写：界面文案改为中文，其余行为保持一致。
+ */
+---
+
+<site-search>
+  <aside class='form my-4'>
+    {
+      import.meta.env.DEV ? (
+        <div class='w-full rounded-xl border-2 bg-transparent px-4 py-2 pe-3 outline-none'>
+          开发模式下搜索不可用：Pagefind 索引需要先 <code>npm run build</code>，再用
+          <code>npm run preview</code> 查看。
+        </div>
+      ) : (
+        <div id='site-search' />
+      )
+    }
+  </aside>
+</site-search>
+
+<script>
+  const formatURL = (path: string) => path.replace(/(.)\/(#.*)?$/, '$1$2')
+
+  class SiteSearch extends HTMLElement {
+    constructor() {
+      super()
+      const mount = () => {
+        const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1))
+        onIdle(async () => {
+          // 开发模式下没有 #site-search 容器，跳过即可。
+          if (!document.getElementById('site-search')) return
+          // @ts-expect-error 缺少 @pagefind/default-ui 的类型声明
+          const { PagefindUI } = await import('@pagefind/default-ui')
+          new PagefindUI({
+            element: '#site-search',
+            baseUrl: import.meta.env.BASE_URL,
+            bundlePath: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/pagefind/`,
+            showImages: false,
+            showSubResults: true,
+            translations: {
+              placeholder: '搜索文章…',
+              clear_search: '清空',
+              load_more: '加载更多结果',
+              search_label: '搜索本站内容',
+              filters_label: '筛选',
+              zero_results: '没有找到与「[SEARCH_TERM]」相关的内容',
+              many_results: '找到 [COUNT] 条与「[SEARCH_TERM]」相关的内容',
+              one_result: '找到 1 条与「[SEARCH_TERM]」相关的内容',
+              alt_search: '没有与「[SEARCH_TERM]」相关的内容，以下是与「[DIFFERENT_TERM]」相关的结果',
+              search_suggestion: '可以试试：[DIFFERENT_TERM]',
+              searching: '搜索「[SEARCH_TERM]」…'
+            },
+            processResult: (result: { url: string; sub_results: Array<{ url: string }> }) => {
+              result.url = formatURL(result.url)
+              result.sub_results = result.sub_results.map((subResult) => {
+                subResult.url = formatURL(subResult.url)
+                return subResult
+              })
+            }
+          })
+        })
+      }
+
+      // 脚本可能在 DOM 解析前执行，也可能在之后（模块脚本/客户端路由）。
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mount, { once: true })
+      } else {
+        mount()
+      }
+    }
+  }
+
+  if (!customElements.get('site-search')) customElements.define('site-search', SiteSearch)
+</script>
+
+<style>
+  #site-search {
+    --pagefind-ui-scale: 0.8;
+    --pagefind-ui-primary: hsl(var(--primary) / var(--un-bg-opacity, 1));
+    --pagefind-ui-text: hsl(var(--foreground) / var(--un-text-opacity, 1));
+    --pagefind-ui-background: hsl(var(--muted) / var(--un-bg-opacity, 1));
+    --pagefind-ui-border: hsl(var(--border) / var(--un-border-opacity, 1));
+    --pagefind-ui-tag: hsl(var(--border) / var(--un-border-opacity, 1));
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: inherit;
+  }
+
+  #site-search .pagefind-ui__search-input {
+    font-weight: normal;
+  }
+
+  /* 子结果用一条短竖线代替 Pagefind 默认的「⤷」，在中文排版里更干净。
+     这些节点由 Pagefind 在运行时渲染，必须用 :global 才能命中。 */
+  #site-search :global(.pagefind-ui__result-nested .pagefind-ui__result-link::before) {
+    content: '';
+    width: 2px;
+    height: 0.9em;
+    border-radius: 1px;
+    background: currentColor;
+    opacity: 0.28;
+    top: 0.2em;
+    right: calc(100% + 0.45em);
+  }
+</style>

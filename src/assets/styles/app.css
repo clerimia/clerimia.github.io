@@ -1,6 +1,3 @@
-/* Joye-inspired visual system: quiet surfaces, blue accents, and generous space. */
-
-/* Self-hosted Satoshi (variable font), replacing the fontshare CDN provider. */
 @font-face {
   font-family: Satoshi;
   src: url('/fonts/Satoshi-Variable.ttf') format('truetype-variations');
@@ -8,6 +5,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: Satoshi;
   src: url('/fonts/Satoshi-VariableItalic.ttf') format('truetype-variations');
@@ -17,126 +15,662 @@
 }
 
 :root {
-  --background: 210 33% 99%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 200 29% 45%;
-  --primary-foreground: 0 0% 92.5%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95%;
-  --muted-foreground: 240 3.8% 28.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 72.22% 50.59%;
+  color-scheme: light;
+  --paper: #fbfdf6;
+  --surface: #fbfcf5;
+  --ink: #303b28;
+  --quiet: #77816a;
+  --rule: #dce3cb;
+  --wash: #f0f4e4;
+  --leaf: #637d43;
+  --leaf-soft: #e7eed5;
+  --background: 80 40% 98%;
+  --foreground: 95 19% 19%;
+  --card: 80 40% 98%;
+  --card-foreground: 95 19% 19%;
+  --popover: 80 40% 98%;
+  --popover-foreground: 95 19% 19%;
+  --primary: 87 30% 38%;
+  --primary-foreground: 69 54% 97%;
+  --secondary: 80 30% 95%;
+  --secondary-foreground: 95 19% 19%;
+  --muted: 80 30% 95%;
+  --muted-foreground: 86 10% 46%;
+  --accent: 80 30% 95%;
+  --accent-foreground: 95 19% 19%;
+  --destructive: 0 65% 48%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 88%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  --radius: 0.5rem;
-  --term-surface: 210 20% 97%;
-  --term-chrome: 210 20% 95%;
-  --term-ok: 142 50% 40%;
-  --code-bg: 220 14% 93%;
-  --code-fg: 220 13% 18%;
-}
-.dark {
-  --background: 240 20.54% 5.2%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 195 95% 85%;
-  --primary-foreground: 240 3.7% 15.9%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 5.9% 12%;
-  --muted-foreground: 240 5% 74.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 19.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-  --term-surface: 240 18% 7%;
-  --term-chrome: 240 18% 4%;
-  --term-ok: 142 60% 65%;
-  --code-bg: 240 5.9% 12%;
-  --code-fg: 0 0% 92%;
-}
-:root {
+  --border: 80 22% 90%;
+  --input: 80 22% 90%;
+  --ring: 87 30% 38%;
+  --radius: 0.75rem;
+  --term-surface: 80 40% 98%;
+  --term-chrome: 80 30% 95%;
+  --term-ok: 87 30% 38%;
+  --code-bg: 80 30% 95%;
+  --code-fg: 95 19% 19%;
   --un-default-border-color: hsl(var(--border) / 1);
+
+  /* One sheet of paper, one light source (top-left, 135deg).
+     Panels are not surfaces; they are the same paper with a hairline edge. */
+  --panel-wash: 0;
+  --panel-edge: color-mix(in srgb, var(--rule) 62%, transparent);
+  --card-tint: rgb(95 122 62 / 0.05);
+  --card-tint-hover: rgb(95 122 62 / 0.1);
+  --card-edge: rgb(95 122 62 / 0.18);
+  --card-edge-hover: rgb(95 122 62 / 0.4);
+  --chip-tint: rgb(95 122 62 / 0.06);
+  --chip-tint-hover: rgb(95 122 62 / 0.12);
+  --active-tint: rgb(95 122 62 / 0.13);
+  --row-tint: rgb(95 122 62 / 0.06);
+  --avatar-ring: rgb(255 255 255 / 0.55);
 }
-html.dark {
+
+.dark {
   color-scheme: dark;
+  --paper: #1c251b;
+  --surface: #253023;
+  --ink: #e9efdd;
+  --quiet: #a7b39a;
+  --rule: #3f4d35;
+  --wash: #2d3928;
+  --leaf: #bbd68c;
+  --leaf-soft: #37472c;
+  --background: 110 16% 12%;
+  --foreground: 80 36% 90%;
+  --card: 110 16% 12%;
+  --card-foreground: 80 36% 90%;
+  --popover: 110 16% 12%;
+  --popover-foreground: 80 36% 90%;
+  --primary: 81 47% 69%;
+  --primary-foreground: 110 16% 12%;
+  --secondary: 105 15% 17%;
+  --secondary-foreground: 80 36% 90%;
+  --muted: 105 15% 17%;
+  --muted-foreground: 94 14% 65%;
+  --accent: 105 15% 17%;
+  --accent-foreground: 80 36% 90%;
+  --destructive: 0 58% 38%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 95 19% 25%;
+  --input: 95 19% 25%;
+  --ring: 81 47% 69%;
+  --term-surface: 110 16% 14%;
+  --term-chrome: 105 15% 17%;
+  --term-ok: 81 47% 69%;
+  --code-bg: 105 15% 17%;
+  --code-fg: 80 36% 90%;
+
+  --panel-edge: rgb(187 214 140 / 0.13);
+  --card-tint: rgb(187 214 140 / 0.035);
+  --card-tint-hover: rgb(187 214 140 / 0.08);
+  --card-edge: rgb(187 214 140 / 0.14);
+  --card-edge-hover: rgb(187 214 140 / 0.36);
+  --chip-tint: rgb(187 214 140 / 0.04);
+  --chip-tint-hover: rgb(187 214 140 / 0.09);
+  --active-tint: rgb(187 214 140 / 0.11);
+  --row-tint: rgb(187 214 140 / 0.05);
+  --avatar-ring: rgb(255 255 255 / 0.1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html {
-  font-family: Satoshi, ui-sans-serif, system-ui, sans-serif;
+  min-width: 320px;
+  scrollbar-gutter: stable;
+  background: #fbfdf6;
+  font-family: Satoshi, 'Microsoft YaHei', system-ui, sans-serif;
 }
 
-/* Global */
+html.dark {
+  background: #1a2218;
+}
+
+/* A single sheet of paper lit once from the top-left corner.
+   The base is near-white; the light itself is green, fading to white.
+   Everything below inherits that one direction; nothing lights itself. */
+body.site-body {
+  position: relative;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--ink);
+  background: #fbfdf6;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+body.site-body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% 70% at 0% 0%,
+    rgb(167 193 106 / 0.3),
+    rgb(199 216 145 / 0.14) 45%,
+    transparent 72%
+  );
+}
+
+.dark body.site-body {
+  background: #1a2218;
+}
+
+.dark body.site-body::before {
+  background: radial-gradient(
+    ellipse 85% 70% at 0% 0%,
+    rgb(110 143 66 / 0.3),
+    rgb(88 118 54 / 0.14) 45%,
+    transparent 72%
+  );
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button,
 a {
-  transition: color 0.2s ease;
-  &:hover {
-    color: hsl(var(--primary) / var(--un-text-opacity, 1));
-  }
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Keep the homepage rhythm close to the reference: compact labels, airy rows. */
-#content > section {
-  scroll-margin-top: 6rem;
+button {
+  color: inherit;
 }
 
-#content > section > :first-child h2 {
+a {
+  color: inherit;
+  transition: color 160ms ease;
+}
+
+a:hover {
+  color: var(--leaf);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--leaf);
+  outline-offset: 4px;
+}
+
+.site-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(1080px, calc(100% - 64px));
+  min-height: 100dvh;
+  margin: 30px auto 0;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 键盘用户跳转正文的入口，平时不可见。 */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  z-index: 90;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--leaf);
+  color: #fff;
+  font-size: 13px;
+  text-decoration: none;
+  transform: translate(-50%, -160%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  min-height: 70px;
+  gap: 24px;
+  padding: 12px 18px;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+
+.site-brand__mark {
+  color: var(--leaf);
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.site-brand__suffix {
+  margin-left: 6px;
+  color: var(--quiet);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.site-nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.site-nav a {
+  padding: 6px 11px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  background: var(--active-tint);
+  color: var(--leaf);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-square-button {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.site-square-button:hover {
+  border-color: var(--card-edge-hover);
+  background: var(--chip-tint-hover);
+  color: var(--leaf);
+}
+
+.site-square-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.site-terminal-button {
+  color: var(--leaf);
+  font: 15px ui-monospace, Consolas, monospace;
+}
+
+.theme-icon--moon,
+.dark .theme-icon--sun {
+  display: none;
+}
+
+.dark .theme-icon--moon {
+  display: block;
+}
+
+.site-content {
+  flex: 1;
+  width: 100%;
+}
+
+.site-content--inner {
+  margin-top: 18px;
+  padding: 34px 38px 42px;
+  /* Fully merged with the page: no outline, no fill — content sits on the sheet itself. */
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+}
+
+.site-content--inner #content-header h1 {
+  color: var(--ink);
   font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.site-content--inner #sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+.site-content--inner .toc-item.highlight-bg-translucent {
+  background: var(--active-tint);
+  border-radius: 8px;
+}
+
+.site-content--inner .prose :where(h2, h3, h4) {
+  color: var(--ink);
   letter-spacing: -0.02em;
 }
 
-.home-intro {
+.site-content--inner .prose :where(a) {
+  text-decoration-color: color-mix(in srgb, var(--leaf) 50%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.site-content--inner :where(.rounded-2xl, .rounded-xl) {
+  border-color: var(--rule);
+}
+
+/* Cards are just a slightly darker patch of the same paper. */
+.paper-card {
+  border: 1px solid var(--card-edge);
+  background: var(--card-tint);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 160ms ease;
+}
+
+a.paper-card:hover,
+.paper-card:hover {
+  border-color: var(--card-edge-hover);
+  background: var(--card-tint-hover);
+}
+
+/* Pills, back buttons and other muted buttons use the same faint tint. */
+.site-content--inner :is(a, button)[class~='bg-muted'] {
+  border-color: var(--card-edge);
+  background: var(--chip-tint);
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.site-content--inner :is(a, button)[class~='bg-muted']:hover {
+  border-color: var(--card-edge-hover);
+  background: var(--chip-tint-hover);
+  color: var(--leaf);
+}
+
+.site-footer {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin: 0 0 -1.25rem;
-  padding: 0 0.25rem;
-  color: hsl(var(--muted-foreground));
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 42px;
+  padding: 20px 10px 25px;
+  border-top: 1px solid var(--rule);
+  color: var(--quiet);
+  font-size: 10px;
 }
 
-.home-intro__tag {
-  border: 1px dashed hsl(var(--border));
-  border-radius: 999px;
-  background: hsl(var(--muted) / 0.55);
-  padding: 0.125rem 0.5rem;
-  color: hsl(var(--muted-foreground) / 0.8);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.71875rem;
-  letter-spacing: 0.04em;
+.site-footer a {
+  color: var(--quiet);
+  text-decoration: none;
 }
 
-.home-list-card {
-  border-radius: 1rem;
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--background));
-  padding: 0.625rem 1.25rem;
-  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+.site-footer a:hover {
+  color: var(--leaf);
 }
 
-.home-list-card:hover {
-  border-color: hsl(var(--primary) / 0.35);
-  background: hsl(var(--muted));
-  transform: translateY(-1px);
+.site-footer__links {
+  display: flex;
+  gap: 8px;
+}
+
+html.terminal-modal-open {
+  overflow: hidden;
+}
+
+.terminal-dialog {
+  width: min(720px, calc(100% - 40px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  color: var(--ink);
+  /* Modals are the one place that legitimately floats: flat paper, real shadow. */
+  background: color-mix(in srgb, var(--paper) 92%, var(--surface));
+  border: 1px solid var(--panel-edge);
+  border-radius: 18px;
+  box-shadow: 0 40px 120px -30px #17211455;
+}
+
+.terminal-dialog[open] {
+  animation: terminal-appear 160ms ease-out;
+}
+
+.terminal-dialog::backdrop {
+  background: #23301b5c;
+  backdrop-filter: blur(5px);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 58px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dialog-icon {
+  color: var(--leaf);
+  font: 16px ui-monospace, Consolas, monospace;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dialog-site {
+  margin-left: 3px;
+  color: var(--quiet);
+  font-size: 10px;
+}
+
+.dialog-close {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--quiet);
+  cursor: pointer;
+}
+
+.dialog-close:hover {
+  background: var(--chip-tint);
+  color: var(--ink);
+}
+
+.dialog-close kbd {
+  font-size: 10px;
+}
+
+.dialog-close > span {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--panel-edge);
+  background: var(--chip-tint);
+  color: var(--quiet);
+  font: 10px/1.5 ui-monospace, Consolas, monospace;
+}
+
+@keyframes terminal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .site-shell {
+    width: calc(100% - 40px);
+    margin-top: 16px;
+  }
+
+  .site-header {
+    min-height: 64px;
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .site-brand__suffix {
+    display: none;
+  }
+
+  .site-nav {
+    gap: 0;
+  }
+
+  .site-nav a {
+    padding-inline: 8px;
+  }
+
+  .site-content--inner {
+    padding: 30px 28px 36px;
+  }
+}
+
+@media (max-width: 680px) {
+  .site-shell {
+    width: calc(100% - 32px);
+    margin-top: 10px;
+  }
+
+  .site-header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    padding: 10px 4px;
+  }
+
+  .site-brand {
+    font-size: 18px;
+  }
+
+  .site-header__actions {
+    margin-left: auto;
+  }
+
+  .site-nav {
+    order: 3;
+    width: 100%;
+    /* 5 个栏目在窄屏改成可横向滑动的 chip 行，不再把字号压到 11px */
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    /* 44px 触控目标 */
+    min-height: 44px;
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .site-content--inner {
+    margin-top: 15px;
+    padding: 24px 20px 30px;
+    border-radius: 20px;
+  }
+
+  .site-footer {
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-inline: 2px;
+    font-size: 9px;
+  }
+
+  .terminal-dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 15px;
+  }
+
+  .dialog-header {
+    min-height: 52px;
+    padding-inline: 16px;
+  }
+
+  .dialog-footer {
+    padding-inline: 17px;
+    font-size: 9px;
+  }
+
+  .dialog-footer > span:last-child {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-list-card {
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

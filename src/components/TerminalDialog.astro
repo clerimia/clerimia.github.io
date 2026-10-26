@@ -1,0 +1,115 @@
+---
+import Terminal from '@/components/home/Terminal.astro'
+
+const routes = {
+  blog: '/blog',
+  notes: '/notes',
+  musings: '/musings',
+  links: '/links',
+  about: '/about'
+}
+---
+
+<dialog
+  id='terminal-dialog'
+  class='terminal-dialog'
+  aria-labelledby='terminal-heading'
+  aria-describedby='terminal-description'
+>
+  <header class='dialog-header'>
+    <span class='dialog-icon' aria-hidden='true'>&gt;_</span>
+    <h2 id='terminal-heading'>站点终端</h2>
+    <span class='dialog-site'>clerimia.sh</span>
+    <button class='dialog-close' id='terminal-close' type='button' aria-label='关闭终端'>
+      <kbd aria-hidden='true'>Esc</kbd><span aria-hidden='true'>×</span>
+    </button>
+  </header>
+  <p id='terminal-description' class='visually-hidden'>输入 help 查看命令，也可以点击推荐命令开始。</p>
+  <Terminal
+    variant='panel'
+    user='clerimia'
+    host='workspace'
+    cwd='~'
+    bannerTitle='clerimia.sh'
+    bannerSub='输入 help，或者随意逛逛。'
+    authorName='clerimia'
+    authorDesc='合肥工业大学在读，关注 AI Agent 与全栈开发。'
+    {routes}
+    social={{ github: 'https://github.com/clerimia', email: '1937049668@qq.com' }}
+  />
+  <footer class='dialog-footer'>
+    <span>↑ ↓ 历史记录</span><span>输入 help 查看命令 · Esc 关闭</span>
+  </footer>
+</dialog>
+
+<script>
+  const terminalDialog = document.getElementById('terminal-dialog') as HTMLDialogElement | null
+  const terminalTriggers = document.querySelectorAll<HTMLElement>('[data-terminal-trigger]')
+  const terminalClose = document.getElementById('terminal-close')
+  let terminalReturnFocus: HTMLElement | null = null
+
+  function setTriggerState(open: boolean) {
+    terminalTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', String(open)))
+  }
+
+  function openTerminal(trigger: Element | null = document.activeElement) {
+    if (!terminalDialog || terminalDialog.open) return
+    terminalReturnFocus = trigger instanceof HTMLElement ? trigger : null
+    terminalDialog.showModal()
+    document.documentElement.classList.add('terminal-modal-open')
+    setTriggerState(true)
+    terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
+  }
+
+  terminalTriggers.forEach((button) => {
+    button.addEventListener('click', () => openTerminal(button))
+  })
+  terminalClose?.addEventListener('click', () => terminalDialog?.close())
+
+  terminalDialog?.addEventListener('click', (event) => {
+    if (event.target !== terminalDialog) return
+    const rect = terminalDialog.getBoundingClientRect()
+    const outside =
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
+    if (outside) terminalDialog.close()
+  })
+
+  terminalDialog?.addEventListener('close', () => {
+    document.documentElement.classList.remove('terminal-modal-open')
+    setTriggerState(false)
+    terminalReturnFocus?.focus()
+  })
+
+  terminalDialog?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return
+    const controls = Array.from(
+      terminalDialog.querySelectorAll<HTMLElement>('button, input, a[href], [tabindex="0"]')
+    ).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0)
+    if (!controls.length) return
+    const first = controls[0]
+    const last = controls[controls.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  })
+
+  window.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key !== '`' || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return
+      const target = event.target as HTMLElement | null
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      openTerminal()
+    },
+    true
+  )
+</script>

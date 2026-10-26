@@ -1,0 +1,43 @@
+---
+import type { Page } from 'astro'
+import { Paginator } from 'astro-pure/components/pages'
+import { Button } from 'astro-pure/user'
+import PostPreview from '@/components/PostPreview.astro'
+import TagLinks from '@/components/tags/TagLinks.astro'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { getTagUrl, sectionTitles, type ContentSection, type TaggedEntry } from '@/utils/tags'
+
+interface Props {
+  section: ContentSection
+  page: Page<TaggedEntry>
+}
+
+const { section, page } = Astro.props
+const { tag } = Astro.params
+const title = `${sectionTitles[section]} · #${tag}`
+const paginationProps = {
+  ...(page.url.prev && { prevUrl: { text: '← 上一页', url: page.url.prev } }),
+  ...(page.url.next && { nextUrl: { text: '下一页 →', url: page.url.next } })
+}
+---
+
+<PageLayout meta={{ title, description: `${sectionTitles[section]} 中标签为 ${tag} 的内容。` }}>
+  <Button title='返回' href={getTagUrl(section)} variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
+    <section id='content' aria-label={`${sectionTitles[section]} 标签结果`}>
+      <ul class='flex flex-col gap-4'>
+        {page.data.map((post) => post.collection === 'notes' ? (
+          <li class='paper-card rounded-2xl px-5 py-4'>
+            <a href={`/notes/${post.id}`} class='block hover:text-primary' data-astro-prefetch>
+              <h2 class='font-medium'>{post.data.title}</h2>
+              <p class='mt-2 text-sm text-muted-foreground'>{post.data.description}</p>
+            </a>
+            <TagLinks {post} class='mt-3' />
+          </li>
+        ) : <PostPreview {post} detailed />)}
+      </ul>
+      <Paginator {...paginationProps} />
+    </section>
+  </main>
+</PageLayout>

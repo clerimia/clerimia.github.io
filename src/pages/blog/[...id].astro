@@ -1,14 +1,16 @@
 ---
+import type { MarkdownHeading } from 'astro'
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 
 import { getPosts } from '@/utils/posts'
 import PostLayout from '@/layouts/BlogPost.astro'
+import RedirectPage from '@/components/RedirectPage.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
   const allPosts = await getPosts()
-  // Essays moved to the musings collection; keep their old /blog/<id> links working via 301.
+  // Essays moved to the musings collection; keep their old /blog/<id> links working.
   const essayIds = (await getCollection('musings')).map((essay) => essay.id)
   return [...allPosts, ...essayIds.map((id) => ({ id }))].map((post) => ({
     params: { id: post.id },
@@ -21,13 +23,39 @@ type Props = {
 }
 
 const { post } = Astro.props
-// Redirect old links for posts that moved to the essays section (/musings/<id>).
-if (!('collection' in post)) return Astro.redirect(`/musings/${post.id}`, 301)
-if (post.data.section === 'essays') return Astro.redirect(`/musings/${post.id}`, 301)
-const posts = await getPosts()
-const { Content, headings, remarkPluginFrontmatter } = await render(post)
+const postId = (post as { id: string }).id
+
+// 长随笔已经搬到 /musings/<id>：旧链接给一个完整的跳转页，而不是裸 meta refresh。
+const movedTo =
+  !('collection' in post) || (post as CollectionEntry<'blog'>).data.section === 'essays'
+    ? `/musings/${postId}`
+    : null
+
+let Content: any = null
+let headings: MarkdownHeading[] = []
+let remarkPluginFrontmatter: Record<string, unknown> = {}
+let posts: CollectionEntry<'blog'>[] = []
+
+if (!movedTo) {
+  const rendered = await render(post as CollectionEntry<'blog'>)
+  Content = rendered.Content
+  headings = rendered.headings
+  remarkPluginFrontmatter = rendered.remarkPluginFrontmatter
+  posts = (await getPosts()).filter((item) => item.data.section === 'blog')
+}
 ---
 
-<PostLayout {post} posts={posts.filter((p) => p.data.section === 'blog')} {headings} {remarkPluginFrontmatter}>
-  <Content />
-</PostLayout>
+{
+  movedTo ? (
+    <RedirectPage to={movedTo} label='对应的随笔' />
+  ) : (
+    <PostLayout
+      post={post as CollectionEntry<'blog'>}
+      {posts}
+      {headings}
+      {remarkPluginFrontmatter}
+    >
+      {Content && <Content />}
+    </PostLayout>
+  )
+}

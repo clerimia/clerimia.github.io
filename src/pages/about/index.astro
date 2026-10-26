@@ -1,161 +1,114 @@
 ---
-import { Timeline } from 'astro-pure/user'
-import PageLayout from '@/layouts/CommonPage.astro'
-import ToolSection from '@/components/about/ToolSection.astro'
-
-const headings = [
-  { depth: 2, slug: 'about-me', text: 'Overview' },
-  { depth: 2, slug: 'tools', text: 'Tools' },
-  { depth: 2, slug: 'social-networks', text: 'Contact' },
-  { depth: 2, slug: 'about-blog', text: 'About This Site' }
-]
+import { Image } from 'astro:assets'
+import { Button, Icon } from 'astro-pure/user'
+import avatar from '@/assets/avatar.png'
+import darkAvatar from '@/assets/avatar-dark.png'
+import '@/assets/styles/about.css'
+import GitHubActivity from '@/components/about/GitHubActivity.astro'
+import { Comment } from '@/components/comments'
+import PageLayout from '@/layouts/BaseLayout.astro'
 ---
 
-<PageLayout title='About' {headings} comment>
-  <p>合肥工业大学在读，关注 AI Agent 与全栈开发。</p>
-  <p>平时喜欢把想法做成能跑起来的东西，再把过程记录下来。这个站点就是其中之一。</p>
-  <p>Motto: Stay hungry, stay foolish.</p>
+<PageLayout meta={{ title: 'About', description: '关于 clerimia。' }}>
+  <main class='about-page'>
+    <Button title='返回' href='/' variant='back' />
 
-  <h2 id='about-me'>Overview</h2>
-  <ul>
-    <li>在读：合肥工业大学</li>
-    <li>关注方向：AI Agent、全栈开发</li>
-    <li>所在地：安徽 宣城</li>
-    <li>常用语言：TypeScript / Java / Python / Verilog</li>
-  </ul>
+    <div class='about-activity'>
+      <GitHubActivity username='clerimia' />
+    </div>
 
-  <h2 id='tools'>Tools</h2>
-  <ToolSection
-    title='Daily Essentials'
-    tools={[
-      {
-        name: 'VS Code',
-        description: 'Code editor',
-        href: 'https://code.visualstudio.com/',
-        icon: import('@/assets/tools/vscode.svg?raw')
-      },
-      {
-        name: 'Chrome',
-        description: 'Web browser',
-        href: 'https://www.google.com/chrome/',
-        icon: import('@/assets/tools/chrome.svg?raw')
-      },
-      {
-        name: 'Windows 11',
-        description: 'Operating system',
-        href: 'https://www.microsoft.com/windows/windows-11',
-        icon: import('@/assets/tools/windows11.svg?raw')
-      }
-    ]}
-  />
+    <header class='about-profile'>
+      <div>
+        <h1>关于我</h1>
+        <p>我是 clerimia，合肥工业大学计算机科学与技术专业在读。</p>
+        <div class='about-profile__links'>
+          <a href='https://github.com/clerimia' target='_blank' rel='noopener noreferrer'>
+            <Icon name='github' /> GitHub
+          </a>
+          <a href='mailto:1937049668@qq.com'><Icon name='email' /> 1937049668@qq.com</a>
+        </div>
+      </div>
 
-  <ToolSection
-    class='mt-4'
-    title='AI & Code Assistants'
-    tools={[
-      {
-        name: 'ChatGPT',
-        description: 'AI assistant',
-        href: 'https://chatgpt.com/',
-        icon: import('@/assets/tools/chatgpt.svg?raw')
-      },
-      {
-        name: 'Claude Code',
-        description: 'Coding agent',
-        href: 'https://claude.com/product/claude-code',
-        icon: 'CC'
-      },
-      {
-        name: 'Codex',
-        description: 'Coding agent',
-        href: 'https://openai.com/codex/',
-        icon: import('@/assets/tools/chatgpt.svg?raw')
-      },
-      {
-        name: 'Hermes Agent',
-        description: 'Personal AI agent',
-        href: 'https://hermes-agent.nousresearch.com/',
-        icon: 'H'
-      }
-    ]}
-  />
+      <div class='about-portrait'>
+        <Image
+          class='about-avatar--light'
+          src={avatar}
+          alt='clerimia 的头像'
+          width={112}
+          height={112}
+          loading='eager'
+        />
+        <Image
+          class='about-avatar--dark'
+          src={darkAvatar}
+          alt='clerimia 的深色模式头像'
+          width={darkAvatar.width}
+          height={darkAvatar.height}
+          loading='eager'
+        />
+      </div>
+    </header>
 
-  <ToolSection
-    class='mt-4'
-    title='Runtime & Package Managers'
-    tools={[
-      {
-        name: 'Node.js',
-        description: 'JavaScript runtime',
-        href: 'https://nodejs.org/',
-        icon: 'JS'
-      },
-      {
-        name: 'npm',
-        description: 'JavaScript package manager',
-        href: 'https://www.npmjs.com/',
-        icon: 'npm'
-      },
-      {
-        name: 'JDK',
-        description: 'Java development kit',
-        href: 'https://openjdk.org/',
-        icon: 'J'
-      },
-      {
-        name: 'Maven',
-        description: 'Java build tool',
-        href: 'https://maven.apache.org/',
-        icon: 'MVN'
-      }
-    ]}
-  />
+    <div class='about-story'>
+      <section aria-labelledby='now-heading'>
+        <h2 id='now-heading'>最近在做什么</h2>
+        <p>
+          我对很多事情都很好奇，想做的事也不少。最近比较感兴趣的是 AI Agent，也在折腾自己的
+          Personal Agent，希望能通过日常聊天软件和它交流。研究这些东西的时候，会遇到不少值得继续想的问题，
+          于是也就有了这里的一些文章。
+        </p>
+      </section>
 
-  <h2 id='social-networks'>Contact</h2>
-  <ul>
-    <li>
-      GitHub: <a href='https://github.com/clerimia' target='_blank'>@clerimia</a>
-    </li>
-    <li>
-      Email: <a href='mailto:1937049668@qq.com'>1937049668@qq.com</a>
-    </li>
-  </ul>
+      <section aria-labelledby='stack-heading'>
+        <h2 id='stack-heading'>技术栈</h2>
+        <dl class='about-tech-stack'>
+          <div><dt>语言</dt><dd>Java 出身，也用 TypeScript、Python、SQL。</dd></div>
+          <div><dt>框架</dt><dd>Spring Boot</dd></div>
+          <div><dt>数据库</dt><dd>MySQL、Redis、SQLite</dd></div>
+          <div><dt>中间件</dt><dd>RocketMQ</dd></div>
+          <div><dt>前端</dt><dd>React、Tailwind CSS、shadcn/ui、Vite</dd></div>
+          <div><dt>工具</dt><dd>Docker、Git、GitHub、Codex、Claude Code</dd></div>
+        </dl>
+      </section>
 
-  <h2 id='about-blog'>About This Site</h2>
-  <p>站点历史：</p>
-  <Timeline
-    events={[
-      {
-        date: '2024',
-        content: '用 Hexo 搭起第一个博客'
-      },
-      {
-        date: '2026-09',
-        content: '迁移到 Astro，手写了一套自己的脚手架'
-      },
-      {
-        date: '2026-09-17',
-        content:
-          '改用 <a href="https://github.com/cworld1/astro-theme-pure" target="_blank">Astro Theme Pure</a> 主题，专注写内容'
-      }
-    ]}
-  />
-  <p>本站由以下项目与服务驱动：</p>
-  <ul>
-    <li>
-      框架：<a href='https://astro.build/' target='_blank'>Astro</a>
-    </li>
-    <li>
-      主题：<a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>Astro Theme Pure</a>
-    </li>
-    <li>
-      样式：<a href='https://unocss.dev/' target='_blank'>UnoCSS</a>
-    </li>
-    <li>
-      托管：<a href='https://pages.github.com/' target='_blank'>GitHub Pages</a>
-    </li>
-    <li>
-      搜索：<a href='https://pagefind.app/' target='_blank'>Pagefind</a>
-    </li>
-  </ul>
+      <section aria-labelledby='writing-heading'>
+        <h2 id='writing-heading'>为什么写博客</h2>
+        <p>我正在学习怎么表达自己。</p>
+        <p>
+          之前一次面试，我试着向面试官介绍自己的项目，把原本零散的经历组织起来。
+          讲完之后才发现，原来自己也能说出这么多东西。不过，有些话说的时候很顺，回头想想，
+          又未必真的想清楚了。
+        </p>
+        <p>
+          写博客也有类似的感觉。那些脑海里模糊的想法，只有试着写出来，才知道哪里还没弄明白。
+          我也想借这个地方，把想说却不太敢说的话慢慢说出来，让自己更 open 一点，去做那些想做的事。
+        </p>
+        <p>
+          所以这里既有技术文章，也会写阅读时的困惑、一次面试后的感受。
+          有些还写不成长文，就先放进随笔里。
+        </p>
+      </section>
+
+      <section aria-labelledby='life-heading'>
+        <h2 id='life-heading'>平时</h2>
+        <p>
+          不折腾这些的时候，我喜欢看小说、看动漫，听日轻音乐。游戏主要玩英雄联盟、我的世界和鸣潮，
+          除了自己玩，也喜欢看电竞比赛。
+        </p>
+      </section>
+    </div>
+
+    <section class='about-site' aria-labelledby='site-heading'>
+      <h2 id='site-heading'>关于本站</h2>
+      <p>
+        使用 <a href='https://astro.build/' target='_blank' rel='noopener noreferrer'>Astro</a>
+        和 <a href='https://github.com/cworld1/astro-theme-pure' target='_blank' rel='noopener noreferrer'>Astro Theme Pure</a>
+        搭建，部署在 GitHub Pages。
+      </p>
+    </section>
+
+    <div class='about-comments'>
+      <Comment />
+    </div>
+  </main>
 </PageLayout>

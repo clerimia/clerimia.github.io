@@ -1,0 +1,158 @@
+---
+import config from 'virtual:config'
+
+import { cn, getFormattedDate } from 'astro-pure/utils'
+import { QRCode } from 'astro-pure/advanced'
+import { Icon } from 'astro-pure/user'
+
+/**
+ * 文章底部的版权卡。
+ * 基于 astro-pure 的 Copyright 组件改写：
+ * - 去掉模板自带的「Buy me a cup of coffee」赞助条（指向不存在的 /projects 页）；
+ * - 标签改为中文；
+ * - 复制链接后给出可见反馈。
+ */
+interface Props {
+  data: {
+    title: string
+    publishDate?: Date
+    heroImage?: { src?: string | { src: string } }
+  }
+  class?: string
+}
+
+const {
+  data: { heroImage, title, publishDate },
+  class: className
+} = Astro.props
+
+const imageSrc =
+  typeof heroImage?.src === 'string' ? heroImage.src : (heroImage?.src?.src ?? '')
+
+const shares = {
+  weibo: {
+    label: '分享到微博',
+    link: `http://service.weibo.com/share/share.php?url=${Astro.url}&title=${title}&pic=${imageSrc}`
+  },
+  x: {
+    label: '分享到 X',
+    link: `https://x.com/intent/tweet?text='${title}'&url='${Astro.url}'&via='${config.author}'`
+  },
+  bluesky: {
+    label: '分享到 Bluesky',
+    link: `https://bsky.app/intent/compose?text=${title}%0A${Astro.url}`
+  }
+} as const
+---
+
+<div
+  class={cn(
+    'relative flex flex-col gap-y-2 rounded-xl border px-3 sm:px-4 py-2 sm:py-3',
+    className
+  )}
+>
+  <Icon class='absolute end-4 top-4 size-20 opacity-10' name='copyright' aria-hidden='true' />
+
+  {/* 标题与地址 */}
+  <div class='flex flex-col'>
+    <div class='font-medium text-foreground'>{title}</div>
+    <div class='text-sm line-clamp-1'>{Astro.url}</div>
+  </div>
+
+  {/* 基本信息 */}
+  <div class='flex flex-row flex-wrap justify-start gap-x-5 gap-y-1 sm:gap-x-8'>
+    <div class='flex gap-x-2 sm:flex-col'>
+      <span>作者</span>
+      <span class='text-sm text-foreground max-sm:place-self-center'>{config.author}</span>
+    </div>
+    {
+      publishDate && (
+        <div class='flex gap-x-2 sm:min-w-16 sm:flex-col'>
+          <span>发表于</span>
+          <span class='text-sm text-foreground max-sm:place-self-center'>
+            {getFormattedDate(publishDate, { month: 'long' })}
+          </span>
+        </div>
+      )
+    }
+    <div class='flex gap-x-2 sm:flex-col'>
+      <span>许可</span>
+      <a
+        class='text-sm text-foreground max-sm:place-self-center'
+        href='https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh'
+        target='_blank'
+        rel='noopener noreferrer'
+      >
+        CC BY-NC-SA 4.0
+      </a>
+    </div>
+  </div>
+
+  {/* 操作 */}
+  <div class='relative'>
+    <div class='flex flex-row gap-3'>
+      <button
+        id='copy-link'
+        type='button'
+        aria-label='复制本文链接'
+        title='复制本文链接'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='link' />
+      </button>
+      <button
+        id='get-qrcode'
+        type='button'
+        aria-label='显示二维码'
+        title='显示二维码'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='qrcode' />
+      </button>
+      {
+        config.content.share.map((share) => (
+          <a
+            href={shares[share].link}
+            target='_blank'
+            rel='noopener noreferrer'
+            id={`share-${share}`}
+            aria-label={shares[share].label}
+            title={shares[share].label}
+            class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+          >
+            <Icon class='size-5' name={share} />
+          </a>
+        ))
+      }
+    </div>
+    <QRCode
+      class='absolute z-10 -mt-2 box-content max-h-0 max-w-44 overflow-hidden rounded-xl border bg-muted p-4 opacity-0 transition-all duration-300 ease-in-out'
+    />
+  </div>
+</div>
+
+<style>
+  #qrcode-container.expanded {
+    max-height: 11rem;
+    transform: translateY(6px);
+    opacity: 100;
+  }
+</style>
+
+<script>
+  import { showToast } from 'astro-pure/utils'
+
+  const copyLink = document.getElementById('copy-link')
+  copyLink?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      showToast({ message: '链接已复制' })
+    } catch {
+      showToast({ message: '复制失败，请手动复制地址栏链接' })
+    }
+  })
+
+  const getQRCode = document.getElementById('get-qrcode')
+  const qrcodeContainer = document.getElementById('qrcode-container')
+  getQRCode?.addEventListener('click', () => qrcodeContainer?.classList.toggle('expanded'))
+</script>

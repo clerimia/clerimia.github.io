@@ -30,7 +30,11 @@ export default defineConfig({
   // base: '/astro-pure/',
   trailingSlash: 'never',
   // root: './my-project-directory',
-  server: { host: true },
+  // 默认只绑定 localhost。需要手机真机调试时再临时改成 { host: true }，
+  // 否则同一局域网内的其他人也能打开你的草稿。
+  server: { host: false },
+  // 页面底部的小黑框是 Astro 开发工具栏，仅 dev 模式存在；按需关闭。
+  devToolbar: { enabled: false },
   // https://docs.astro.build/en/guides/prefetch/
   prefetch: {
     // prefetchAll: true,
@@ -62,7 +66,14 @@ export default defineConfig({
         rehypeAutolinkHeadings,
         {
           behavior: 'append',
-          properties: { className: ['anchor'] },
+          // aria-hidden + tabindex 让它不进 Tab 序列；data-pagefind-ignore 避免
+          // 搜索结果摘要里出现一串没意义的「#」。
+          properties: {
+            className: ['anchor'],
+            ariaHidden: 'true',
+            tabIndex: -1,
+            'data-pagefind-ignore': 'true'
+          },
           content: { type: 'text', value: '#' }
         }
       ]
@@ -107,7 +118,7 @@ export default defineConfig({
     // 注意：不要添加 @astrojs/react。Astro 6 的 React 集成会注入
     // `vite-react-refresh-wrapper`，在 dev 模式下与 rolldown-vite 不兼容，
     // 导致所有 CSS/JS 资源 500（官方 issue #16229，标记为不修复）。
-    // 站点的交互组件（首页终端、入场动画）均用原生 JS 实现。
+    // 站点的交互组件（首页终端、Toast、目录滚动监听）均用原生 JS 实现。
   ],
 
   // [Experimental]

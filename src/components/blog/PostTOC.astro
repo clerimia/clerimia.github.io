@@ -1,0 +1,118 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+  class?: string
+}
+
+const { headings, class: className } = Astro.props
+
+// 目录只显示到三级标题，层级用缩进表达。
+const items = headings.filter((heading) => heading.depth <= 3)
+
+const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
+---
+
+<toc-heading class={className}>
+  <h2 class='font-medium'>目录</h2>
+  <ul class='mt-4'>
+    {
+      items.map((heading) => (
+        <li>
+          <div class='relative'>
+            <span class='toc-bar absolute inset-y-0 start-0 w-[2px] rounded bg-transparent transition-colors duration-300' />
+            <a
+              aria-label={`跳到「${label(heading.text)}」`}
+              class:list={[
+                'toc-item line-clamp-2 px-3 py-1 ms-2 text-foreground/75 transition-colors hover:text-foreground',
+                heading.depth > 2 && 'ps-7'
+              ]}
+              href={`#${heading.slug}`}
+            >
+              {label(heading.text)}
+            </a>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</toc-heading>
+
+<script>
+  // 滚动监听：只高亮「当前正在读」的那一条。
+  // astro-pure 原版会把所有进入视口的标题一起点亮，短页面上整块目录都会变绿。
+  class Toc extends HTMLElement {
+    connectedCallback() {
+      const links = Array.from(this.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'))
+      const entries = links
+        .map((link) => {
+          const id = (link.getAttribute('href') || '').slice(1)
+          const heading = id ? document.getElementById(id) : null
+          return heading
+            ? { link, bar: link.previousElementSibling as HTMLElement, heading, offset: 0 }
+            : null
+        })
+        .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+
+      if (!entries.length) return
+
+      let frame = 0
+      const render = () => {
+        frame = 0
+        const threshold = window.scrollY + 150
+        let active = -1
+        for (let i = 0; i < entries.length; i++) {
+          entries[i].offset = entries[i].heading.getBoundingClientRect().top + window.scrollY
+          if (entries[i].offset <= threshold) active = i
+        }
+        // 滚到底部时，最后一条一定是当前所在位置。
+        const atBottom =
+          window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+        if (atBottom) active = entries.length - 1
+        // 还在第一条标题上方时，默认指向第一条，避免整块目录都没有状态。
+        if (active < 0) active = 0
+
+        entries.forEach(({ link, bar }, index) => {
+          const isActive = index === active
+          link.classList.toggle('highlight', isActive)
+          bar.classList.toggle('highlight-bg', isActive)
+        })
+      }
+
+      const schedule = () => {
+        if (!frame) frame = requestAnimationFrame(render)
+      }
+
+      entries.forEach(({ link, heading }) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault()
+          window.history.pushState(null, '', link.getAttribute('href'))
+          heading.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      })
+
+      render()
+      window.addEventListener('scroll', schedule, { passive: true })
+      window.addEventListener('resize', schedule)
+      document.addEventListener('astro:page-load', schedule)
+    }
+  }
+
+  if (!customElements.get('toc-heading')) customElements.define('toc-heading', Toc)
+</script>
+
+<style>
+  toc-heading :global(.toc-item) {
+    display: flow-root;
+  }
+
+  toc-heading :global(.toc-item.highlight) {
+    font-weight: 500;
+    color: hsl(var(--primary));
+  }
+
+  toc-heading :global(.toc-bar.highlight-bg) {
+    background: hsl(var(--primary));
+  }
+</style>

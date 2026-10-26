@@ -1,0 +1,31 @@
+---
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { getSectionTags, getTagUrl, sectionTitles, type ContentSection } from '@/utils/tags'
+
+interface Props {
+  section: ContentSection
+}
+
+const { section } = Astro.props
+const tags = await getSectionTags(section)
+const title = `${sectionTitles[section]} · Tags`
+---
+
+<PageLayout meta={{ title, description: `${sectionTitles[section]} 的全部标签。` }}>
+  <Button title='返回' href={`/${section}`} variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
+    {tags.length > 0 ? (
+      <ul class='flex flex-wrap gap-4'>
+        {tags.map(([tag, count]) => (
+          <li>
+            <Button href={getTagUrl(section, tag)} variant='pill'>
+              {tag} <span class='ms-1 text-xs'>{count}</span>
+            </Button>
+          </li>
+        ))}
+      </ul>
+    ) : <p class='text-muted-foreground'>还没有标签。</p>}
+  </main>
+</PageLayout>

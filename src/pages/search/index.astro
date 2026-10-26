@@ -1,11 +1,11 @@
 ---
-import { PFSearch } from 'astro-pure/components/pages'
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import SiteSearch from '@/components/SiteSearch.astro'
 import { integ } from '@/site-config'
 
 const meta = {
-  description: 'Search relative posts of the whole blog',
+  description: '搜索站内文章',
   title: 'Search'
 }
 ---
@@ -21,11 +21,11 @@ const meta = {
       {
         integ.pagefind ? (
           <>
-            <p>Enter a search term or phrase to search the blog.</p>
-            <PFSearch />
+            <p>输入关键词，可以搜到文章标题、正文和代码块。</p>
+            <SiteSearch />
           </>
         ) : (
-          <p>Pagefind is disabled.</p>
+          <p>站内搜索未启用。</p>
         )
       }
     </div>

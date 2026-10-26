@@ -7,9 +7,9 @@ import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
 
 const headings = [
-  { depth: 2, slug: 'common-links', text: 'Friends' },
-  { depth: 2, slug: 'special-links', text: 'Featured Links' },
-  { depth: 2, slug: 'apply-links', text: 'Exchange Links' }
+  { depth: 2, slug: 'common-links', text: '友链' },
+  { depth: 2, slug: 'special-links', text: '推荐链接' },
+  { depth: 2, slug: 'apply-links', text: '申请友链' }
 ]
 
 const { friends } = links
@@ -19,24 +19,24 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
 
 <PageLayout title='Links' {headings} comment>
   <p>顺序随机。</p>
-  <h2 id='common-links'>Friends</h2>
+  <h2 id='common-links'>友链</h2>
   <FriendList list={friends[0]} />
-  <Collapse title='Inactive Sites'>
+  <Collapse title='暂时失联的站点'>
     <FriendList list={friends[1]} />
   </Collapse>
-  <Collapse title='Changelog'>
+  <Collapse title='友链变动记录'>
     <Timeline events={linksConf.logbook} />
   </Collapse>
 
-  <h2 id='special-links'>Featured Links</h2>
+  <h2 id='special-links'>推荐链接</h2>
   <FriendList list={friends[2]} />
 
-  <h2 id='apply-links'>Exchange Links</h2>
+  <h2 id='apply-links'>申请友链</h2>
   <p>本站信息（点击复制）：</p>
   <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
     {
       linksConf.applyTip.map(({ name, val }) => {
-        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'Copied "${val}" to clipboard!'}}))`
+        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'已复制：${val}'}}))`
         return (
           <>
             <span class='text-end'>{name}:</span>

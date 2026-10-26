@@ -6,6 +6,7 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import PostLayout from '@/layouts/BlogPost.astro'
 import { integ } from '@/site-config'
 import { getMusings } from '@/utils/posts'
+import TagLinks from '@/components/tags/TagLinks.astro'
 
 export const prerender = true
 
@@ -54,6 +55,7 @@ const meta = {
     <div id='content' class={cn('animate mt-6 max-w-none md:min-w-[45ch]', integ.typography.class)}>
       <Content />
     </div>
+    <TagLinks {post} class='mt-6' />
   </main>
 </PageLayout>
 )}
