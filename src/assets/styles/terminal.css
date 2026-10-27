@@ -12,8 +12,6 @@
   --wt-leading: 1.7;
   --wt-canvas: var(--term-canvas);
   --wt-edge: var(--term-edge);
-  --wt-muted: var(--term-muted);
-  --wt-accent: var(--term-accent);
 
   position: relative;
   display: flex;
@@ -51,7 +49,7 @@
   padding: 0 14px;
   border-bottom: 1px solid var(--wt-edge);
   background: color-mix(in srgb, var(--wt-canvas), hsl(var(--background)) 30%);
-  color: hsl(var(--muted-foreground));
+  color: var(--term-muted);
   font-size: 12px;
   letter-spacing: 0.01em;
   user-select: none;
@@ -75,6 +73,7 @@
     transform var(--motion-feedback) var(--motion-feedback-easing),
     filter var(--motion-feedback) var(--motion-feedback-easing);
 }
+/* 同 .dialog-light：macOS 系统色，不参与语义色板。 */
 .wt-light--r { background: #ff5f57; }
 .wt-light--y { background: #febc2e; }
 .wt-light--g { background: #28c840; }
@@ -141,12 +140,12 @@
   letter-spacing: 0.04em;
   color: hsl(var(--foreground));
 }
-.wt-banner-sub { color: hsl(var(--muted-foreground)); }
+.wt-banner-sub { color: var(--term-muted); }
 
 /* 首屏快捷命令：只让命令字可点，保持终端里的文字感 */
 .wt-intro {
   margin-top: 8px;
-  color: hsl(var(--muted-foreground));
+  color: var(--term-muted);
 }
 .wt-cmd {
   padding: 0;
@@ -180,7 +179,7 @@
 }
 .wt-help-list dd {
   margin: 0;
-  color: hsl(var(--muted-foreground));
+  color: var(--term-muted);
 }
 
 /* ===== 输入行（常驻底部） ===== */
@@ -207,11 +206,12 @@
   font-feature-settings: 'tnum';
   white-space: nowrap;
 }
-.wt-prompt-user,
+/* 用户名是身份（日间苔绿、夜间酒红）；❯ 是「可以输入」的动作信号，始终用行动色。 */
+.wt-prompt-user { color: var(--color-identity); }
 .wt-prompt-sigil { color: hsl(var(--primary)); }
 .wt-prompt-at,
 .wt-prompt-host,
-.wt-prompt-cwd { color: hsl(var(--muted-foreground)); }
+.wt-prompt-cwd { color: var(--term-muted); }
 
 .wt-input-wrap {
   position: relative;
@@ -237,7 +237,7 @@
 /* 原生占位符只在失焦且为空时显示，聚焦后交给光标自己表达状态。 */
 .wt-input:focus::placeholder { color: transparent; }
 .wt-input::placeholder {
-  color: hsl(var(--muted-foreground) / 0.7);
+  color: color-mix(in srgb, var(--term-muted) 70%, transparent);
   font-style: italic;
 }
 
@@ -279,9 +279,9 @@
 
 /* ===== 色调 ===== */
 .wt-tone-fg { color: hsl(var(--foreground)); }
-.wt-tone-muted { color: hsl(var(--muted-foreground)); }
+.wt-tone-muted { color: var(--term-muted); }
 .wt-tone-primary { color: hsl(var(--primary)); }
-.wt-tone-ok { color: var(--color-status-success); }
+.wt-tone-ok { color: var(--color-action); }
 .wt-tone-err { color: var(--color-status-error); }
 .wt-tone-warn { color: var(--color-status-warning); }
 

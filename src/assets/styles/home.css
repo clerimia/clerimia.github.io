@@ -116,15 +116,9 @@
 
 .home-avatar-frame {
   padding: 20px;
-  border: 1px solid var(--card-edge);
+  border: 1px solid var(--color-identity-edge);
   border-radius: var(--radius-lg);
-  background: var(--card-tint);
-}
-
-/* 夜间的酒红只用于身份相关的小面积表面。 */
-.dark .home-avatar-frame {
-  border-color: var(--color-expression);
-  background: var(--color-expression-surface);
+  background: var(--color-identity-surface);
 }
 
 .home-avatar-mat img {

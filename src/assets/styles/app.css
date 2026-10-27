@@ -26,12 +26,14 @@
   --color-selection: #e8f2ea;
   --color-border: #d0ded2;
   --color-focus: #315a40;
-  --color-status-success: #3f7050;
+  /* 身份：日间由苔绿和头像承担，夜间交给酒红；两套主题都有值。 */
+  --color-identity: var(--color-action);
+  --color-identity-surface: var(--color-surface);
+  --color-identity-edge: var(--color-border);
+  --color-identity-ink: var(--color-text);
   --color-status-warning: #805417;
   --color-status-error: #ab2e2e;
   --color-action-foreground: var(--color-action-ink);
-  --color-danger: hsl(var(--destructive));
-  --color-danger-foreground: hsl(var(--destructive-foreground));
 
   /* 同一套尺度由日夜主题共用。 */
   --space-1: 4px;
@@ -100,8 +102,6 @@
   --muted-foreground: 140.87 12.17% 37.06%;
   --accent: 132 27.78% 92.94%;
   --accent-foreground: 142.86 21.65% 19.02%;
-  --destructive: 0 65% 48%;
-  --destructive-foreground: 0 0% 98%;
   --border: 128.57 17.5% 84.31%;
   --input: 128.57 17.5% 84.31%;
   --ring: 141.95 29.5% 27.25%;
@@ -110,7 +110,6 @@
   --term-canvas: var(--color-surface);
   --term-edge: var(--color-border);
   --term-muted: var(--color-text-muted);
-  --term-accent: var(--color-action);
   --code-bg: var(--muted);
   --code-fg: var(--foreground);
   --un-default-border-color: hsl(var(--border) / 1);
@@ -143,7 +142,10 @@
   --color-expression-ink: #efb9c7;
   --color-border: #43544a;
   --color-focus: #a9d8b4;
-  --color-status-success: #a9d8b4;
+  --color-identity: var(--color-expression-ink);
+  --color-identity-surface: var(--color-expression-surface);
+  --color-identity-edge: var(--color-expression);
+  --color-identity-ink: var(--color-expression-ink);
   --color-status-warning: #e4c18a;
   --color-status-error: #ffaaa4;
   --background: 165 7.41% 10.59%;
@@ -156,7 +158,6 @@
   --term-canvas: #1e2721;
   --term-edge: #3a463d;
   --term-muted: #93a89a;
-  --term-accent: var(--color-action);
   --primary: 134.04 37.6% 75.49%;
   --primary-foreground: 137.14 13.21% 10.39%;
   --secondary: 135.79 15.7% 23.73%;
@@ -165,8 +166,6 @@
   --muted-foreground: 135 10.96% 71.37%;
   --accent: 135.79 15.7% 23.73%;
   --accent-foreground: 128.57 20% 93.14%;
-  --destructive: 0 58% 38%;
-  --destructive-foreground: 0 0% 98%;
   --border: 144.71 11.26% 29.61%;
   --input: 144.71 11.26% 29.61%;
   --ring: 134.04 37.6% 75.49%;
@@ -591,9 +590,9 @@ html.terminal-modal-open {
   flex: 0 0 auto;
   min-height: 38px;
   padding: 0 14px;
-  border-bottom: 1px solid var(--term-edge);
-  background: color-mix(in srgb, var(--term-canvas), hsl(var(--background)) 30%);
-  color: var(--term-muted);
+  border-bottom: 1px solid var(--color-identity-edge);
+  background: var(--color-identity-surface);
+  color: var(--color-identity-ink);
   font: 12px/1 ui-monospace, Consolas, monospace;
   user-select: none;
 }
@@ -616,6 +615,8 @@ html.terminal-modal-open {
     transform var(--motion-feedback) var(--motion-feedback-easing),
     filter var(--motion-feedback) var(--motion-feedback-easing);
 }
+/* 圆点沿用 macOS 系统色，属于外来窗口语言，不参与本站语义色板：
+   它不表达成功、错误或身份，所以不映射到 --color-*。 */
 .dialog-light--r { background: #ff5f57; }
 .dialog-light--y { background: #febc2e; }
 .dialog-light--g { background: #28c840; }
@@ -639,15 +640,15 @@ html.terminal-modal-open {
 
 .dialog-hint {
   margin-left: auto;
-  color: var(--term-muted);
+  color: var(--color-identity-ink);
   font-size: 11px;
   opacity: 0.75;
 }
 .dialog-hint kbd {
   padding: 2px 6px;
-  border: 1px solid var(--term-edge);
+  border: 1px solid color-mix(in srgb, var(--color-identity-ink) 35%, transparent);
   border-radius: 4px;
-  background: hsl(var(--background) / 0.25);
+  background: color-mix(in srgb, var(--color-identity-ink) 10%, transparent);
   font: inherit;
 }
 
