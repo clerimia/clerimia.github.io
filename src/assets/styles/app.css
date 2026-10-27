@@ -46,6 +46,8 @@
   --layout-wide: 1080px;
   --layout-reading: 760px;
   --layout-aside: 224px;
+  --motion-feedback: 160ms;
+  --motion-feedback-easing: ease-out;
   --motion-overlay: 220ms;
   --motion-overlay-easing: cubic-bezier(0.2, 0, 0, 1);
   --radius-code: 6px;
@@ -104,9 +106,11 @@
   --input: 128.57 17.5% 84.31%;
   --ring: 141.95 29.5% 27.25%;
   --radius: var(--radius-control);
-  --term-surface: var(--background);
-  --term-chrome: var(--muted);
-  --term-ok: var(--primary);
+  /* 终端画布与边线：日间沿用纸面，夜间换成墨提斯的暗绿 */
+  --term-canvas: var(--color-surface);
+  --term-edge: var(--color-border);
+  --term-muted: var(--color-text-muted);
+  --term-accent: var(--color-action);
   --code-bg: var(--muted);
   --code-fg: var(--foreground);
   --un-default-border-color: hsl(var(--border) / 1);
@@ -148,6 +152,11 @@
   --card-foreground: 128.57 20% 93.14%;
   --popover: 145.71 8.43% 16.27%;
   --popover-foreground: 128.57 20% 93.14%;
+  /* 墨提斯终端画布：偏绿的深色，但和画布的冷灰错开 */
+  --term-canvas: #1e2721;
+  --term-edge: #3a463d;
+  --term-muted: #93a89a;
+  --term-accent: var(--color-action);
   --primary: 134.04 37.6% 75.49%;
   --primary-foreground: 137.14 13.21% 10.39%;
   --secondary: 135.79 15.7% 23.73%;
@@ -539,80 +548,107 @@ html.terminal-modal-open {
 }
 
 .terminal-dialog {
-  width: min(720px, calc(100% - 40px));
-  max-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  width: min(760px, calc(100% - 40px));
+  height: min(560px, calc(100dvh - 48px));
   margin: auto;
   padding: 0;
-  overflow: auto;
-  color: var(--ink);
-  /* Modals are the one place that legitimately floats: flat paper, real shadow. */
-  background: var(--color-surface);
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--radius-dialog);
-  box-shadow: 0 40px 120px -30px #17211455;
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  /* 终端要有自己的画布，不做 paper 卡片 */
+  background: var(--term-canvas);
+  border: 1px solid var(--term-edge);
+  border-radius: var(--radius-panel);
+  box-shadow:
+    0 1px 0 0 hsl(var(--background) / 0.4) inset,
+    0 24px 60px -24px hsl(140 40% 8% / 0.55);
+}
+
+/* 未打开时必须真正隐藏：author 的 display 会覆盖 UA 的 dialog:not([open])。 */
+.terminal-dialog:not([open]) {
+  display: none;
 }
 
 .terminal-dialog[open] {
-  animation: terminal-appear 160ms ease-out;
+  animation: terminal-appear var(--motion-overlay) var(--motion-overlay-easing);
 }
+
+/* 终端主体填充剩余高度 */
+.terminal-dialog .wt-shell { flex: 1 1 auto; min-height: 0; }
+.terminal-dialog .wt-body { flex: 1 1 auto; min-height: 0; }
 
 .terminal-dialog::backdrop {
-  background: #23301b5c;
-  backdrop-filter: blur(5px);
+  background: hsl(var(--background) / 0.6);
+  backdrop-filter: blur(3px);
 }
 
+/* 标题栏 = macOS 风格圆点 + 居中 user@host:path */
 .dialog-header {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-height: 58px;
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--rule);
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--term-edge);
+  background: color-mix(in srgb, var(--term-canvas), hsl(var(--background)) 30%);
+  color: var(--term-muted);
+  font: 12px/1 ui-monospace, Consolas, monospace;
+  user-select: none;
 }
 
-.dialog-icon {
-  color: var(--leaf);
-  font: 16px ui-monospace, Consolas, monospace;
+.dialog-lights {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  z-index: 1;
 }
 
-.dialog-header h2 {
+.dialog-light {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform var(--motion-feedback) var(--motion-feedback-easing),
+    filter var(--motion-feedback) var(--motion-feedback-easing);
+}
+.dialog-light--r { background: #ff5f57; }
+.dialog-light--y { background: #febc2e; }
+.dialog-light--g { background: #28c840; }
+
+.dialog-light:hover:not([disabled]) { filter: brightness(1.12); }
+.dialog-light:active:not([disabled]) { transform: scale(0.92); }
+.dialog-light[disabled] { cursor: default; opacity: 0.55; }
+
+.dialog-title {
+  position: absolute;
+  inset-inline: 0;
+  text-align: center;
+  pointer-events: none;
+  font-feature-settings: 'tnum';
+}
+.dialog-title h2 {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
-.dialog-site {
-  margin-left: 3px;
-  color: var(--quiet);
-  font-size: 10px;
-}
-
-.dialog-close {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
+.dialog-hint {
   margin-left: auto;
-  padding: 4px 8px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--quiet);
-  cursor: pointer;
+  color: var(--term-muted);
+  font-size: 11px;
+  opacity: 0.75;
 }
-
-.dialog-close:hover {
-  background: var(--chip-tint);
-  color: var(--ink);
-}
-
-.dialog-close kbd {
-  font-size: 10px;
-}
-
-.dialog-close > span {
-  font-size: 24px;
-  line-height: 1;
+.dialog-hint kbd {
+  padding: 2px 6px;
+  border: 1px solid var(--term-edge);
+  border-radius: 4px;
+  background: hsl(var(--background) / 0.25);
+  font: inherit;
 }
 
 .visually-hidden {
@@ -624,17 +660,6 @@ html.terminal-modal-open {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 24px;
-  border-top: 1px solid var(--panel-edge);
-  background: var(--chip-tint);
-  color: var(--quiet);
-  font: 10px/1.5 ui-monospace, Consolas, monospace;
 }
 
 @keyframes terminal-appear {
@@ -735,18 +760,17 @@ html.terminal-modal-open {
 
   .terminal-dialog {
     width: calc(100% - 24px);
-    max-height: calc(100dvh - 24px);
-    border-radius: var(--radius-dialog);
+    height: calc(100dvh - 24px);
+    border-radius: var(--radius-panel);
   }
 
   .dialog-header {
-    min-height: 52px;
-    padding-inline: 16px;
+    min-height: 36px;
+    padding-inline: 12px;
   }
 
-  .dialog-footer {
-    padding-inline: 17px;
-    font-size: 9px;
+  .dialog-title h2 {
+    font-size: 11px;
   }
 
   .dialog-footer > span:last-child {

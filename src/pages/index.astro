@@ -34,6 +34,17 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
             <a class='home-notes-link' href='/notes' data-astro-prefetch>
               翻翻笔记
             </a>
+            <button
+              class='home-terminal-link'
+              type='button'
+              data-terminal-trigger
+              aria-haspopup='dialog'
+              aria-controls='terminal-dialog'
+              aria-expanded='false'
+            >
+              <span class='home-terminal-link__glyph' aria-hidden='true'>&gt;_</span>
+              <span>在终端里逛逛</span>
+            </button>
           </div>
         </div>
 

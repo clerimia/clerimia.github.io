@@ -40,7 +40,7 @@ src/
 ├── config/giscus.ts        ★ Giscus 评论参数
 ├── components/
 │   ├── comments/             Giscus 评论与留言入口
-│   ├── home/Terminal.astro   首页可交互终端（原生 JS）
+│   ├── home/Terminal.astro   终端组件（原生 JS，浮层内展示）
 │   └── links/ about/ home/
 ├── layouts/                  BaseLayout / CommonPage / BlogPost …
 ├── pages/                    路由（含 notes / tags / archives / search）
@@ -98,7 +98,7 @@ publishDate: '2026-10-04'
 - **友链**：`public/links.json`
 - **评论**：`src/config/giscus.ts`（参数取自 <https://giscus.app>）
 - **头像**：替换 `src/assets/avatar.png`
-- **终端文案 / 可跳转栏目**：`src/pages/index.astro` 中 `<Terminal />` 的 props
+- **终端文案 / 可跳转栏目**：`src/components/TerminalDialog.astro` 中 `<Terminal />` 的 props
 
 ## 部署
 

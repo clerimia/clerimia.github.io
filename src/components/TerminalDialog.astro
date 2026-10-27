@@ -17,29 +17,51 @@ const routes = {
   aria-describedby='terminal-description'
 >
   <header class='dialog-header'>
-    <span class='dialog-icon' aria-hidden='true'>&gt;_</span>
-    <h2 id='terminal-heading'>站点终端</h2>
-    <span class='dialog-site'>clerimia.sh</span>
-    <button class='dialog-close' id='terminal-close' type='button' aria-label='关闭终端'>
-      <kbd aria-hidden='true'>Esc</kbd><span aria-hidden='true'>×</span>
-    </button>
+    <div class='dialog-lights' aria-hidden='true'>
+      <button
+        class='dialog-light dialog-light--r'
+        id='terminal-close'
+        type='button'
+        aria-label='关闭终端'
+      />
+      <button
+        class='dialog-light dialog-light--y'
+        id='terminal-minimize'
+        type='button'
+        aria-label='最小化终端'
+        disabled
+        aria-disabled='true'
+      />
+      <button
+        class='dialog-light dialog-light--g'
+        id='terminal-maximize'
+        type='button'
+        aria-label='最大化终端'
+        disabled
+        aria-disabled='true'
+      />
+    </div>
+    <div class='dialog-title'>
+      <h2 id='terminal-heading'>clerimia@blog:~</h2>
+    </div>
+    <div class='dialog-hint' aria-hidden='true'>
+      <kbd>Esc</kbd>
+    </div>
   </header>
-  <p id='terminal-description' class='visually-hidden'>输入 help 查看命令，也可以点击推荐命令开始。</p>
+  <p id='terminal-description' class='visually-hidden'>输入 help 查看命令，也可以输入 ls 列出栏目。</p>
   <Terminal
-    variant='panel'
+    embedded
     user='clerimia'
-    host='workspace'
+    host='blog'
     cwd='~'
     bannerTitle='clerimia.sh'
-    bannerSub='输入 help，或者随意逛逛。'
+    bannerSub='输入 help 查看命令，Esc 关闭。'
     authorName='clerimia'
     authorDesc='合肥工业大学在读，关注 AI Agent 与全栈开发。'
+    welcome=''
     {routes}
     social={{ github: 'https://github.com/clerimia', email: '1525258693@qq.com' }}
   />
-  <footer class='dialog-footer'>
-    <span>↑ ↓ 历史记录</span><span>输入 help 查看命令 · Esc 关闭</span>
-  </footer>
 </dialog>
 
 <script>
@@ -58,7 +80,9 @@ const routes = {
     terminalDialog.showModal()
     document.documentElement.classList.add('terminal-modal-open')
     setTriggerState(true)
-    terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
+    requestAnimationFrame(() => {
+      terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
+    })
   }
 
   terminalTriggers.forEach((button) => {
@@ -84,9 +108,10 @@ const routes = {
   })
 
   terminalDialog?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') return
     if (event.key !== 'Tab') return
     const controls = Array.from(
-      terminalDialog.querySelectorAll<HTMLElement>('button, input, a[href], [tabindex="0"]')
+      terminalDialog.querySelectorAll<HTMLElement>('button:not([disabled]), input, a[href], [tabindex="0"]')
     ).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0)
     if (!controls.length) return
     const first = controls[0]
@@ -99,6 +124,9 @@ const routes = {
       first.focus()
     }
   })
+
+  /* 终端壳子自己的圆点按钮（非嵌入模式）转到这里处理 */
+  document.addEventListener('wt:close', () => terminalDialog?.close())
 
   window.addEventListener(
     'keydown',

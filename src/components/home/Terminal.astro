@@ -1,6 +1,5 @@
 ---
 import '@/assets/styles/terminal.css'
-import '@/assets/styles/terminal-panel.css'
 
 interface Props {
   user?: string
@@ -10,150 +9,160 @@ interface Props {
   bannerSub?: string
   authorName?: string
   authorDesc?: string
+  /** 顶部欢迎语；传空字符串则只保留 banner */
+  welcome?: string
   /** 可 cd 的栏目：{ blog: '/blog', ... } */
   routes?: Record<string, string>
   social?: Record<string, string>
-  /** panel 用于弹窗：固定输入区、独立滚动输出和直接输入。 */
-  variant?: 'window' | 'panel'
+  /** 是否内嵌在对话框里（隐藏自己的标题栏圆点，由对话框头部提供关闭等控件） */
+  embedded?: boolean
 }
 
 const {
-  user = 'user',
+  user = 'guest',
   host = 'localhost',
   cwd = '~',
-  bannerTitle = 'wterm v0.1',
+  bannerTitle = '',
   bannerSub = '',
   authorName = '',
   authorDesc = '',
+  welcome,
   routes = {},
   social = {},
-  variant = 'window'
+  embedded = false
 } = Astro.props
 
-const welcome = `你好，我是 ${authorName || '这里的主人'}。输入 help 查看可用命令。`
-const isPanel = variant === 'panel'
+const welcomeText =
+  welcome !== undefined
+    ? welcome
+    : authorName
+      ? `你好，我是 ${authorName}。输入 help 查看可用命令。`
+      : '输入 help 查看可用命令。'
+
+const lsColumns = 2
+const quickCommands = ['help', 'ls', 'whoami']
+
+const helpRows: Array<[string, string]> = [
+  ['help', '显示帮助'],
+  ['whoami', '关于我'],
+  ['ls', '列出站点栏目'],
+  ['cd <栏目>', '跳转，例如 cd blog'],
+  ['theme [dark|light|system]', '切换主题'],
+  ['social', '联系方式'],
+  ['date', '当前时间'],
+  ['echo <文本>', '回显文本'],
+  ['clear', '清屏']
+]
 ---
 
 <div
   id='wt-shell'
-  class:list={['wt-shell', { 'wt-shell--collapsed': !isPanel, 'wt-shell--panel': isPanel }]}
-  role={isPanel ? undefined : 'button'}
-  tabindex={isPanel ? undefined : '0'}
-  aria-expanded={isPanel ? 'true' : 'false'}
+  class:list={['wt-shell', { 'wt-shell--embedded': embedded }]}
+  data-wt-shell
 >
-  <div class='wt-titlebar'>
-    <div class='wt-lights' aria-hidden='true'>
-      <button
-        type='button'
-        class='wt-light wt-light--r'
-        tabindex='-1'
-        aria-label='折叠/展开'
-        data-wt='toggle'></button>
-      <button type='button' class='wt-light wt-light--y' tabindex='-1' aria-label='展开终端' data-wt='open'
-      ></button>
-      <button type='button' class='wt-light wt-light--g' tabindex='-1' aria-label='展开终端' data-wt='open'
-      ></button>
-    </div>
-
-    <div class='wt-title wt-title--peek' data-wt='title'></div>
-    <div class='wt-hint' data-wt='hint'></div>
-  </div>
+  {
+    !embedded && (
+      <div class='wt-titlebar'>
+        <div class='wt-lights' aria-hidden='true'>
+          <button
+            type='button'
+            class='wt-light wt-light--r'
+            tabindex='-1'
+            aria-label='关闭终端'
+            data-wt='close'
+          />
+          <button
+            type='button'
+            class='wt-light wt-light--y'
+            tabindex='-1'
+            aria-label='最小化终端'
+            data-wt='minimize'
+          />
+          <button
+            type='button'
+            class='wt-light wt-light--g'
+            tabindex='-1'
+            aria-label='最大化终端'
+            data-wt='maximize'
+          />
+        </div>
+        <div class='wt-title' data-wt='title' />
+      </div>
+    )
+  }
 
   <div class='wt-body' data-wt='body'>
-    <div class='wt-banner' hidden={isPanel}>
-      <span class='wt-banner-title'>{bannerTitle}</span>
-      {bannerSub && <span class='wt-banner-sub'>{bannerSub}</span>}
-    </div>
-
-    <div class='wt-output' data-wt='output' role={isPanel ? 'log' : undefined} aria-label={isPanel ? '终端输出' : undefined} aria-live={isPanel ? 'polite' : undefined}>
-      {isPanel ? (
-        <div class='wt-panel-welcome' data-wt='welcome'>
-          <span class='wt-panel-eyebrow'>HELLO, VISITOR</span>
-          <h3>欢迎来逛逛。</h3>
-          <p>用几条简单的命令，认识这个小站。</p>
-          <div class='wt-suggestions'>
-            <button type='button' data-wt-command='whoami'><code>whoami</code><span>关于我</span></button>
-            <button type='button' data-wt-command='ls'><code>ls</code><span>站点栏目</span></button>
-            <button type='button' data-wt-command='help'><code>help</code><span>所有命令</span></button>
+    <div class='wt-output' data-wt='output' role='log' aria-label='终端输出' aria-live='polite'>
+      {
+        bannerTitle && (
+          <div class='wt-banner' data-wt='banner'>
+            <span class='wt-banner-title'>{bannerTitle}</span>
+            {bannerSub && <span class='wt-banner-sub'>{bannerSub}</span>}
           </div>
-        </div>
-      ) : (
-        <span class='wt-line wt-tone-muted' data-wt='typed'><span class='wt-caret' data-wt='typed-caret'></span></span>
-      )}
+        )
+      }
     </div>
 
     <div class='wt-input-row' data-wt='input-row'>
-      {isPanel ? <span class='wt-prompt' data-wt='prompt' aria-hidden='true'>❯</span> : <span class='wt-prompt' data-wt='prompt'
+      <span class='wt-prompt' data-wt='prompt' aria-hidden='true'
         ><span class='wt-prompt-user'>{user}</span><span class='wt-prompt-at'>@</span><span
           class='wt-prompt-host'>{host}</span
-        ><span class='wt-prompt-cwd'> {cwd}</span><span class='wt-prompt-sigil'>$</span></span>}
-      {!isPanel && <span class='wt-input-display'>
-        <span class='wt-tone-fg' data-wt='input-text'></span>
-        <span class='wt-caret'></span>
-        <span class='wt-input-hint' data-wt='input-hint'
-          >输入 <span class='wt-tone-primary'>help</span> 开始探索</span
-        >
-      </span>}
-      <input
-        class={isPanel ? 'wt-input' : 'wt-input-hidden'}
-        data-wt='input'
-        spellcheck='false'
-        autocomplete='off'
-        autocapitalize='off'
-        autocorrect='off'
-        aria-label='终端输入'
-        placeholder={isPanel ? '输入命令，例如 help' : undefined}
-      />
-      {isPanel && <kbd class='wt-submit-hint' aria-hidden='true'>Enter ↵</kbd>}
+        ><span class='wt-prompt-cwd'>{cwd}</span><span class='wt-prompt-sigil'>❯</span></span
+      >
+      <span class='wt-input-wrap'>
+        <input
+          class='wt-input'
+          data-wt='input'
+          spellcheck='false'
+          autocomplete='off'
+          autocapitalize='off'
+          autocorrect='off'
+          aria-label='终端输入'
+          placeholder='help'
+        />
+        <span class='wt-block-caret' data-wt='caret' aria-hidden='true' />
+      </span>
     </div>
   </div>
 </div>
 
-<script is:inline define:vars={{ user, host, cwd, bannerTitle, welcome, routes, social, authorName, authorDesc, isPanel }}>
+<script is:inline define:vars={{ user, host, cwd, bannerTitle, bannerSub, welcomeText, routes, social, authorName, authorDesc, helpRows, lsColumns, quickCommands, embedded }}>
   ;(function () {
-    var shell = document.getElementById('wt-shell')
+    var shell = document.querySelector('[data-wt-shell]')
     if (!shell) return
 
     var titleEl = shell.querySelector('[data-wt="title"]')
-    var hintEl = shell.querySelector('[data-wt="hint"]')
     var bodyEl = shell.querySelector('[data-wt="body"]')
     var outputEl = shell.querySelector('[data-wt="output"]')
-    var typedEl = shell.querySelector('[data-wt="typed"]')
-    var typedCaret = shell.querySelector('[data-wt="typed-caret"]')
     var inputRow = shell.querySelector('[data-wt="input-row"]')
     var inputEl = shell.querySelector('[data-wt="input"]')
-    var inputTextEl = shell.querySelector('[data-wt="input-text"]')
-    var inputHintEl = shell.querySelector('[data-wt="input-hint"]')
     var promptEl = shell.querySelector('[data-wt="prompt"]')
-    var panelWelcome = shell.querySelector('[data-wt="welcome"]')
+    var blockCaret = shell.querySelector('[data-wt="caret"]')
 
-    var open = isPanel
-    var typed = ''
-    var typeTimer = 0
-    var histIdx = -1
     var history = []
+    var histIdx = -1
 
-    /* ===== 标题栏 / 提示文案 ===== */
+    /* ===== 标题栏 ===== */
     function renderChrome() {
-      if (open) {
-        titleEl.innerHTML =
-          '<span class="wt-tone-muted">' +
-          user +
-          '@' +
-          host +
-          '</span><span class="wt-tone-muted"> — ' +
-          bannerTitle +
-          '</span>'
-        hintEl.innerHTML = typed ? '<span class="wt-tone-muted">输入 help 开始</span>' : ''
-      } else {
-        titleEl.innerHTML = '<span class="wt-prompt-sigil">$</span><span class="wt-tone-fg"></span><span class="wt-caret wt-caret--idle"></span>'
-        hintEl.innerHTML = '点击或按 <span class="wt-kbd">`</span> 打开'
-      }
+      if (!titleEl) return
+      titleEl.textContent = ''
+      var u = document.createElement('span')
+      u.className = 'wt-tone-primary'
+      u.textContent = user + '@' + host
+      var sep = document.createElement('span')
+      sep.className = 'wt-tone-muted'
+      sep.textContent = ':'
+      var p = document.createElement('span')
+      p.className = 'wt-tone-muted'
+      p.textContent = cwd
+      titleEl.appendChild(u)
+      titleEl.appendChild(sep)
+      titleEl.appendChild(p)
     }
 
     /* ===== 输出行 ===== */
     function appendLine(text, tone, withPrompt) {
-      var el = document.createElement('span')
+      var el = document.createElement('div')
       el.className = withPrompt ? 'wt-line wt-entry' : 'wt-line wt-tone-' + (tone || 'fg')
       if (withPrompt) {
         el.appendChild(promptEl.cloneNode(true))
@@ -165,33 +174,43 @@ const isPanel = variant === 'panel'
         el.textContent = text
       }
       outputEl.appendChild(el)
-      scrollOutput()
+      scrollToBottom()
+      return el
     }
 
-    function scrollOutput() {
-      var scrollEl = isPanel ? outputEl : bodyEl
-      scrollEl.scrollTop = scrollEl.scrollHeight
+    function appendNode(node) {
+      outputEl.appendChild(node)
+      scrollToBottom()
     }
 
-    /* ===== 打字机欢迎语 ===== */
-    function typeWelcome() {
-      window.clearInterval(typeTimer)
-      typed = ''
-      typedEl.textContent = ''
-      typedEl.appendChild(typedCaret)
-      var i = 0
-      typeTimer = window.setInterval(function () {
-        i += 1
-        typed = welcome.slice(0, i)
-        typedEl.textContent = typed
-        if (i < welcome.length) {
-          typedEl.appendChild(typedCaret)
-        }
-        if (i >= welcome.length) {
-          window.clearInterval(typeTimer)
-          renderChrome()
-        }
-      }, 26)
+    function scrollToBottom() {
+      bodyEl.scrollTop = bodyEl.scrollHeight
+    }
+
+    /* ===== 光标定位（镜像量宽） ===== */
+    var mirrorEl = document.createElement('span')
+    mirrorEl.className = 'wt-input-mirror'
+    mirrorEl.setAttribute('aria-hidden', 'true')
+    shell.appendChild(mirrorEl)
+
+    function syncCaret() {
+      if (!blockCaret) return
+      if (document.activeElement !== inputEl) {
+        blockCaret.classList.remove('wt-block-caret--visible')
+        return
+      }
+      var at = inputEl.selectionStart
+      var collapsed = at === inputEl.selectionEnd
+      if (at === null || !collapsed) {
+        blockCaret.classList.remove('wt-block-caret--visible')
+        return
+      }
+      blockCaret.classList.add('wt-block-caret--visible')
+      mirrorEl.textContent = inputEl.value.slice(0, at)
+      blockCaret.style.setProperty(
+        '--wt-caret-x',
+        mirrorEl.getBoundingClientRect().width - inputEl.scrollLeft + 'px'
+      )
     }
 
     /* ===== 命令实现 ===== */
@@ -199,9 +218,41 @@ const isPanel = variant === 'panel'
       appendLine(text, tone || 'fg', false)
     }
 
+    function emitColumns(items, columns) {
+      /* 对齐为等宽多列，靠 padding 不靠表格 */
+      var maxLen = 0
+      items.forEach(function (s) {
+        if (s.length > maxLen) maxLen = s.length
+      })
+      var rows = Math.ceil(items.length / columns)
+      for (var r = 0; r < rows; r++) {
+        var parts = []
+        for (var c = 0; c < columns; c++) {
+          var i = c * rows + r
+          if (i < items.length) parts.push(items[i].padEnd(maxLen + 2, ' '))
+        }
+        emit(parts.join('').trimEnd(), 'primary')
+      }
+    }
+
+    function emitHelp() {
+      var dl = document.createElement('dl')
+      dl.className = 'wt-help-list'
+      helpRows.forEach(function (pair) {
+        var row = document.createElement('div')
+        var dt = document.createElement('dt')
+        var dd = document.createElement('dd')
+        dt.textContent = pair[0]
+        dd.textContent = pair[1]
+        row.appendChild(dt)
+        row.appendChild(dd)
+        dl.appendChild(row)
+      })
+      appendNode(dl)
+    }
+
     function run(raw) {
       var cmd = String(raw || '').trim()
-      if (isPanel && cmd) panelWelcome.hidden = true
       appendLine(cmd, 'fg', true)
       if (!cmd) return
 
@@ -211,62 +262,44 @@ const isPanel = variant === 'panel'
       var key = name.toLowerCase()
 
       switch (key) {
-        case 'help': {
-          var commands = [
-            ['help', '显示帮助'], ['whoami', '关于我'], ['ls', '列出站点栏目'],
-            ['cd <栏目>', '跳转，例如 cd blog'], ['theme [dark|light|system]', '切换主题'],
-            ['social', '联系方式'], ['date', '当前时间'], ['echo <文本>', '回显文本'], ['clear', '清屏']
-          ]
-          if (isPanel) {
-            var list = document.createElement('dl')
-            list.className = 'wt-help-list wt-line'
-            commands.forEach(function (command) {
-              var row = document.createElement('div')
-              var term = document.createElement('dt')
-              var desc = document.createElement('dd')
-              term.textContent = command[0]
-              desc.textContent = command[1]
-              row.append(term, desc)
-              list.appendChild(row)
-            })
-            outputEl.appendChild(list)
-            scrollOutput()
-          } else {
-            emit('可用命令：', 'muted')
-            commands.forEach(function (command) { emit('  ' + command[0].padEnd(26) + command[1], 'muted') })
-          }
+        case 'help':
+          emitHelp()
           break
-        }
 
         case 'whoami':
           emit(authorName || '-', 'primary')
-          emit(authorDesc || '-', 'muted')
+          if (authorDesc) emit(authorDesc, 'muted')
           break
 
         case 'ls': {
-          var keys = Object.keys(routes)
-          if (!keys.length) {
+          var names = Object.keys(routes)
+          if (!names.length) {
             emit('没有可跳转的栏目。', 'muted')
           } else {
-            emit(keys.join('    '), 'primary')
-            emit('提示：使用 cd <栏目> 跳转', 'muted')
+            emitColumns(
+              names.map(function (n) {
+                return n
+              }),
+              lsColumns
+            )
+            emit("Tip: use 'cd <栏目>' to navigate.", 'muted')
           }
           break
         }
 
         case 'cd': {
           if (!arg) {
-            emit('用法：cd <栏目>', 'warn')
+            emit('usage: cd <栏目>', 'warn')
             break
           }
           var target = routes[arg.replace(/^\//, '')]
           if (target) {
-            emit('正在跳转到 ' + target + ' ...', 'ok')
+            emit('→ ' + target, 'ok')
             window.setTimeout(function () {
               window.location.href = target
-            }, 350)
+            }, 320)
           } else {
-            emit('没有这个栏目：' + arg, 'err')
+            emit('cd: no such directory: ' + arg, 'err')
           }
           break
         }
@@ -289,16 +322,16 @@ const isPanel = variant === 'panel'
             localStorage.setItem('theme', nowDark ? 'dark' : 'light')
           } catch (e) {}
           document.dispatchEvent(new Event('site:theme-change'))
-          emit('已切换到' + (nowDark ? '暗色' : '亮色') + '主题', 'ok')
+          emit('theme → ' + (nowDark ? 'dark' : 'light'), 'ok')
           break
         }
 
         case 'social': {
-          var entries = Object.keys(social || {})
-          if (!entries.length) {
+          var keys = Object.keys(social || {})
+          if (!keys.length) {
             emit('未配置社交链接。', 'muted')
           } else {
-            entries.forEach(function (k) {
+            keys.forEach(function (k) {
               emit(k + '  ' + social[k], 'primary')
             })
           }
@@ -313,12 +346,12 @@ const isPanel = variant === 'panel'
           emit(arg || '', 'fg')
           break
 
-        case 'clear':
-          outputEl.querySelectorAll('.wt-line').forEach(function (n) {
+        case 'clear': {
+          outputEl.querySelectorAll('.wt-line, .wt-help-list, .wt-banner').forEach(function (n) {
             n.remove()
           })
-          if (isPanel) panelWelcome.hidden = false
           break
+        }
 
         case 'sudo':
           emit('你已经是这里的主人了，不需要 sudo。', 'warn')
@@ -326,52 +359,40 @@ const isPanel = variant === 'panel'
 
         default:
           emit('command not found: ' + name, 'err')
-          emit('输入 help 查看可用命令', 'muted')
+          emit("输入 help 查看可用命令", 'muted')
       }
     }
 
-    /* ===== 折叠 / 展开 ===== */
-    function setOpen(v) {
-      open = v
-      shell.classList.toggle('wt-shell--collapsed', !v)
-      shell.setAttribute('aria-expanded', v ? 'true' : 'false')
-      if (v) {
-        shell.removeAttribute('role')
-        shell.removeAttribute('tabindex')
-      } else {
-        shell.setAttribute('role', 'button')
-        shell.setAttribute('tabindex', '0')
-      }
-      renderChrome()
-      if (v) {
-        typeWelcome()
-        inputEl.focus()
-      }
+    /* ===== 输入事件 ===== */
+    function clearInput() {
+      inputEl.value = ''
+      syncCaret()
     }
 
-    /* ===== 输入 ===== */
-    function syncInput() {
-      if (isPanel) return
-      inputTextEl.textContent = inputEl.value
-      inputHintEl.style.display = inputEl.value ? 'none' : ''
-    }
-
-    inputEl.addEventListener('input', syncInput)
+    /* 聚焦时清空占位符，把状态交给光标；失焦且为空时恢复 */
+    inputEl.addEventListener('focus', function () {
+      inputEl.placeholder = ''
+    })
+    inputEl.addEventListener('blur', function () {
+      if (!inputEl.value) inputEl.placeholder = 'help'
+    })
 
     inputEl.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.isComposing) {
         var value = inputEl.value
         if (value.trim()) history.push(value)
         histIdx = -1
-        inputEl.value = ''
-        syncInput()
+        clearInput()
         run(value)
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
         if (!history.length) return
         histIdx = histIdx < 0 ? history.length - 1 : Math.max(0, histIdx - 1)
         inputEl.value = history[histIdx]
-        syncInput()
+        window.requestAnimationFrame(function () {
+          inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length)
+          syncCaret()
+        })
       } else if (e.key === 'ArrowDown') {
         e.preventDefault()
         if (histIdx < 0) return
@@ -383,59 +404,93 @@ const isPanel = variant === 'panel'
           histIdx = idx
           inputEl.value = history[idx]
         }
-        syncInput()
+        window.requestAnimationFrame(function () {
+          inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length)
+          syncCaret()
+        })
       }
     })
 
-    shell.querySelectorAll('[data-wt-command]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var command = button.getAttribute('data-wt-command')
-        history.push(command)
-        histIdx = -1
-        inputEl.value = ''
-        run(command)
-        inputEl.focus()
+    ;['input', 'keyup', 'click', 'select', 'scroll'].forEach(function (event) {
+      inputEl.addEventListener(event, syncCaret)
+    })
+    document.addEventListener('selectionchange', function () {
+      if (document.activeElement === inputEl) syncCaret()
+    })
+
+    /* 横向滚动时定期校正 */
+    var followTimer = 0
+    inputEl.addEventListener('focus', function () {
+      syncCaret()
+      window.clearInterval(followTimer)
+      followTimer = window.setInterval(syncCaret, 260)
+    })
+    inputEl.addEventListener('blur', function () {
+      window.clearInterval(followTimer)
+      followTimer = 0
+      syncCaret()
+    })
+    window.addEventListener('resize', syncCaret)
+
+    /* 点输入行空白处也聚焦 */
+    inputRow.addEventListener('click', function (e) {
+      if (e.target === inputEl) return
+      inputEl.focus()
+    })
+    shell.addEventListener('click', function (e) {
+      if (e.target === bodyEl || e.target === outputEl) inputEl.focus()
+    })
+
+    /* ===== 标题栏按钮（非嵌入模式）：红色关闭可用，黄绿暂为占位 ===== */
+    shell.querySelectorAll('[data-wt="close"]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        document.dispatchEvent(new CustomEvent('wt:close'))
       })
     })
 
-    inputRow.addEventListener('click', function () {
+    /* ===== 首屏指引：告诉第一次来的人可以敲什么 ===== */
+    function renderIntro() {
+      if (welcomeText) appendLine(welcomeText, 'muted')
+      var intro = document.createElement('div')
+      intro.className = 'wt-line wt-intro'
+      var label = document.createElement('span')
+      label.className = 'wt-tone-muted'
+      label.textContent = '试试 '
+      intro.appendChild(label)
+      quickCommands.forEach(function (cmd, i) {
+        if (i) {
+          var sep = document.createElement('span')
+          sep.className = 'wt-tone-muted'
+          sep.textContent = ' · '
+          intro.appendChild(sep)
+        }
+        var button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'wt-cmd'
+        button.setAttribute('data-wt-command', cmd)
+        button.textContent = cmd
+        intro.appendChild(button)
+      })
+      appendNode(intro)
+    }
+
+    shell.querySelectorAll('[data-wt-command]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var cmd = button.getAttribute('data-wt-command')
+        inputEl.focus()
+        inputEl.value = ''
+        syncCaret()
+        run(cmd)
+      })
+    })
+
+    /* ===== 初始 ===== */
+    renderChrome()
+    renderIntro()
+    if (embedded) {
+      /* 嵌入模式由对话框负责聚焦 */
+    } else {
       inputEl.focus()
-    })
-
-    /* 折叠态点击卡片展开 */
-    shell.addEventListener('click', function (e) {
-      var btn = e.target.closest ? e.target.closest('[data-wt]') : null
-      var action = btn ? btn.getAttribute('data-wt') : null
-      if (action === 'toggle') {
-        e.stopPropagation()
-        setOpen(!open)
-        return
-      }
-      if (action === 'open') {
-        e.stopPropagation()
-        setOpen(true)
-        return
-      }
-      if (!open) setOpen(true)
-    })
-
-    shell.addEventListener('keydown', function (e) {
-      if (!open && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault()
-        setOpen(true)
-      }
-    })
-
-    /* 全局 ` 键打开 */
-    window.addEventListener('keydown', function (e) {
-      if (isPanel || e.key !== '`' || open) return
-      var t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
-      e.preventDefault()
-      setOpen(true)
-    })
-
-    /* 初始渲染 */
-    if (!isPanel) renderChrome()
+    }
   })()
 </script>

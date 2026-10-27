@@ -57,9 +57,11 @@
   margin-top: 16px;
 }
 
-.home-actions a {
+.home-actions a,
+.home-actions button {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: 44px;
   padding-block: 4px;
   font-size: var(--text-body);
@@ -77,9 +79,35 @@
   text-decoration: none;
 }
 
+/* 终端入口是次级动作：文字可读，但权重低于前两个链接。 */
+.home-terminal-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--quiet);
+  font: inherit;
+  font-size: var(--text-body);
+  cursor: pointer;
+}
+
+.home-terminal-link__glyph {
+  color: var(--leaf);
+  font: 12px ui-monospace, Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+/* 主链接仍用下划线；终端入口是次级文字链接，
+   沿用 .home-text-link 的语言：整组换色，不画线
+   （inline-flex 下划线会按字盒分段，gap 处必然断开）。 */
 .home-actions a:hover {
   color: var(--leaf);
   text-decoration-line: underline;
+}
+
+.home-terminal-link:hover,
+.home-terminal-link:focus-visible,
+.home-terminal-link:hover .home-terminal-link__glyph {
+  color: var(--leaf);
 }
 
 .home-profile {
