@@ -604,6 +604,56 @@
         border: 1px solid var(--line);
         border-radius: 10px;
       }
+      .arrow-sample {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 44px;
+        margin: 12px 0 18px;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .arrow-sample svg {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        color: var(--muted);
+        stroke: currentColor;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: color 160ms ease-out;
+      }
+      .arrow-sample__tip, .arrow-sample__shaft {
+        transition: transform 220ms ease-out;
+      }
+      .text-link-sample {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 44px;
+        color: var(--muted);
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .text-link-sample:hover, .text-link-sample:focus-visible { color: var(--green); }
+      .arrow-sample__shaft {
+        transform-box: view-box;
+        transform-origin: 12px 12px;
+        transform: scaleX(0);
+      }
+      @media (hover: hover) {
+        .arrow-sample:hover svg { color: var(--green); }
+        .arrow-sample:hover .arrow-sample__tip { transform: translateX(7px); }
+        .arrow-sample:hover .arrow-sample__shaft { transform: scaleX(1); }
+      }
+      .arrow-sample:focus-visible svg { color: var(--green); }
+      .arrow-sample:focus-visible .arrow-sample__tip { transform: translateX(7px); }
+      .arrow-sample:focus-visible .arrow-sample__shaft { transform: scaleX(1); }
       .motion-sample summary {
         display: flex;
         align-items: center;
@@ -1104,7 +1154,7 @@
                   <h5>最近写下的</h5>
                   <p>从一个安静的念头开始，慢慢写成属于自己的故事。</p>
                   <div class="preview-actions">
-                    <span class="preview-link">阅读文章 ↗</span
+                    <span class="preview-link">阅读文章</span
                     ><span class="preview-chip">日间 · 柔和</span>
                   </div>
                 </div>
@@ -1186,7 +1236,7 @@
                   <h5>让想法被听见</h5>
                   <p>绿色指向行动，酒红让表达带有温度和存在感。</p>
                   <div class="preview-actions">
-                    <span class="preview-link">阅读文章 ↗</span
+                    <span class="preview-link">阅读文章</span
                     ><span class="preview-chip">夜间 · 鲜活</span>
                   </div>
                 </div>
@@ -1749,6 +1799,20 @@
                 <div class="motion-sample__body">这是 220ms、最多 8px 的小范围进入示例；再次点击可收起。</div>
               </details>
 
+              <h4>文章行方向箭头 · 已接入，实际设备待验证</h4>
+              <p>整行文章链接的辅助方向提示：默认显示右尖括号，悬停或键盘聚焦时箭头尖向右移动，横线同步长出。图标变形 220ms、颜色 160ms，均为 ease-out；触屏不依赖悬停，减少动态效果时立即切换。外部链接、分页与正文图示各自处理。</p>
+              <a class="arrow-sample" href="#motion">
+                <span>文章行示例 · 悬停或键盘聚焦</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path class="arrow-sample__shaft" d="M5 12h14" />
+                  <path class="arrow-sample__tip" d="m7 7 5 5-5 5" />
+                </svg>
+              </a>
+
+              <h4>站内次级文字导航 · 首页已接入</h4>
+              <p>文字后使用静态横向箭头；悬停或键盘聚焦时文字和箭头作为整体变为操作色。其他页面待逐步对照。</p>
+              <a class="text-link-sample" href="#motion"><span class="text-link-sample__label">全部文章</span><span aria-hidden="true">→</span></a>
+
               <p class="motion-note">
                 <b>减少动态效果：</b>响应 <code>prefers-reduced-motion</code>，关闭非必要过渡、位移、闪烁和平滑滚动；内容、状态、焦点与关闭方式仍完整保留。
                 终端光标只在输入焦点内闪烁，阅读区域不持续运动。
@@ -1756,7 +1820,7 @@
             </article>
           </div>
           <div class="hint" style="margin-top: 18px">
-            <b>实施与验证：</b>页框、导航换行、平滑字号和基于容器宽度的目录与列表侧栏已接入。模拟检查了日夜主题、320–1440px 的代表宽度和目录键盘操作；真实设备、安全区及缩放仍待验证。目录进入使用 220ms，其余动效尚未统一；页面仍有 300ms 入场和首页光标闪烁。详见
+            <b>实施与验证：</b>页框、导航换行、平滑字号和基于容器宽度的目录与列表侧栏已接入。模拟检查了日夜主题、320–1440px 的代表宽度和目录键盘操作；真实设备、安全区及缩放仍待验证。文章行方向箭头已共享，浏览器已检查悬停、键盘焦点和减少动态效果，实际设备待验证；目录进入使用 220ms，其余动效尚未统一，部分页面仍有 300ms 入场。详见
             <a href="design-language.md">文字规范的差距清单</a>。
           </div>
         </section>

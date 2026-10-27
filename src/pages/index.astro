@@ -3,6 +3,7 @@ import { Image } from 'astro:assets'
 
 import { Icon } from 'astro-pure/user'
 import DailyQuote from '@/components/home/DailyQuote.astro'
+import DirectionalArrow from '@/components/DirectionalArrow.astro'
 import darkAvatar from '@/assets/avatar-dark.png'
 import avatar from '@/assets/avatar.png'
 
@@ -28,29 +29,12 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
           </p>
           <div class='home-actions'>
             <a class='home-reading-link' href='/blog' data-astro-prefetch>
-              阅读文章 <span aria-hidden='true'>↗</span>
+              阅读文章
             </a>
             <a class='home-notes-link' href='/notes' data-astro-prefetch>
-              翻翻笔记 <span aria-hidden='true'>↗</span>
+              翻翻笔记
             </a>
           </div>
-          <button
-            class='home-terminal-peek'
-            data-terminal-trigger
-            type='button'
-            aria-haspopup='dialog'
-            aria-controls='terminal-dialog'
-            aria-expanded='false'
-          >
-            <span class='home-peek-title' aria-hidden='true'>clerimia.sh</span>
-            <span class='home-peek-line' aria-hidden='true'>
-              <span class='home-peek-prompt'>❯</span>
-              <span class='home-peek-cmd'>help</span>
-              <span class='home-peek-caret'></span>
-            </span>
-            <span class='home-peek-action' aria-hidden='true'>打开终端 ↗</span>
-            <span class='visually-hidden'>打开站点终端</span>
-          </button>
         </div>
 
         <aside class='home-profile' aria-label='个人名片'>
@@ -89,8 +73,8 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
             <a class='home-social-button' href='/rss.xml' aria-label='订阅 RSS'
               ><Icon name='rss' /></a
             >
-            <a class='home-about-link' href='/about' data-astro-prefetch>
-              更多关于我 <span aria-hidden='true'>↗</span>
+            <a class='home-text-link home-about-link' href='/about' data-astro-prefetch>
+              <span class='home-text-link__label'>更多关于我</span><span aria-hidden='true'>→</span>
             </a>
           </div>
         </aside>
@@ -102,12 +86,14 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
         <div>
           <h2 id='home-latest-heading'>最近写下的</h2>
         </div>
-        <a href='/blog' data-astro-prefetch>全部文章 <span aria-hidden='true'>↗</span></a>
+        <a class='home-text-link' href='/blog' data-astro-prefetch>
+          <span class='home-text-link__label'>全部文章</span><span aria-hidden='true'>→</span>
+        </a>
       </div>
       <div class='home-post-list'>
         {
           posts.map((post) => (
-            <a class='home-post-row' href={getPostUrl(post)} data-astro-prefetch>
+            <a class='home-post-row direction-arrow-trigger' href={getPostUrl(post)} data-astro-prefetch>
               <div class='home-post-date'>
                 {post.data.publishDate
                   .toLocaleDateString('zh-CN', {
@@ -122,9 +108,7 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
                 <h3>{post.data.title}</h3>
                 <p>{post.data.description}</p>
               </div>
-              <span class='home-post-arrow' aria-hidden='true'>
-                ↗
-              </span>
+              <DirectionalArrow />
             </a>
           ))
         }

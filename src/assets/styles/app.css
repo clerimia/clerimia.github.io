@@ -274,13 +274,19 @@ input:focus-visible,
 
 .site-brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: baseline;
+  gap: 14px;
   color: var(--ink);
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.5px;
   text-decoration: none;
+}
+
+.site-brand__wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
 }
 
 .site-brand__mark {
@@ -289,12 +295,14 @@ input:focus-visible,
   font-weight: 800;
 }
 
-.site-brand__suffix {
-  margin-left: 6px;
+.site-brand__tagline {
+  padding-left: 12px;
+  border-left: 1px solid var(--rule);
   color: var(--quiet);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .site-nav {
@@ -651,7 +659,7 @@ html.terminal-modal-open {
     gap: 12px;
   }
 
-  .site-brand__suffix {
+  .site-brand__tagline {
     display: none;
   }
 

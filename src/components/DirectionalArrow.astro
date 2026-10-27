@@ -1,0 +1,64 @@
+<svg class='direction-arrow' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
+  <path class='direction-arrow__shaft' d='M5 12h14' />
+  <path class='direction-arrow__tip' d='m7 7 5 5-5 5' />
+</svg>
+
+<style>
+  .direction-arrow {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex: none;
+    color: var(--color-text-muted);
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: color 160ms ease-out;
+  }
+
+  .direction-arrow__tip,
+  .direction-arrow__shaft {
+    transition: transform 220ms ease-out;
+  }
+
+  .direction-arrow__shaft {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+    transform: scaleX(0);
+  }
+
+  @media (hover: hover) {
+    :global(.direction-arrow-trigger:hover) .direction-arrow {
+      color: var(--color-action);
+    }
+
+    :global(.direction-arrow-trigger:hover) .direction-arrow__tip {
+      transform: translateX(7px);
+    }
+
+    :global(.direction-arrow-trigger:hover) .direction-arrow__shaft {
+      transform: scaleX(1);
+    }
+  }
+
+  :global(.direction-arrow-trigger:focus-visible) .direction-arrow {
+    color: var(--color-action);
+  }
+
+  :global(.direction-arrow-trigger:focus-visible) .direction-arrow__tip {
+    transform: translateX(7px);
+  }
+
+  :global(.direction-arrow-trigger:focus-visible) .direction-arrow__shaft {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .direction-arrow,
+    .direction-arrow__tip,
+    .direction-arrow__shaft {
+      transition: none;
+    }
+  }
+</style>

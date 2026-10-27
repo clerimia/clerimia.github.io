@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import { type CollectionEntry, render } from 'astro:content'
 import { FormattedDate, Icon } from 'astro-pure/user'
+import DirectionalArrow from '@/components/DirectionalArrow.astro'
 import { getMusingUrl } from '@/utils/posts'
 import { getEntrySection, getTagUrl } from '@/utils/tags'
 
@@ -21,7 +22,7 @@ const postDate = data.updatedDate ?? data.publishDate
 ---
 
 <li class:list={['post-preview', { 'post-preview--plain': plain }, className]}>
-  <a class='post-preview__link' href={getMusingUrl(post)} data-astro-prefetch>
+  <a class='post-preview__link direction-arrow-trigger' href={getMusingUrl(post)} data-astro-prefetch>
     <div class='post-preview__content'>
       <FormattedDate class='post-preview__date' date={postDate} />
       {data.title && (
@@ -45,7 +46,7 @@ const postDate = data.updatedDate ?? data.publishDate
         {...data.heroImage}
       />
     )}
-    <span class='post-preview__arrow' aria-hidden='true'>↗</span>
+    <DirectionalArrow />
   </a>
 
   {detailed && data.tags.length > 0 && (
@@ -126,13 +127,8 @@ const postDate = data.updatedDate ?? data.publishDate
       border-radius: var(--radius-control);
     }
 
-    .post-preview__arrow {
-      color: var(--color-text-muted);
-      font-size: 18px;
-    }
-
     .post-preview__link:hover .post-preview__title,
-    .post-preview__link:hover .post-preview__arrow {
+    .post-preview__link:focus-visible .post-preview__title {
       color: var(--color-action);
     }
 
