@@ -6,8 +6,9 @@
   --diagram-line: hsl(var(--border) / 0.65);
   --diagram-surface: var(--card-tint);
   --diagram-card: var(--card-tint-hover);
-  --diagram-blue: hsl(var(--primary));
-  --diagram-blue-soft: hsl(var(--primary) / 0.06);
+  /* 图表分类色不是操作状态，继续使用绿色以免随 action 变红。 */
+  --diagram-blue: var(--color-brand);
+  --diagram-blue-soft: color-mix(in srgb, var(--color-brand) 6%, transparent);
   --diagram-teal: #23786a;
   --diagram-teal-soft: rgb(35 120 106 / 0.06);
   --diagram-red: #a84b38;

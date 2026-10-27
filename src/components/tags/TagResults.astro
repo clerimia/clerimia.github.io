@@ -1,7 +1,6 @@
 ---
 import type { Page } from 'astro'
 import { Paginator } from 'astro-pure/components/pages'
-import { Button } from 'astro-pure/user'
 import PostPreview from '@/components/PostPreview.astro'
 import TagLinks from '@/components/tags/TagLinks.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
@@ -21,9 +20,8 @@ const paginationProps = {
 }
 ---
 
-<PageLayout meta={{ title, description: `${sectionTitles[section]} 中标签为 ${tag} 的内容。` }}>
-  <Button title='返回' href={getTagUrl(section)} variant='back' />
-  <main class='mt-6 lg:mt-10'>
+<PageLayout meta={{ title, description: `${sectionTitles[section]} 中标签为 ${tag} 的内容。` }} back={getTagUrl(section)}>
+  <main class='site-page-main'>
     <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
     <section id='content' aria-label={`${sectionTitles[section]} 标签结果`}>
       <ul class='flex flex-col gap-4'>

@@ -1,5 +1,6 @@
 ---
 import { ThemeProvider } from 'astro-pure/components/basic'
+import { Button } from 'astro-pure/user'
 import type { SiteMeta } from 'astro-pure/types'
 import BaseHead from '@/components/BaseHead.astro'
 import SiteFooter from '@/components/SiteFooter.astro'
@@ -14,10 +15,12 @@ import '@/assets/styles/app.css'
 
 interface Props {
   meta: SiteMeta
+  back?: string
 }
 
 const {
   meta: { articleDate, description = config.description, ogImage, title },
+  back,
   ...props
 } = Astro.props
 const isHome = Astro.url.pathname === '/'
@@ -41,6 +44,7 @@ const isHome = Astro.url.pathname === '/'
         class:list={['site-content', { 'site-content--inner': !isHome }]}
         tabindex='-1'
       >
+        {back && <Button title='返回' href={back} variant='back' class='site-back' />}
         <slot />
       </div>
       <SiteFooter />

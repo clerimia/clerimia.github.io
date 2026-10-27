@@ -1,7 +1,7 @@
 ---
 import { BackToTop } from 'astro-pure/components/pages'
 import type { SiteMeta } from 'astro-pure/types'
-import { Button, Icon } from 'astro-pure/user'
+import { Icon } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
@@ -16,9 +16,8 @@ interface Props {
 const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = Astro.props
 ---
 
-<PageLayout {meta} {...props}>
-  <Button title='返回' href={back} variant='back' />
-  <main class:list={['article-layout', 'mt-6', { 'article-layout--with-sidebar': hasSidebar }]}>
+<PageLayout {meta} {back} {...props}>
+  <main class:list={['site-page-main', 'article-layout', { 'article-layout--with-sidebar': hasSidebar }]}>
     {hasSidebar && (
       <>
         <aside id='sidebar' class='article-sidebar animate' aria-label='页面目录' tabindex='-1' data-pagefind-ignore>

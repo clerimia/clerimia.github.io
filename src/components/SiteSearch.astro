@@ -94,6 +94,11 @@ import '@pagefind/default-ui/css/ui.css'
     font-weight: normal;
   }
 
+  /* Pagefind 默认白色勾选符在夜间浅酒红底上对比不足。 */
+  #site-search :global(.pagefind-ui__filter-value::before) {
+    border-color: var(--color-action-ink);
+  }
+
   /* 搜索命中沿用主题选中表面，保持文字清晰且不引入高亮黄。 */
   #site-search :global(mark) {
     padding-inline: 0.1em;

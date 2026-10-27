@@ -2,14 +2,18 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { runInNewContext } from 'node:vm'
+import ts from 'typescript'
 
 const header = await readFile(new URL('../src/components/SiteHeader.astro', import.meta.url), 'utf8')
-const script = header.match(/<script>([\s\S]*?)<\/script>/)[1]
+const script = ts.transpile(header.match(/<script>([\s\S]*?)<\/script>/)[1])
 
 // Execute the real header script in a document that initialized before the user changed theme.
 function createPage(initialTheme) {
   const saved = new Map([['theme', initialTheme]])
   let dark = initialTheme === 'dark'
+  const classes = new Set()
+  const frames = new Map()
+  let nextFrame = 0
   const attributes = new Map()
   const button = Object.assign(new EventTarget(), {
     setAttribute: (name, value) => attributes.set(name, value)
@@ -17,8 +21,10 @@ function createPage(initialTheme) {
   const document = Object.assign(new EventTarget(), {
     documentElement: {
       classList: {
-        contains: () => dark,
-        toggle: (_name, force = !dark) => (dark = force)
+        contains: (name) => name === 'dark' ? dark : classes.has(name),
+        toggle: (name, force = !dark) => name === 'dark' ? (dark = force) : force,
+        add: (name) => classes.add(name),
+        remove: (name) => classes.delete(name)
       }
     },
     getElementById: () => button
@@ -29,9 +35,16 @@ function createPage(initialTheme) {
   runInNewContext(script, {
     document,
     window,
-    localStorage: { getItem: (key) => saved.get(key) ?? null, setItem: (key, value) => saved.set(key, value) }
+    localStorage: { getItem: (key) => saved.get(key) ?? null, setItem: (key, value) => saved.set(key, value) },
+    requestAnimationFrame: (callback) => { frames.set(++nextFrame, callback); return nextFrame },
+    cancelAnimationFrame: (id) => frames.delete(id)
   })
-  return { document, window, button, saved, attributes, isDark: () => dark }
+  const flushFrame = () => {
+    const pending = [...frames.values()]
+    frames.clear()
+    pending.forEach((callback) => callback())
+  }
+  return { document, window, button, saved, attributes, isDark: () => dark, classes, flushFrame }
 }
 
 for (const initial of ['light', 'dark']) {
@@ -73,4 +86,15 @@ test('a theme changed by another site control updates the header toggle', () => 
   page.document.dispatchEvent(new Event('site:theme-change'))
   assert.equal(page.attributes.get('aria-pressed'), 'true')
   assert.equal(page.attributes.get('aria-label'), '切换到浅色')
+})
+
+test('theme changes pause color transitions until the new theme is painted', () => {
+  const page = createPage('light')
+  page.button.dispatchEvent(new Event('click'))
+  assert.equal(page.isDark(), true)
+  assert.ok(page.classes.has('theme-changing'))
+  page.flushFrame()
+  assert.ok(page.classes.has('theme-changing'))
+  page.flushFrame()
+  assert.ok(!page.classes.has('theme-changing'))
 })

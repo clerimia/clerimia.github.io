@@ -2,7 +2,6 @@
 import PostPreview from '@/components/PostPreview.astro'
 import { groupCollectionsByYear } from 'astro-pure/server'
 import { getPosts } from '@/utils/posts'
-import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
@@ -17,10 +16,9 @@ const meta = {
 }
 ---
 
-<PageLayout {meta}>
-  <Button title='返回' href='/blog' variant='back' />
+<PageLayout {meta} back='/blog'>
 
-  <main class='mt-6 lg:mt-10'>
+  <main class='site-page-main'>
     <div id='content-header' class='animate'>
       <h1 class='mb-6 text-3xl font-medium'>Archives</h1>
     </div>

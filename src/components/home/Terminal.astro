@@ -147,7 +147,7 @@ const helpRows: Array<[string, string]> = [
       if (!titleEl) return
       titleEl.textContent = ''
       var u = document.createElement('span')
-      u.className = 'wt-tone-primary'
+      u.className = 'wt-tone-identity'
       u.textContent = user + '@' + host
       var sep = document.createElement('span')
       sep.className = 'wt-tone-muted'
@@ -231,7 +231,7 @@ const helpRows: Array<[string, string]> = [
           var i = c * rows + r
           if (i < items.length) parts.push(items[i].padEnd(maxLen + 2, ' '))
         }
-        emit(parts.join('').trimEnd(), 'primary')
+        emit(parts.join('').trimEnd(), 'fg')
       }
     }
 
@@ -267,7 +267,7 @@ const helpRows: Array<[string, string]> = [
           break
 
         case 'whoami':
-          emit(authorName || '-', 'primary')
+          emit(authorName || '-', 'identity')
           if (authorDesc) emit(authorDesc, 'muted')
           break
 
@@ -307,6 +307,7 @@ const helpRows: Array<[string, string]> = [
         case 'theme': {
           var mode = arg.toLowerCase()
           var root = document.documentElement
+          document.dispatchEvent(new Event('site:theme-changing'))
           if (mode === 'dark') root.classList.add('dark')
           else if (mode === 'light') root.classList.remove('dark')
           else if (mode === 'system') {
@@ -332,7 +333,7 @@ const helpRows: Array<[string, string]> = [
             emit('未配置社交链接。', 'muted')
           } else {
             keys.forEach(function (k) {
-              emit(k + '  ' + social[k], 'primary')
+              emit(k + '  ' + social[k], 'fg')
             })
           }
           break

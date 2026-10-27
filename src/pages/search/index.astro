@@ -1,5 +1,4 @@
 ---
-import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import SiteSearch from '@/components/SiteSearch.astro'
 import { integ } from '@/site-config'
@@ -10,9 +9,8 @@ const meta = {
 }
 ---
 
-<PageLayout {meta}>
-  <Button title='返回' href='/blog' variant='back' />
-  <main class='mt-6 lg:mt-10'>
+<PageLayout {meta} back='/blog'>
+  <main class='site-page-main'>
     <div id='content-header' class='animate'>
       <h1 class='mb-6 text-3xl font-medium'>Search</h1>
     </div>

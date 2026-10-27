@@ -31,7 +31,7 @@
 
 .home-name {
   display: inline-block;
-  color: var(--color-action);
+  color: var(--color-brand);
   font-weight: 700;
   letter-spacing: -0.5px;
 }
@@ -91,7 +91,7 @@
 }
 
 .home-terminal-link__glyph {
-  color: var(--leaf);
+  color: inherit;
   font: 12px ui-monospace, Consolas, monospace;
   letter-spacing: 0.02em;
 }
@@ -100,8 +100,12 @@
    沿用 .home-text-link 的语言：整组换色，不画线
    （inline-flex 下划线会按字盒分段，gap 处必然断开）。 */
 .home-actions a:hover {
-  color: var(--leaf);
+  color: var(--color-action-hover);
   text-decoration-line: underline;
+}
+
+.home-actions a:active {
+  color: var(--color-action-active);
 }
 
 .home-terminal-link:hover,
@@ -110,15 +114,18 @@
   color: var(--leaf);
 }
 
+.home-terminal-link:active,
+.home-terminal-link:active .home-terminal-link__glyph {
+  color: var(--color-action-active);
+}
+
 .home-profile {
   width: 200px;
 }
 
 .home-avatar-frame {
-  padding: 20px;
-  border: 1px solid var(--color-identity-edge);
-  border-radius: var(--radius-lg);
-  background: var(--color-identity-surface);
+  width: var(--home-avatar-size);
+  margin-inline: auto;
 }
 
 .home-avatar-mat img {
@@ -127,13 +134,14 @@
   height: var(--home-avatar-size);
   margin: auto;
   object-fit: cover;
-  border: 5px solid var(--avatar-ring);
+  border: 1px solid var(--color-border);
   border-radius: 50%;
 }
 
 .home-avatar-mat .home-avatar--dark {
   display: none;
-  object-position: 16% center;
+  /* 避开原图右侧露出的一小截标志，让注意力留在人物上。 */
+  object-position: 7% center;
 }
 
 .dark .home-avatar-mat .home-avatar--light {
@@ -185,9 +193,11 @@
 }
 
 .home-social-button:hover {
-  border-color: var(--card-edge-hover);
-  background: var(--chip-tint-hover);
-  color: var(--leaf);
+  color: var(--color-action);
+}
+
+.home-social-button:active {
+  color: var(--color-action-active);
 }
 
 .home-social-button svg {
@@ -225,10 +235,6 @@
   border-top: 1px solid var(--rule);
 }
 
-.dark .home-daily-note {
-  border-top-color: var(--color-expression);
-}
-
 .home-latest {
   margin: 22px 0 0;
 }
@@ -253,8 +259,7 @@
   border-top: 1px solid var(--rule);
 }
 
-/* 列表行是并列关系：靠分隔线组织，不各自成卡。
-   圆角只在 hover 出现，作为「可点击」的反馈，而不是常态外观。 */
+/* 列表行靠分隔线组织，交互反馈与内页文章行一致。 */
 .home-post-row {
   display: grid;
   grid-template-columns: 105px minmax(0, 1fr) 24px;
@@ -268,11 +273,6 @@
   transition:
     color 160ms ease,
     background 160ms ease;
-}
-
-.home-post-row:hover {
-  background: var(--row-tint);
-  border-radius: var(--radius-sm);
 }
 
 .home-post-row:hover .home-post-content h3,
@@ -316,10 +316,6 @@
     width: 170px;
   }
 
-  .home-avatar-frame {
-    padding: 16px 14px;
-  }
-
 }
 
 @media (max-width: 680px) {
@@ -342,7 +338,7 @@
 
   .home-profile {
     display: grid;
-    grid-template-columns: calc(var(--home-avatar-size) + 14px) minmax(0, 1fr);
+    grid-template-columns: var(--home-avatar-size) minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     column-gap: 16px;
     align-items: center;
@@ -351,12 +347,7 @@
 
   .home-avatar-frame {
     grid-row: 1 / 3;
-    padding: 8px 6px;
-    border-radius: 15px;
-  }
-
-  .home-avatar-mat img {
-    border-width: 3px;
+    margin-inline: 0;
   }
 
   .home-location {

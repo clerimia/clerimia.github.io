@@ -38,6 +38,9 @@ jobs:
       - name: Verify post sections and redirects
         run: node --test tests/post-sections.test.mjs
 
+      - name: Verify page frames and return destinations
+        run: node --test tests/page-frame.test.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

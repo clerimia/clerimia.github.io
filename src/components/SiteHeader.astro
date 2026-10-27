@@ -61,6 +61,27 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
 
 <script>
   const themeButton = document.getElementById('site-theme-toggle')
+  let themeTransitionFrame = 0
+
+  // 颜色和画布同时切换；等待绘制完成后恢复普通交互过渡。
+  function pauseThemeTransitions() {
+    const root = document.documentElement
+    cancelAnimationFrame(themeTransitionFrame)
+    root.classList.add('theme-changing')
+    themeTransitionFrame = requestAnimationFrame(() => {
+      themeTransitionFrame = requestAnimationFrame(() => {
+        root.classList.remove('theme-changing')
+        themeTransitionFrame = 0
+      })
+    })
+  }
+
+  function setTheme(isDark: boolean) {
+    const root = document.documentElement
+    if (root.classList.contains('dark') === isDark) return
+    pauseThemeTransitions()
+    root.classList.toggle('dark', isDark)
+  }
 
   // 说明：<head> 里的内联脚本负责「首屏无闪烁」的初始着色（astro-pure ThemeProvider）；
   // 这里负责后续的重新同步——预渲染激活、往返缓存（bfcache）、以及其它标签页改了主题。
@@ -71,7 +92,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
       const isDark =
         saved === 'dark' ||
         ((!saved || saved === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      document.documentElement.classList.toggle('dark', isDark)
+      setTheme(isDark)
     } catch {
       // 浏览器禁用存储时保持当前主题
     }
@@ -94,6 +115,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
 
   applyStoredTheme()
   document.addEventListener('prerenderingchange', applyStoredTheme)
+  document.addEventListener('site:theme-changing', pauseThemeTransitions)
   document.addEventListener('site:theme-change', syncThemeButton)
   window.addEventListener('pageshow', applyStoredTheme)
   window.addEventListener('storage', (event) => {
@@ -101,7 +123,8 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
   })
 
   themeButton?.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark')
+    const isDark = !document.documentElement.classList.contains('dark')
+    setTheme(isDark)
     try {
       localStorage.setItem('theme', isDark ? 'dark' : 'light')
     } catch {}

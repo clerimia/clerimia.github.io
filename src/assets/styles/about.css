@@ -1,6 +1,4 @@
 .about-page {
-  max-width: var(--layout-reading);
-  margin-inline: auto;
   color: var(--ink);
   font-size: var(--reading-size);
   line-height: var(--reading-leading);
@@ -11,14 +9,10 @@
   grid-template-columns: minmax(0, 1fr) 112px;
   align-items: start;
   gap: 32px;
-  margin-top: 32px;
 }
 
 .about-page h1 {
   margin: 0 0 20px;
-  font-size: var(--font-page-title);
-  font-weight: 600;
-  line-height: 1.3;
 }
 
 .about-page h2 {
@@ -43,6 +37,14 @@
 .about-page a {
   color: var(--leaf);
   text-underline-offset: 4px;
+}
+
+.about-page a:hover {
+  color: var(--color-action-hover);
+}
+
+.about-page a:active {
+  color: var(--color-action-active);
 }
 
 .about-profile__links a {
@@ -115,7 +117,6 @@
   .about-profile {
     grid-template-columns: minmax(0, 1fr) 72px;
     gap: 16px;
-    margin-top: 24px;
   }
 
   .about-portrait img {

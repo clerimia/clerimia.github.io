@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, render } from 'astro:content'
-import { Button, FormattedDate } from 'astro-pure/user'
+import { FormattedDate } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import PostLayout from '@/layouts/BlogPost.astro'
@@ -42,9 +42,8 @@ const meta = {
     <Content />
   </PostLayout>
 ) : (
-<PageLayout {meta}>
-  <Button title='返回' href='/musings' variant='back' />
-  <main class='mt-6 lg:mt-10'>
+<PageLayout {meta} back='/musings'>
+  <main class='site-page-main'>
     <div id='content-header' class='animate'>
       <div class='flex flex-wrap items-baseline gap-x-4'>
         <FormattedDate date={publishDate} class='text-sm' />

@@ -18,7 +18,7 @@ test('hero gives reading destinations priority over the optional terminal', asyn
   assert.ok(actions, 'reading actions must exist in the hero')
   assert.match(actions, /class="home-reading-link"[^>]*href="\/blog"/)
   assert.match(actions, /class="home-notes-link"[^>]*href="\/notes"/)
-  assert.ok(hero.indexOf('class="home-actions"') < hero.indexOf('class="home-terminal-peek"'))
+  assert.ok(actions.indexOf('href="/notes"') < actions.indexOf('data-terminal-trigger'))
 })
 
 test('recent posts come immediately after the hero, with the quote after the posts', async () => {
@@ -32,9 +32,9 @@ test('recent posts come immediately after the hero, with the quote after the pos
   assert.match(html, /<\/section>\s*<section class="home-latest"/)
 })
 
-test('compact terminal retains native button and dialog semantics', async () => {
+test('terminal entry retains native button and dialog semantics', async () => {
   const hero = readHero(await readHome())
-  const trigger = hero.match(/<button\b[^>]*class="home-terminal-peek"[\s\S]*?<\/button>/)?.[0]
+  const trigger = hero.match(/<button\b[^>]*data-terminal-trigger[^>]*>[\s\S]*?<\/button>/)?.[0]
   assert.ok(trigger)
   for (const attribute of [
     'data-terminal-trigger',
@@ -45,7 +45,7 @@ test('compact terminal retains native button and dialog semantics', async () => 
   ]) {
     assert.ok(trigger.includes(attribute), `terminal must retain ${attribute}`)
   }
-  assert.match(trigger, /class="visually-hidden">打开站点终端<\/span>/)
+  assert.ok(trigger.includes('在终端里逛逛'), 'the entry has a visible accessible name')
   assert.ok(!trigger.includes('home-peek-out'), 'the large command inventory must not return')
 })
 

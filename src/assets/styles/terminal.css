@@ -3,7 +3,7 @@
  *
  * 结构：titlebar（红/黄/绿圆点 + user@host:path）+ body（输出区 + 底部常驻输入行）。
  * 反馈约定：输入行不用整圈焦点环，聚焦由「边框 1px 变操作色 + 块状光标」承担。
- * 两套主题共用同一结构；墨提斯只是把画布换成暗绿、把强调色换成亮绿。
+ * 两套主题共用同一结构；身份保持绿色，夜间行动反馈使用酒红。
  */
 
 .wt-shell {
@@ -173,7 +173,7 @@
 .wt-help-list > div { display: contents; }
 .wt-help-list dt {
   padding-right: 18px;
-  color: hsl(var(--primary));
+  color: hsl(var(--foreground));
   font-family: var(--wt-mono);
   white-space: nowrap;
 }
@@ -206,7 +206,7 @@
   font-feature-settings: 'tnum';
   white-space: nowrap;
 }
-/* 用户名是身份（日间苔绿、夜间酒红）；❯ 是「可以输入」的动作信号，始终用行动色。 */
+/* 用户名是绿色身份；❯ 是「可以输入」的动作信号，使用主题行动色。 */
 .wt-prompt-user { color: var(--color-identity); }
 .wt-prompt-sigil { color: hsl(var(--primary)); }
 .wt-prompt-at,
@@ -280,8 +280,9 @@
 /* ===== 色调 ===== */
 .wt-tone-fg { color: hsl(var(--foreground)); }
 .wt-tone-muted { color: var(--term-muted); }
+.wt-tone-identity { color: var(--color-identity); }
 .wt-tone-primary { color: hsl(var(--primary)); }
-.wt-tone-ok { color: var(--color-action); }
+.wt-tone-ok { color: var(--color-status-success); }
 .wt-tone-err { color: var(--color-status-error); }
 .wt-tone-warn { color: var(--color-status-warning); }
 

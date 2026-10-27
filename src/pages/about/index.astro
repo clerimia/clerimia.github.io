@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets'
-import { Button, Icon } from 'astro-pure/user'
+import { Icon } from 'astro-pure/user'
 import avatar from '@/assets/avatar.png'
 import darkAvatar from '@/assets/avatar-dark.png'
 import '@/assets/styles/about.css'
@@ -9,10 +9,9 @@ import { Comment } from '@/components/comments'
 import PageLayout from '@/layouts/BaseLayout.astro'
 ---
 
-<PageLayout meta={{ title: 'About', description: '关于 clerimia。' }}>
-  <Button title='返回' href='/' variant='back' />
-  <main class='about-page'>
-    <header class='about-profile'>
+<PageLayout meta={{ title: 'About', description: '关于 clerimia。' }} back='/'>
+  <main class='site-page-main reading-column about-page'>
+    <header id='content-header' class='about-profile'>
       <div>
         <h1>关于我</h1>
         <p>我是 clerimia，合肥工业大学计算机科学与技术专业在读。</p>

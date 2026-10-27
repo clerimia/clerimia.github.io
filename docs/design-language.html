@@ -20,9 +20,9 @@
         --line: #d0ded2;
         --soft: #e8f2ea;
         --green: #3f7050;
-        --wine: #873a50;
-        --wine-soft: #f4e9eb;
-        --wine-text: #773248;
+        --action: #3f7050;
+        --action-surface: #e8f2ea;
+        --focus: #315a40;
         --shadow: 0 16px 40px #24301b14;
       }
       :root[data-theme='dark'] {
@@ -34,9 +34,9 @@
         --line: #43544a;
         --soft: #334638;
         --green: #a9d8b4;
-        --wine: #80364b;
-        --wine-soft: #38232a;
-        --wine-text: #efb9c7;
+        --action: #df9aae;
+        --action-surface: #38232a;
+        --focus: #a9d8b4;
         --shadow: 0 16px 40px #0005;
       }
       * {
@@ -62,7 +62,7 @@
       }
       a:focus-visible,
       button:focus-visible {
-        outline: 3px solid var(--green);
+        outline: 3px solid var(--focus);
         outline-offset: 4px;
       }
       code,
@@ -103,7 +103,7 @@
         color: var(--muted);
       }
       .nav a:hover {
-        color: var(--green);
+        color: var(--action);
       }
       .toggle {
         min-height: 44px;
@@ -115,10 +115,7 @@
         white-space: nowrap;
       }
       .toggle:hover {
-        border-color: var(--green);
-      }
-      :root[data-theme='dark'] .toggle {
-        border-color: var(--wine);
+        color: var(--action);
       }
       .hero {
         padding: 68px 0 76px;
@@ -258,8 +255,8 @@
         white-space: nowrap;
       }
       .tag.proposal {
-        background: var(--wine-soft);
-        color: var(--wine-text);
+        background: var(--soft);
+        color: var(--muted);
       }
       .hint {
         margin-top: 20px;
@@ -269,8 +266,8 @@
         font-size: 13px;
       }
       .hint.wine {
-        border-left-color: var(--wine);
-        background: var(--wine-soft);
+        border-left-color: var(--line);
+        background: var(--soft);
       }
       .scroll-hint {
         display: none;
@@ -347,7 +344,7 @@
         color: var(--muted);
       }
       .no {
-        color: var(--wine-text);
+        color: var(--muted);
         font-size: 12px !important;
       }
       .type-ex {
@@ -640,18 +637,18 @@
         font-size: 14px;
         text-decoration: none;
       }
-      .text-link-sample:hover, .text-link-sample:focus-visible { color: var(--green); }
+      .text-link-sample:hover, .text-link-sample:focus-visible { color: var(--action); }
       .arrow-sample__shaft {
         transform-box: view-box;
         transform-origin: 12px 12px;
         transform: scaleX(0);
       }
       @media (hover: hover) {
-        .arrow-sample:hover svg { color: var(--green); }
+        .arrow-sample:hover svg { color: var(--action); }
         .arrow-sample:hover .arrow-sample__tip { transform: translateX(7px); }
         .arrow-sample:hover .arrow-sample__shaft { transform: scaleX(1); }
       }
-      .arrow-sample:focus-visible svg { color: var(--green); }
+      .arrow-sample:focus-visible svg { color: var(--action); }
       .arrow-sample:focus-visible .arrow-sample__tip { transform: translateX(7px); }
       .arrow-sample:focus-visible .arrow-sample__shaft { transform: scaleX(1); }
       .motion-sample summary {
@@ -673,18 +670,17 @@
       }
       .motion-sample summary::after {
         content: '+';
-        color: var(--green);
+        color: var(--muted);
         font-size: 18px;
       }
       .motion-sample[open] summary::after {
         content: '−';
       }
       .motion-sample summary:hover {
-        color: var(--green);
-        background: var(--soft);
+        color: var(--action);
       }
       .motion-sample summary:focus-visible {
-        outline: 3px solid var(--green);
+        outline: 3px solid var(--focus);
         outline-offset: 4px;
       }
       .motion-sample__body {
@@ -698,13 +694,6 @@
       }
       .motion-sample[open] .motion-sample__body {
         animation: motion-sample-enter 220ms cubic-bezier(0.2, 0, 0, 1) both;
-      }
-      :root[data-theme='dark'] .motion-sample summary::after {
-        color: var(--wine-text);
-      }
-      :root[data-theme='dark'] .motion-sample__body {
-        background: var(--wine-soft);
-        color: var(--wine-text);
       }
       @keyframes motion-sample-enter {
         from { opacity: 0; transform: translateY(8px); }
@@ -728,7 +717,7 @@
         }
       }
       .migration td:first-child {
-        color: var(--wine-text);
+        color: var(--muted);
       }
       .footer {
         padding: 30px 0 50px;
@@ -739,7 +728,7 @@
         font-size: 12px;
       }
       .footer a {
-        color: var(--green);
+        color: var(--action);
       }
       .themeplates {
         display: grid;
@@ -750,26 +739,6 @@
         border: 1px solid var(--line);
         border-radius: 14px;
         overflow: hidden;
-      }
-      .themeplate-day {
-        --t-bg: #f9fcf9;
-        --t-surface: #fbfcf5;
-        --t-text: #263b2e;
-        --t-muted: #68745e;
-        --t-green: #3f7050;
-        --t-border: #d0ded2;
-        --t-chip: #e7eed5;
-        --t-detail: #3f7050;
-      }
-      .themeplate-night {
-        --t-bg: #191d1c;
-        --t-surface: #253023;
-        --t-text: #eaf1eb;
-        --t-muted: #aebeb2;
-        --t-green: #a9d8b4;
-        --t-border: #3f4d35;
-        --t-chip: #39232b;
-        --t-detail: #efb9c7;
       }
       .themeplate {
         background: var(--t-bg);
@@ -846,7 +815,7 @@
         font:
           600 10px/1.5 ui-monospace,
           monospace;
-        color: var(--t-detail);
+        color: var(--t-green);
       }
       .plate-preview h5 {
         font-size: 18px;
@@ -866,7 +835,7 @@
         margin-top: 13px;
       }
       .preview-link {
-        color: var(--t-green);
+        color: var(--t-action);
         font-size: 13px;
         font-weight: 650;
         text-decoration: underline;
@@ -876,8 +845,16 @@
         font-size: 11px;
         padding: 3px 8px;
         background: var(--t-chip);
-        color: var(--t-detail);
+        color: var(--t-text);
         border-radius: 999px;
+      }
+      .preview-button {
+        padding: 5px 10px;
+        border-radius: 6px;
+        background: var(--t-action);
+        color: var(--t-action-ink);
+        font-size: 12px;
+        font-weight: 650;
       }
       .plate-foot {
         margin: 16px 0 0;
@@ -975,9 +952,10 @@
         --t-text: #263b2e;
         --t-muted: #536a5b;
         --t-green: #3f7050;
+        --t-action: #3f7050;
+        --t-action-ink: #ffffff;
         --t-border: #d0ded2;
         --t-chip: #e8f2ea;
-        --t-detail: #3f7050;
       }
       .themeplate-night {
         --t-bg: #191d1c;
@@ -985,9 +963,10 @@
         --t-text: #eaf1eb;
         --t-muted: #aebeb2;
         --t-green: #a9d8b4;
+        --t-action: #df9aae;
+        --t-action-ink: #2b1920;
         --t-border: #43544a;
-        --t-chip: #38232a;
-        --t-detail: #efb9c7;
+        --t-chip: #334638;
       }
       .spec-grid {
         display: grid;
@@ -1020,8 +999,8 @@
       }
       .context {
         padding: 16px 20px;
-        background: var(--wine-soft);
-        border-left: 3px solid var(--wine);
+        background: var(--soft);
+        border-left: 3px solid var(--line);
         margin: 20px 0;
         font-size: 13px;
       }
@@ -1071,7 +1050,7 @@
             <div class="eyebrow">01 · FOUNDATIONS / COLOR</div>
             <h2>色彩系统</h2>
             <p>
-              以主题情绪确定色彩，再为每个颜色安排职责。两套色板已映射到站点语义 token，其他组件仍需逐步对照。
+              以绿色延续共同身份，以主题行动色回应操作。两套色板已映射到站点语义 token，其他组件仍需逐步对照。
             </p>
           </div>
           <div class="subhead">
@@ -1091,7 +1070,7 @@
               </div>
               <div class="plate-content">
                 <p class="plate-summary">
-                  近白与清透薄荷为画布，深灰绿建立阅读层级，苔绿给行动一个安静的信号。
+                  近白与清透薄荷为画布，深灰绿建立阅读层级，苔绿分别承担身份与行动。
                 </p>
                 <div class="palette-grid">
                   <div class="palette-item">
@@ -1116,6 +1095,12 @@
                     <div class="palette-chip" style="--color: #536a5b"></div>
                     <div class="palette-info">
                       <b>辅助文字</b><code>#536a5b</code><small>摘要 / 元信息</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #3f7050"></div>
+                    <div class="palette-info">
+                      <b>共同身份</b><code>#3f7050</code><small>品牌 / 用户名</small>
                     </div>
                   </div>
                   <div class="palette-item">
@@ -1148,6 +1133,24 @@
                       <b>键盘焦点</b><code>#315a40</code><small>键盘焦点</small>
                     </div>
                   </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #315a40"></div>
+                    <div class="palette-info">
+                      <b>行动悬停</b><code>#315a40</code><small>行动反馈</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #2b4e38"></div>
+                    <div class="palette-info">
+                      <b>行动按下</b><code>#2b4e38</code><small>操作反馈</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #e8f2ea"></div>
+                    <div class="palette-info">
+                      <b>行动弱表面</b><code>#e8f2ea</code><small>局部操作状态</small>
+                    </div>
+                  </div>
                 </div>
                 <div class="plate-preview">
                   <span class="preview-label">DAY / WAKABA MUTSUMI</span>
@@ -1155,11 +1158,11 @@
                   <p>从一个安静的念头开始，慢慢写成属于自己的故事。</p>
                   <div class="preview-actions">
                     <span class="preview-link">阅读文章</span
-                    ><span class="preview-chip">日间 · 柔和</span>
+                    ><span class="preview-button">主要操作</span><span class="preview-chip">日间 · 柔和</span>
                   </div>
                 </div>
                 <p class="plate-foot">
-                  白色文字与苔绿填充用于主要操作；薄荷底用于轻微选中，不用于大面积染色。日间不设独立身份色——身份由苔绿、头像与身份牌表面承担。
+                  身份与行动分别命名，日间暂用同一苔绿；白字配行动底，薄荷只用于局部弱表面。
                 </p>
               </div>
             </article>
@@ -1173,7 +1176,7 @@
               </div>
               <div class="plate-content">
                 <p class="plate-summary">
-                  炭灰承托鲜绿与酒红：绿色让行动明亮，酒红让人格、创造和表达更有张力。
+                  炭灰承托身份绿与行动酒红：同一个自我的线索连续，行动有不同的声音。
                 </p>
                 <div class="palette-grid">
                   <div class="palette-item">
@@ -1203,13 +1206,13 @@
                   <div class="palette-item">
                     <div class="palette-chip" style="--color: #a9d8b4"></div>
                     <div class="palette-info">
-                      <b>行动</b><code>#a9d8b4</code><small>链接 / 主要行动</small>
+                      <b>共同身份</b><code>#a9d8b4</code><small>品牌 / 用户名</small>
                     </div>
                   </div>
                   <div class="palette-item">
-                    <div class="palette-chip" style="--color: #171e19"></div>
+                    <div class="palette-chip" style="--color: #df9aae"></div>
                     <div class="palette-info">
-                      <b>行动上文字</b><code>#171e19</code><small>实心操作文字</small>
+                      <b>行动</b><code>#df9aae</code><small>链接 / 主要行动</small>
                     </div>
                   </div>
                   <div class="palette-item">
@@ -1231,35 +1234,47 @@
                     </div>
                   </div>
                   <div class="palette-item">
-                    <div class="palette-chip" style="--color: #80364b"></div>
+                    <div class="palette-chip" style="--color: #f5c4d0"></div>
                     <div class="palette-info">
-                      <b>酒红</b><code>#80364b</code><small>身份边线 / 主题细节 · 夜间专属</small>
+                      <b>行动悬停</b><code>#f5c4d0</code><small>行动反馈</small>
                     </div>
                   </div>
                   <div class="palette-item">
                     <div class="palette-chip" style="--color: #38232a"></div>
                     <div class="palette-info">
-                      <b>酒红浅底</b><code>#38232a</code><small>身份表面 · 夜间专属</small>
+                      <b>行动弱表面</b><code>#38232a</code><small>局部操作状态</small>
                     </div>
                   </div>
                   <div class="palette-item">
-                    <div class="palette-chip" style="--color: #efb9c7"></div>
+                    <div class="palette-chip" style="--color: #2b1920"></div>
                     <div class="palette-info">
-                      <b>浅酒红</b><code>#efb9c7</code><small>身份文字 · 夜间专属</small>
+                      <b>行动上文字</b><code>#2b1920</code><small>实心操作文字</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #e3a7b8"></div>
+                    <div class="palette-info">
+                      <b>行动按下</b><code>#e3a7b8</code><small>操作反馈</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #25342a"></div>
+                    <div class="palette-info">
+                      <b>身份表面</b><code>#25342a</code><small>终端标题栏</small>
                     </div>
                   </div>
                 </div>
                 <div class="plate-preview">
                   <span class="preview-label">NIGHT / MORTIS</span>
                   <h5>让想法被听见</h5>
-                  <p>绿色指向行动，酒红让表达带有温度和存在感。</p>
+                  <p>绿色延续身份，酒红让行动带有生命力。</p>
                   <div class="preview-actions">
                     <span class="preview-link">阅读文章</span
-                    ><span class="preview-chip">夜间 · 鲜活</span>
+                    ><span class="preview-button">主要操作</span><span class="preview-chip">夜间 · 鲜活</span>
                   </div>
                 </div>
                 <p class="plate-foot">
-                  鲜绿用于操作；酒红用于身份与主题细节，错误状态另有语义，成功沿用行动绿。
+                  亮酒红用于可读的操作文字和实心行动，身份与成功保持独立语义；非行动内容不因此染红。
                 </p>
               </div>
             </article>
@@ -1277,7 +1292,7 @@
             <table>
               <thead>
                 <tr>
-                  <th>语义 Token · 提议</th>
+                  <th>语义 Token · 部分落地</th>
                   <th>若叶睦 · 日间</th>
                   <th>墨提斯 · 夜间</th>
                   <th>用途</th>
@@ -1320,60 +1335,67 @@
                   <td colspan="5">强调、边界与状态</td>
                 </tr>
                 <tr>
-                  <td><code>--color-action</code></td>
+                  <td><code>--color-brand / --color-identity</code></td>
                   <td>#3f7050</td>
                   <td>#a9d8b4</td>
+                  <td>共同绿色身份：品牌、名字、用户名</td>
+                  <td>identity 引用 brand；与行动语义分开</td>
+                </tr>
+                <tr>
+                  <td><code>--color-action</code></td>
+                  <td>#3f7050</td>
+                  <td>#df9aae</td>
                   <td>链接、主要操作、当前状态</td>
-                  <td>对画布 5.57:1 / 10.67:1</td>
+                  <td>对画布 5.57:1 / 7.59:1；不用于非行动内容</td>
+                </tr>
+                <tr>
+                  <td><code>--color-action-hover / --color-action-active</code></td>
+                  <td>#315a40 / #2b4e38</td>
+                  <td>#f5c4d0 / #e3a7b8</td>
+                  <td>已着行动色的链接和实心操作反馈</td>
+                  <td>对行动弱表面，日间 6.87 / 8.14:1；夜间 9.49 / 7.27:1</td>
                 </tr>
                 <tr>
                   <td><code>--color-action-ink</code></td>
                   <td>#ffffff</td>
-                  <td>#171e19</td>
+                  <td>#2b1920</td>
                   <td>实心主要按钮文字</td>
-                  <td>对 action 5.76:1 / 10.65:1</td>
+                  <td>对 action 5.76:1 / 7.42:1</td>
+                </tr>
+                <tr>
+                  <td><code>--color-action-surface</code></td>
+                  <td>#e8f2ea</td>
+                  <td>#38232a</td>
+                  <td>为局部行动状态预留的弱表面</td>
+                  <td>行动文字对其 5.03:1 / 6.50:1；当前目录使用文字与标记</td>
                 </tr>
                 <tr>
                   <td><code>--color-selection</code></td>
                   <td>#e8f2ea</td>
                   <td>#334638</td>
-                  <td>导航选中、行与标签的浅色反馈底</td>
+                  <td>标签、搜索命中等中性局部表面</td>
                   <td>文字与边界按实际组合验证</td>
-                </tr>
-                <tr>
-                  <td><code>--color-identity</code></td>
-                  <td>#3f7050</td>
-                  <td>#efb9c7</td>
-                  <td>身份标记文字：用户名、会话标题</td>
-                  <td>日间即行动绿；对画布 5.57:1 / 9.09:1</td>
                 </tr>
                 <tr>
                   <td><code>--color-identity-surface / edge</code></td>
                   <td>#ffffff / #d0ded2</td>
-                  <td>#38232a / #80364b</td>
-                  <td>身份牌表面：头像框、终端标题栏</td>
+                  <td>#25342a / #435d49</td>
+                  <td>身份牌表面：终端标题栏</td>
                   <td>边线属装饰层，不承担必要控件边界</td>
                 </tr>
                 <tr>
                   <td><code>--color-identity-ink</code></td>
                   <td>#263b2e</td>
-                  <td>#efb9c7</td>
+                  <td>#a9d8b4</td>
                   <td>身份牌上的文字</td>
-                  <td>对身份表面 12.02:1 / 8.62:1</td>
+                  <td>对身份表面 12.02:1 / 8.21:1</td>
                 </tr>
                 <tr>
-                  <td><code>--color-expression</code></td>
-                  <td>无默认值</td>
-                  <td>#80364b</td>
-                  <td>墨提斯主题细节：主题开关、每日一句顶线、引号</td>
-                  <td>夜间专用；不承担身份，也不是错误色</td>
-                </tr>
-                <tr>
-                  <td><code>--color-expression-surface / ink</code></td>
-                  <td>无默认值</td>
-                  <td>#38232a / #efb9c7</td>
-                  <td>酒红背景与可读文字配对</td>
-                  <td>配对 8.62:1；不可代替错误语义</td>
+                  <td><code>--color-status-success</code></td>
+                  <td>#3f7050</td>
+                  <td>#a9d8b4</td>
+                  <td>成功反馈文字</td>
+                  <td>语义独立于行动色，并配文字说明</td>
                 </tr>
                 <tr>
                   <td><code>--color-status-warning</code></td>
@@ -1387,7 +1409,7 @@
                   <td>#ab2e2e</td>
                   <td>#ffaaa4</td>
                   <td>错误反馈文字</td>
-                  <td>与表达用酒红分开</td>
+                  <td>与行动酒红分开</td>
                 </tr>
                 <tr>
                   <td><code>--color-border</code></td>
@@ -1432,8 +1454,8 @@
           </div>
           <div class="hint">
             <b>对比度范围：</b
-            >上表数值为纯色相对亮度计算，不包含透明度、渐变、图像和实际状态。普通文字目标至少
-            4.5:1；重要边界及状态至少 3:1。身份的提示符文字对各自画布为 5.57:1 / 9.09:1，身份牌文字对身份表面为 12.02:1 / 8.62:1；终端的警告和错误文字对表面日间为 6.57 / 6.64:1，夜间为 8.25 / 7.74:1。成功不单独取色，沿用行动绿并由文字说明；状态需配文字或图标，不能把酒红等同错误。红黄绿圆点沿用 macOS 系统色，属于外来窗口语言，不参与本站语义。
+            >上表数值为纯色相对亮度计算，不包含透明度、渐变、图像和所有第三方状态。普通文字目标至少
+            4.5:1；重要边界及状态至少 3:1。行动色对一般表面为 5.76:1 / 6.29:1；实心文字对默认、悬停、按下底分别为 5.76 / 7.87 / 9.34:1（日）和 7.42 / 10.84 / 8.30:1（夜）。焦点对画布为 7.62:1 / 10.67:1，对行动弱表面为 6.87:1 / 9.13:1。终端警告和错误对表面日间为 6.57 / 6.64:1，夜间为 8.25 / 7.74:1。成功、警告和错误各有 token，状态需配文字或图标；酒红不等同错误。红黄绿圆点沿用 macOS 系统色，不参与本站语义。
           </div>
           <div class="subhead">
             <div>
@@ -1445,16 +1467,16 @@
             <div class="card">
               <h4>若叶睦：轻盈而有方向</h4>
               <p>
-                画布近白，文字偏深灰绿；苔绿给主要链接、选中态、焦点和身份提供明确方向，薄荷只用于局部的柔和反馈。
+                画布近白，文字偏深灰绿；身份与行动分别命名，当前都使用苔绿。薄荷只用于局部的柔和反馈。
               </p>
               <p class="no">不要：整页铺绿，或让浅薄荷承载关键正文。</p>
             </div>
             <div class="card">
               <h4>墨提斯：鲜活且有张力</h4>
               <p>
-                鲜绿承担主要行动；酒红分作两用——跨主题的<strong>身份</strong>（提示符用户名、头像框、终端标题栏）与只在夜间出现的<strong>主题细节</strong>（主题开关、每日一句顶线）。两者共享舞台，但无需让所有内容同时高亮。
+                绿色延续同一个人的<strong>身份</strong>（品牌、首页名字与提示符用户名）；双头像由人物提供身份线索，圆形图片只留细边线。酒红回应<strong>行动</strong>（主要链接与合适的交互状态）。每日一言回归中性或身份绿，主题开关只在操作时反馈。
               </p>
-              <p class="no">不要：将酒红默认等同危险，或让颜色削弱文章阅读。</p>
+              <p class="no">不要：将酒红等同危险，因「表达」给非行动内容染红，或用深酒红直接绘制深底小字。文章图示保留服务内容的分类色，键盘焦点使用独立焦点色。</p>
             </div>
           </div>
         </section>
@@ -1588,7 +1610,7 @@
             <div class="card">
               <h4>层级如何建立</h4>
               <p>
-                一个区块优先使用标题、正文与元信息三种角色，利用留白、字重和对齐形成关系。需要强调时先调整层级，再考虑绿色。
+                一个区块优先使用标题、正文与元信息三种角色，利用留白、字重和对齐形成关系。需要强调时先调整层级，再考虑有职责的颜色。
               </p>
             </div>
             <div class="card">
@@ -1818,6 +1840,7 @@
               </div>
 
               <div class="frame-rationale">
+                <p><b>返回与页头：</b>About、Links、列表和内容页的返回入口、页头与页框共用左基线，入口到底下的正文保持 24px。阅读列限宽时靠左；标题前如有文章日期、标签或封面，保留内容自己的层级。已通过 <code>BaseLayout</code> / <code>ContentLayout</code> 的 <code>back</code> 与 <code>.site-page-main</code> 接入，例外应记录理由与验证方式。</p>
                 <p><b>手机先行：</b>两侧各 20px 时，320 / 390 / 430px 的可用宽度分别约为 280 / 350 / 390px（未扣除安全区与滚动条）。正文以 16px / 1.8 为起点，目录收进可关闭的入口；触控目标优先达到 44 × 44 CSS px。</p>
                 <p><b>为什么是 680px？</b>先沿用项目现有的紧凑布局切换点，是待验证的初稿，不是手机型号的分界线。导航可自行换行，标题和头像尺寸平滑变化，避免尺寸在断点处突变。</p>
                 <p><b>为什么是 1000px？</b>估算：宽屏阅读列目标 680 + 列间 32 + 目录 224 + 两侧各 32 = 1000。实际还要求内容容器至少 936px；滚动条、安全区等占用空间时，放不下就保持单列。这里的 680 是阅读列目标，并非手机正文最小宽度。</p>
@@ -1828,7 +1851,7 @@
             <article id="motion" class="card foundation-card">
               <span class="tag proposal">部分接入 · 其余待实现</span>
               <h3>05 动效与交互</h3>
-              <p>若叶睦与墨提斯共享同一节奏；夜间可用酒红点亮主题细节，正文始终保持稳定。</p>
+              <p>若叶睦与墨提斯共享同一节奏；夜间酒红用于适合的行动反馈，正文始终保持稳定。切换主题时暂时停止颜色过渡，使画布与文字同步更新，完成绘制后恢复普通交互过渡。</p>
 
               <dl class="motion-spec">
                 <div class="motion-spec__row">
@@ -1869,7 +1892,7 @@
               <a class="text-link-sample" href="#motion"><span class="text-link-sample__label">全部文章</span><span aria-hidden="true">→</span></a>
 
               <h4>终端 · 已重做为 macOS 风格壳子，实际设备待验证</h4>
-              <p>反馈强度匹配状态稀有度：终端输入行是常驻状态，不套整圈焦点环；聚焦由壳子外边框和输入行顶部 1px 边线变为操作色（160ms）表达，块状光标承担「可以打字」的主要信号。光标只在聚焦且无选区时闪烁，有选区时交还系统选区；减少动态效果时常亮。帮助表命令列固定宽度对齐，窄屏改为两行。终端画布与边线用独立 <code>--term-*</code> token，不混用文章卡片 token。标题栏是身份牌，取 <code>--color-identity-surface / -edge / -ink</code>；提示符里的用户名取 <code>--color-identity</code>，日间苔绿、夜间酒红，<code>❯</code> 保持行动色。</p>
+              <p>反馈强度匹配状态稀有度：终端输入行是常驻状态，不套整圈焦点环；聚焦由壳子外边框和输入行顶部 1px 边线变为操作色（160ms）表达，块状光标承担「可以打字」的主要信号。光标只在聚焦且无选区时闪烁，有选区时交还系统选区；减少动态效果时常亮。帮助表命令列固定宽度对齐，窄屏改为两行。终端画布与边线用独立 <code>--term-*</code> token，不混用文章卡片 token。标题栏是身份牌，取 <code>--color-identity-surface / -edge / -ink</code>；提示符用户名两主题都取绿色 <code>--color-identity</code>，<code>❯</code> 使用行动色。</p>
               <p>首次打开时 banner 说明怎么开始，下面给一行「试试 help · ls · whoami」，命令字可点击执行，不认命令的人也能先看到结果。终端是模态对话框，关闭状态必须真正隐藏，不能以任何形式留在页面流里。入口两处：页头 <code>&gt;_</code> 图标是全站常驻快捷键；首页 hero 动作行在「阅读文章 / 翻翻笔记」之后放次级文字入口「在终端里逛逛」，因为首访者落在首屏，图标和 title 只在悬停时可读。</p>
 
               <p class="motion-note">
@@ -1879,7 +1902,7 @@
             </article>
           </div>
           <div class="hint" style="margin-top: 18px">
-            <b>实施与验证：</b>页框、导航换行、平滑字号和基于容器宽度的目录与列表侧栏已接入。模拟检查了日夜主题、320–1440px 的代表宽度和目录键盘操作；真实设备、安全区及缩放仍待验证。文章行方向箭头已共享，浏览器已检查悬停、键盘焦点和减少动态效果，实际设备待验证；目录进入使用 220ms，其余动效尚未统一，部分页面仍有 300ms 入场。详见
+            <b>实施与验证：</b>页框、导航换行、平滑字号和基于容器宽度的目录与列表侧栏已接入。模拟检查了日夜主题、320–1440px 的代表宽度和目录键盘操作。2026-10-27 的颜色语义检查覆盖首页、列表、文章与关于页的日夜主题及 1440 / 390px，另检查链接悬停与按下、主题切换、键盘、模拟触屏、减少动态效果、终端、Pagefind 勾选符和文章图示。页框检查在日夜主题对照了 About、Links、列表与文章、笔记和政策详情的返回入口和页头，另检查代表断点及键盘跳转；构建产物检查已加入部署工作流，浏览器几何检查仍需执行。真实设备、安全区、缩放、图片配合及 Giscus 等第三方表面的全部状态仍待验证。目录进入使用 220ms，其余动效尚未统一，部分页面仍有 300ms 入场。详见
             <a href="design-language.md">文字规范的差距清单</a>。
           </div>
         </section>

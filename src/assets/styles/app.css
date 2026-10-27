@@ -21,16 +21,21 @@
   --color-surface: #ffffff;
   --color-text: #263b2e;
   --color-text-muted: #536a5b;
+  /* 身份跨主题保持绿色；行动色可随主题变化。 */
+  --color-brand: #3f7050;
   --color-action: #3f7050;
+  --color-action-hover: #315a40;
+  --color-action-active: #2b4e38;
   --color-action-ink: #ffffff;
+  --color-action-surface: #e8f2ea;
   --color-selection: #e8f2ea;
   --color-border: #d0ded2;
   --color-focus: #315a40;
-  /* 身份：日间由苔绿和头像承担，夜间交给酒红；两套主题都有值。 */
-  --color-identity: var(--color-action);
+  --color-identity: var(--color-brand);
   --color-identity-surface: var(--color-surface);
   --color-identity-edge: var(--color-border);
   --color-identity-ink: var(--color-text);
+  --color-status-success: #3f7050;
   --color-status-warning: #805417;
   --color-status-error: #ab2e2e;
   --color-action-foreground: var(--color-action-ink);
@@ -121,31 +126,30 @@
   --card-edge: var(--color-border);
   --card-edge-hover: var(--color-action);
   --chip-tint: var(--color-selection);
-  --chip-tint-hover: var(--color-selection);
-  --active-tint: var(--color-selection);
-  --row-tint: var(--color-selection);
-  --avatar-ring: var(--color-surface);
+  --active-tint: var(--color-action-surface);
 }
 
 .dark {
   color-scheme: dark;
-  /* 墨提斯：绿色引导行动，酒红承载个人表达，不充当错误色。 */
+  /* 墨提斯：绿色延续身份，酒红回应行动；状态另有语义。 */
   --color-canvas: #191d1c;
   --color-surface: #262d29;
   --color-text: #eaf1eb;
   --color-text-muted: #aebeb2;
-  --color-action: #a9d8b4;
-  --color-action-ink: #171e19;
+  --color-brand: #a9d8b4;
+  --color-action: #df9aae;
+  --color-action-hover: #f5c4d0;
+  --color-action-active: #e3a7b8;
+  --color-action-ink: #2b1920;
+  --color-action-surface: #38232a;
   --color-selection: #334638;
-  --color-expression: #80364b;
-  --color-expression-surface: #38232a;
-  --color-expression-ink: #efb9c7;
   --color-border: #43544a;
   --color-focus: #a9d8b4;
-  --color-identity: var(--color-expression-ink);
-  --color-identity-surface: var(--color-expression-surface);
-  --color-identity-edge: var(--color-expression);
-  --color-identity-ink: var(--color-expression-ink);
+  --color-identity: var(--color-brand);
+  --color-identity-surface: #25342a;
+  --color-identity-edge: #435d49;
+  --color-identity-ink: var(--color-brand);
+  --color-status-success: #a9d8b4;
   --color-status-warning: #e4c18a;
   --color-status-error: #ffaaa4;
   --background: 165 7.41% 10.59%;
@@ -158,8 +162,8 @@
   --term-canvas: #1e2721;
   --term-edge: #3a463d;
   --term-muted: #93a89a;
-  --primary: 134.04 37.6% 75.49%;
-  --primary-foreground: 137.14 13.21% 10.39%;
+  --primary: 342.61 51.88% 73.92%;
+  --primary-foreground: 336.67 26.47% 13.33%;
   --secondary: 135.79 15.7% 23.73%;
   --secondary-foreground: 128.57 20% 93.14%;
   --muted: 145.71 8.43% 16.27%;
@@ -169,7 +173,6 @@
   --border: 144.71 11.26% 29.61%;
   --input: 144.71 11.26% 29.61%;
   --ring: 134.04 37.6% 75.49%;
-  --avatar-ring: var(--color-expression-surface);
 }
 
 *,
@@ -214,7 +217,18 @@ a {
 }
 
 a:hover {
-  color: var(--leaf);
+  color: var(--color-action-hover);
+}
+
+a:active {
+  color: var(--color-action-active);
+}
+
+/* 切换主题时让前景与画布同时更新，避免插值经过低对比度。 */
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+  transition: none !important;
 }
 
 button:focus-visible,
@@ -268,6 +282,16 @@ input:focus-visible,
   outline-offset: 2px;
 }
 
+.skip-link:hover {
+  background: var(--color-action-hover);
+  color: var(--color-action-ink);
+}
+
+.skip-link:active {
+  background: var(--color-action-active);
+  color: var(--color-action-ink);
+}
+
 #main-content:focus {
   outline: none;
 }
@@ -298,7 +322,7 @@ input:focus-visible,
 }
 
 .site-brand__mark {
-  color: var(--leaf);
+  color: var(--color-brand);
   font-size: 27px;
   font-weight: 800;
 }
@@ -334,14 +358,16 @@ input:focus-visible,
 
 .site-nav a:hover,
 .site-nav a.active {
-  background: var(--active-tint);
-  color: var(--leaf);
+  color: var(--color-action);
 }
 
 .site-nav a.active {
-  font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 0.3em;
+}
+
+.site-nav a:active {
+  color: var(--color-action-active);
 }
 
 .site-header__actions {
@@ -370,17 +396,11 @@ input:focus-visible,
 }
 
 .site-square-button:hover {
-  border-color: var(--card-edge-hover);
-  background: var(--chip-tint-hover);
-  color: var(--leaf);
+  color: var(--color-action);
 }
 
-/* 主题开关是墨提斯的常驻身份细节，仍保持清楚的图标对比。 */
-.dark .site-theme-button,
-.dark .site-theme-button:hover {
-  border-color: var(--color-expression);
-  background: var(--color-expression-surface);
-  color: var(--color-expression-ink);
+.site-square-button:active {
+  color: var(--color-action-active);
 }
 
 .site-square-button svg {
@@ -389,7 +409,6 @@ input:focus-visible,
 }
 
 .site-terminal-button {
-  color: var(--leaf);
   font: 15px ui-monospace, Consolas, monospace;
 }
 
@@ -415,6 +434,12 @@ input:focus-visible,
   border: 0;
   border-radius: 24px;
   background: transparent;
+}
+
+/* 内页的返回入口与正文共用左基线，并由这里统一控制间距。 */
+.site-page-main {
+  min-width: 0;
+  margin-top: var(--space-6);
 }
 
 .site-content--inner #content-header h1,
@@ -472,8 +497,17 @@ input:focus-visible,
 }
 
 .site-content--inner .prose :where(a) {
-  text-decoration-color: color-mix(in srgb, var(--leaf) 50%, transparent);
+  color: var(--color-action);
+  text-decoration-color: currentColor;
   text-underline-offset: 0.2em;
+}
+
+.site-content--inner .prose :where(a:hover) {
+  color: var(--color-action-hover);
+}
+
+.site-content--inner .prose :where(a:active) {
+  color: var(--color-action-active);
 }
 
 .site-content--inner :where(.rounded-2xl, .rounded-xl) {
@@ -507,13 +541,11 @@ a.paper-card:hover,
 }
 
 .site-content--inner :is(a, button)[class~='bg-muted']:hover {
-  border-color: var(--card-edge-hover);
-  background: var(--chip-tint-hover);
-  color: var(--leaf);
+  color: var(--color-action-hover);
 }
 
 /* 内容页返回入口沿用主题组件，但需要足够的触控高度。 */
-.site-content--inner > a[class~='bg-muted'] {
+.site-content--inner > .site-back {
   min-height: 44px;
 }
 
