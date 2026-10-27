@@ -42,35 +42,36 @@ const target = new URL(to, Astro.site)
         height: 100%;
       }
 
+      .redirect-doc {
+        --redirect-canvas: #f9fcf9;
+        --redirect-text: #263b2e;
+        --redirect-muted: #536a5b;
+        --redirect-action: #3f7050;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .redirect-doc {
+          --redirect-canvas: #191d1c;
+          --redirect-text: #eaf1eb;
+          --redirect-muted: #aebeb2;
+          --redirect-action: #a9d8b4;
+        }
+      }
+
       .redirect-doc body {
         margin: 0;
         display: grid;
         place-items: start center;
         align-content: center;
         padding: 24px;
-        background: #fbfdf6;
-        color: #303b28;
+        background: var(--redirect-canvas);
+        color: var(--redirect-text);
         font: 15px/1.7 "Satoshi", "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
         text-align: center;
       }
 
-      @media (prefers-color-scheme: dark) {
-        .redirect-doc body {
-          background: #1c251b;
-          color: #e8ecde;
-        }
-
-        .redirect-doc a {
-          color: #a8c97f;
-        }
-
-        .redirect-doc small {
-          color: #9aa78c;
-        }
-      }
-
       .redirect-doc a {
-        color: #637d43;
+        color: var(--redirect-action);
         text-underline-offset: 3px;
       }
 
@@ -79,7 +80,7 @@ const target = new URL(to, Astro.site)
       }
 
       .redirect-doc small {
-        color: #77816a;
+        color: var(--redirect-muted);
       }
     </style>
   </body>

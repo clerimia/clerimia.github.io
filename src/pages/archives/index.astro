@@ -30,22 +30,17 @@ const meta = {
     <section id='content' class='animate' aria-label='Blog post list'>
       {
         allPostsByYear.map(([year, posts]) => (
-          <div class='relative mt-20'>
-            <h2
-              class='absolute -start-6 -top-16 z-0 text-9xl font-bold text-transparent opacity-12 dark:opacity-25'
-              style='-webkit-text-stroke-width:2px;-webkit-text-stroke-color:hsl(var(--foreground)/var(--un-text-opacity))'
-            >
-              <samp>{year}</samp>
-            </h2>
-            <p class='px-5 text-muted-foreground'>
-              {posts.length} post{posts.length > 1 && 's'}
-            </p>
+          <section class='mt-12' aria-label={`${year} 年文章`}>
+            <div class='mb-3 flex items-baseline gap-3'>
+              <h2 class='text-xl font-medium'>{year}</h2>
+              <p class='text-sm text-muted-foreground'>{posts.length} 篇文章</p>
+            </div>
             <ul class='flex flex-col text-start'>
               {posts.map((p) => (
                 <PostPreview post={p} plain />
               ))}
             </ul>
-          </div>
+          </section>
         ))
       }
     </section>

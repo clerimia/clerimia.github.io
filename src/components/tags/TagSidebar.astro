@@ -16,7 +16,7 @@ const tags = await getSectionTags(section)
       <Icon name='tag-2' class='me-2' />
       Tags
     </h2>
-    <ul class='text-bgColor flex flex-wrap gap-2'>
+    <ul class='tag-entries text-bgColor flex flex-wrap gap-2'>
       {tags.slice(0, 50).map(([tag]) => (
         <li><Button title={tag} href={getTagUrl(section, tag)} variant='pill' /></li>
       ))}
@@ -28,3 +28,11 @@ const tags = await getSectionTags(section)
     </span>
   </aside>
 )}
+
+<style>
+  .tag-entries :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

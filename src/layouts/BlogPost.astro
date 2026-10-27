@@ -48,13 +48,15 @@ const socialImage = heroImage
     : heroImage.src.src
   : config.socialCard
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
+const hasSidebar = headings.some((heading) => heading.depth <= 3)
 ---
 
 <PageLayout
   meta={{ articleDate, description, ogImage: socialImage, title }}
   back={sectionPath}
+  {hasSidebar}
 >
-  {!!headings.length && <PostTOC {headings} slot='sidebar' />}
+  {hasSidebar && <PostTOC {headings} slot='sidebar' />}
 
   <Fragment slot='header'>
     <Hero {data} {remarkPluginFrontmatter} section={getEntrySection(Astro.props.post)} />

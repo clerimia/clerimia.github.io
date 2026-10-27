@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>clerimia · 设计系统提案</title>
+    <title>clerimia · 设计系统</title>
     <style>
       @font-face {
         font-family: Satoshi;
@@ -31,7 +31,7 @@
         --panel: #262d29;
         --ink: #eaf1eb;
         --muted: #aebeb2;
-        --line: #3f4d35;
+        --line: #43544a;
         --soft: #334638;
         --green: #a9d8b4;
         --wine: #80364b;
@@ -41,9 +41,6 @@
       }
       * {
         box-sizing: border-box;
-      }
-      html {
-        scroll-behavior: smooth;
       }
       body {
         margin: 0;
@@ -445,34 +442,240 @@
         stroke-linecap: round;
         stroke-linejoin: round;
       }
-      .layout {
+      .foundation-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+        align-items: start;
+        gap: 16px;
+      }
+      .foundation-card {
+        min-width: 0;
+      }
+      .foundation-card h3 {
+        margin: 10px 0 8px;
+        font-size: 22px;
+        line-height: 1.35;
+      }
+      .foundation-card > p {
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .frame-diagram {
+        margin: 22px 0 18px;
+      }
+      .frame-diagram__viewport {
+        padding: 20px 26px;
         border: 1px solid var(--line);
         border-radius: 10px;
         background: var(--soft);
-        padding: 14px;
-        margin: 20px 0;
       }
-      .layout-inner {
-        max-width: 90%;
-        margin: auto;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 6px;
+      .frame-diagram__shell {
         padding: 12px;
-        text-align: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+      .frame-diagram__nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .frame-diagram__nav b {
+        color: var(--green);
+      }
+      .frame-diagram__columns {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(68px, 24%);
+        gap: 12px;
+        padding-top: 12px;
+      }
+      .frame-diagram__reading,
+      .frame-diagram__aside {
+        min-width: 0;
+        padding: 11px;
+        border-radius: 6px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .frame-diagram__reading b,
+      .frame-diagram__aside b {
+        color: var(--ink);
+        font-weight: 650;
+      }
+      .frame-diagram__lines {
+        display: grid;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .frame-diagram__lines span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--line);
+      }
+      .frame-diagram__lines span:last-child {
+        width: 60%;
+      }
+      .frame-diagram figcaption {
+        margin-top: 10px;
         color: var(--muted);
         font-size: 12px;
+        line-height: 1.6;
       }
-      .columns {
+      .breakpoint-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
-        margin-top: 14px;
+        margin: 18px 0;
       }
-      .columns div {
+      .breakpoint {
+        min-width: 0;
+        padding: 14px;
+        border-radius: 10px;
         background: var(--soft);
-        height: 50px;
-        border-radius: 5px;
+      }
+      .breakpoint b,
+      .breakpoint span {
+        display: block;
+      }
+      .breakpoint b {
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .breakpoint span {
+        margin-top: 4px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 650;
+      }
+      .breakpoint p {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .frame-rationale {
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .frame-rationale b,
+      .motion-note b {
+        color: var(--ink);
+      }
+      .motion-spec {
+        margin: 22px 0 0;
+      }
+      .motion-spec__row {
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .motion-spec dt {
+        color: var(--green);
+        font: 600 13px/1.6 ui-monospace, Consolas, monospace;
+      }
+      .motion-spec dd {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+      .motion-spec dd b {
+        color: var(--ink);
+        font-weight: 650;
+      }
+      .motion-spec__token {
+        display: block;
+        margin: 2px 0 4px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      .motion-sample {
+        margin: 8px 0 18px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .motion-sample summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 44px;
+        padding: 8px 14px;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 600;
+        list-style: none;
+        cursor: pointer;
+        transition: color 160ms ease-out, background-color 160ms ease-out;
+      }
+      .motion-sample summary::-webkit-details-marker {
+        display: none;
+      }
+      .motion-sample summary::after {
+        content: '+';
+        color: var(--green);
+        font-size: 18px;
+      }
+      .motion-sample[open] summary::after {
+        content: '−';
+      }
+      .motion-sample summary:hover {
+        color: var(--green);
+        background: var(--soft);
+      }
+      .motion-sample summary:focus-visible {
+        outline: 3px solid var(--green);
+        outline-offset: 4px;
+      }
+      .motion-sample__body {
+        margin: 0 10px 10px;
+        padding: 12px;
+        border-radius: 6px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .motion-sample[open] .motion-sample__body {
+        animation: motion-sample-enter 220ms cubic-bezier(0.2, 0, 0, 1) both;
+      }
+      :root[data-theme='dark'] .motion-sample summary::after {
+        color: var(--wine-text);
+      }
+      :root[data-theme='dark'] .motion-sample__body {
+        background: var(--wine-soft);
+        color: var(--wine-text);
+      }
+      @keyframes motion-sample-enter {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .motion-note {
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      @media (max-width: 1000px) {
+        .foundation-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .breakpoint-grid {
+          grid-template-columns: 1fr;
+        }
+        .frame-diagram__viewport {
+          padding: 14px;
+        }
       }
       .migration td:first-child {
         color: var(--wine-text);
@@ -794,22 +997,23 @@
         >
         <nav class="nav" aria-label="规范目录">
           <a href="#color">01 色彩</a><a href="#type">02 字体与字号</a
-          ><a href="#scale">03 间距、圆角、尺寸、图标</a>
+          ><a href="#scale">03 间距、圆角、尺寸、图标</a
+          ><a href="#layout">04 页面框架</a><a href="#motion">05 动效</a>
         </nav>
         <button id="theme" class="toggle" type="button" aria-pressed="false">切换墨提斯主题</button>
       </header>
       <main id="top">
         <div class="hero">
-          <div class="eyebrow">CLERIMIA / DESIGN SYSTEM · PROPOSAL</div>
+          <div class="eyebrow">CLERIMIA / DESIGN SYSTEM</div>
           <h1>安静，但有自己的声音。</h1>
           <p>
-            这是一套为未来博客设计的新系统，与文字规范共同描述具体规则。设计思想见
-            Design.md；若叶睦与墨提斯各有完整色板，共用内容结构、排版和组件。
+            这套系统与文字规范共同描述博客的具体设计规则。设计思想见
+            DESIGN.md；若叶睦与墨提斯各有完整色板，共用内容结构、排版和组件。
           </p>
           <div class="hero-meta">
-            <span class="pill">设计提案 · 尚未实施</span
+            <span class="pill">基础系统 · 部分落地</span
             ><span class="pill">两套主题 / 一套组件语言</span
-            ><span class="pill">数值需在真实页面验证</span>
+            ><span class="pill">真实页面持续验证</span>
           </div>
         </div>
         <section id="color" class="section">
@@ -817,7 +1021,7 @@
             <div class="eyebrow">01 · FOUNDATIONS / COLOR</div>
             <h2>色彩系统</h2>
             <p>
-              以主题情绪确定色彩，再为每个颜色安排职责。两套色板均为新设计，不是现有 CSS 的记录。
+              以主题情绪确定色彩，再为每个颜色安排职责。两套色板已映射到站点语义 token，其他组件仍需逐步对照。
             </p>
           </div>
           <div class="subhead">
@@ -996,7 +1200,7 @@
             <div>
               <h3>语义色 · 一种职责，两种主题</h3>
               <p>
-                未来代码使用语义名；表中为提案色值，按主题映射。焦点和按钮前景需与实际背景配对。
+                代码使用语义名并按主题映射；焦点和按钮前景仍需与实际背景配对检查。
               </p>
             </div>
           </div>
@@ -1083,6 +1287,27 @@
                   <td>配对 8.62:1；不可代替错误语义</td>
                 </tr>
                 <tr>
+                  <td><code>--color-status-success</code></td>
+                  <td>#3f7050</td>
+                  <td>#a9d8b4</td>
+                  <td>成功反馈文字</td>
+                  <td>终端结果，搭配文字表达状态</td>
+                </tr>
+                <tr>
+                  <td><code>--color-status-warning</code></td>
+                  <td>#805417</td>
+                  <td>#e4c18a</td>
+                  <td>警告或用法提示文字</td>
+                  <td>不只依靠颜色</td>
+                </tr>
+                <tr>
+                  <td><code>--color-status-error</code></td>
+                  <td>#ab2e2e</td>
+                  <td>#ffaaa4</td>
+                  <td>错误反馈文字</td>
+                  <td>与表达用酒红分开</td>
+                </tr>
+                <tr>
                   <td><code>--color-border</code></td>
                   <td>#d0ded2</td>
                   <td>#43544a</td>
@@ -1103,7 +1328,7 @@
             <b>对比度范围：</b
             >上表数值为纯色相对亮度计算，不包含透明度、渐变、图像和实际状态。普通文字目标至少
             4.5:1；重要边界及状态至少
-            3:1。成功、警告、错误色在真实需求出现时另行设计，配文字和图标，不能把酒红等同错误。
+            3:1。终端成功、警告和错误文字对表面的日间对比度依次为 5.76 / 6.57 / 6.64:1，夜间为 8.84 / 8.25 / 7.74:1。状态需配文字或图标，不能把酒红等同错误。
           </div>
           <div class="subhead">
             <div>
@@ -1133,7 +1358,7 @@
             <div class="eyebrow">02 · FOUNDATIONS / TYPOGRAPHY</div>
             <h2>字体与字号系统</h2>
             <p>
-              共用一套排版，让两个主题保持同一阅读节奏。以下是未来系统的明确提案，字号及行高需用真实内容验证。
+              共用一套排版，让两个主题保持同一阅读节奏。基础字号已映射到站点，行高与长标题仍需持续用真实内容验证。
             </p>
           </div>
           <div class="subhead">
@@ -1170,7 +1395,7 @@
           <div class="subhead">
             <div>
               <h3>字号 · 8 个语义档位</h3>
-              <p>单位 px / 行高；手机为 680px 以下的设计起点。token 是提议名称，尚未写入站点。</p>
+              <p>单位 px / 行高；表中是宽屏与窄屏两端，主要标题字号在其间平滑变化，组件按职责逐步使用。</p>
             </div>
           </div>
           <p class="scroll-hint">表格可左右滑动查看完整内容 →</p>
@@ -1179,8 +1404,8 @@
               <thead>
                 <tr>
                   <th>角色 / 提议 Token</th>
-                  <th>桌面</th>
-                  <th>手机</th>
+                  <th>宽屏</th>
+                  <th>窄屏起点</th>
                   <th>样例</th>
                   <th>使用场景</th>
                 </tr>
@@ -1274,7 +1499,7 @@
           <div class="section-head">
             <div class="eyebrow">03 · FOUNDATIONS / SPACE & COMPONENTS</div>
             <h2>间距、圆角、尺寸、图标</h2>
-            <p>共同的尺度保持两套主题在结构和使用体验上的一致。数值均为未来系统提案。</p>
+            <p>共同的尺度保持两套主题在结构和使用体验上的一致；基础 token 已落地，组件仍需逐步统一。</p>
           </div>
           <div class="subhead">
             <div>
@@ -1393,8 +1618,8 @@
           </div>
           <div class="subhead">
             <div>
-              <h3>图标、表面与动效</h3>
-              <p>使用一致的图标语言，动效只为交互和主题表达服务。</p>
+              <h3>图标与表面</h3>
+              <p>使用一致的图标语言，只在需要独立分组时使用表面。</p>
             </div>
           </div>
           <div class="grid two">
@@ -1426,55 +1651,121 @@
               <p class="no">不要：图标按钮缺少可访问名称，或仅靠图标传达复杂状态。</p>
             </div>
             <div class="card">
-              <h4>表面与动效</h4>
+              <h4>表面与层级</h4>
               <p>
-                普通内容保持平面；对话框、弹出菜单等可使用阴影。Hover / 颜色反馈 160ms，弹层进入
-                200ms，主题切换约 220ms，均为提案。
+                普通内容保持平面；确有独立边界的面板使用轻边框，对话框和弹出菜单等浮层可使用阴影。
               </p>
               <p>
-                夜间可用酒红与绿色表现主题反馈；正文静止。尊重减少动态偏好，关闭非必要过渡并保留状态变化。
+                文章行优先用间距与分隔线建立关系，不为了填满页面而添加卡片。
               </p>
             </div>
           </div>
-          <div class="subhead">
-            <div>
-              <h3>页面框架与验证</h3>
-              <p>主题共享布局，优先真实内容与使用体验。</p>
-            </div>
+        </section>
+        <section id="layout-motion" class="section">
+          <div class="section-head">
+            <div class="eyebrow">04 / 05 · FOUNDATIONS / FRAME &amp; MOTION</div>
+            <h2>让布局安定，让回应自然。</h2>
+            <p>
+              两种主题共享页面框架和交互节奏。布局为阅读留出空间，动效只在状态变化时提供清楚的回应。
+            </p>
           </div>
-          <div class="grid two">
-            <div class="card">
-              <h4>页面与阅读宽度</h4>
-              <div class="layout">
-                <div class="layout-inner">
-                  站点最大宽度 1080px · 阅读列约 680–760px
-                  <div class="columns">
-                    <div></div>
-                    <div></div>
-                    <div></div>
+          <div class="foundation-grid">
+            <article id="layout" class="card foundation-card">
+              <span class="tag proposal">基础已接入 · 持续验证</span>
+              <h3>04 页面框架与断点</h3>
+              <p>从手机的单列阅读与触屏操作出发，随空间增加再安排内容；宽屏先保护阅读宽度，再决定目录能否并列。</p>
+
+              <figure class="frame-diagram" aria-label="宽屏页面框架示意">
+                <div class="frame-diagram__viewport" aria-hidden="true">
+                  <div class="frame-diagram__shell">
+                    <div class="frame-diagram__nav"><b>clerimia</b><span>导航 · 搜索 · 主题</span></div>
+                    <div class="frame-diagram__columns">
+                      <div class="frame-diagram__reading">
+                        <b>阅读列</b><br />文章与主要内容
+                        <div class="frame-diagram__lines"><span></span><span></span><span></span></div>
+                      </div>
+                      <div class="frame-diagram__aside">
+                        <b>目录</b><br />需要时显示
+                        <div class="frame-diagram__lines"><span></span><span></span><span></span></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                <figcaption>宽屏示意，非精确比例：页框最大 1080px · 阅读列最大 760px · 目录 224px（<code>--layout-aside</code>）· 列间 32px（<code>--space-8</code>）。</figcaption>
+              </figure>
+
+              <div class="breakpoint-grid" aria-label="响应式断点">
+                <div class="breakpoint">
+                  <b>≤ 680px · 紧凑</b>
+                  <span>两侧 20px</span>
+                  <p>单列；简介与头像上下排列。导航优先全部可见或换行，目录通过入口打开。</p>
+                </div>
+                <div class="breakpoint">
+                  <b>&gt; 680 且 &lt; 1000px · 过渡</b>
+                  <span>两侧 24px</span>
+                  <p>单列阅读；目录收进入口，列表的辅助信息移到主内容之后。</p>
+                </div>
+                <div class="breakpoint">
+                  <b>≥ 1000px · 宽屏</b>
+                  <span>两侧 32px</span>
+                  <p>内容容器达到 936px 才并列；没有目录就不预留空栏。</p>
+                </div>
               </div>
-              <p>
-                站点宽度为布局提案；文章正文应单独限制行长。手机两侧 20px 起；内容较宽时自然收缩。
+
+              <div class="frame-rationale">
+                <p><b>手机先行：</b>两侧各 20px 时，320 / 390 / 430px 的可用宽度分别约为 280 / 350 / 390px（未扣除安全区与滚动条）。正文以 16px / 1.8 为起点，目录收进可关闭的入口；触控目标优先达到 44 × 44 CSS px。</p>
+                <p><b>为什么是 680px？</b>先沿用项目现有的紧凑布局切换点，是待验证的初稿，不是手机型号的分界线。导航可自行换行，标题和头像尺寸平滑变化，避免尺寸在断点处突变。</p>
+                <p><b>为什么是 1000px？</b>估算：宽屏阅读列目标 680 + 列间 32 + 目录 224 + 两侧各 32 = 1000。实际还要求内容容器至少 936px；滚动条、安全区等占用空间时，放不下就保持单列。这里的 680 是阅读列目标，并非手机正文最小宽度。</p>
+                <p><b>如何验证：</b>检查 320–430px、断点两侧、横屏与 200% 缩放。长标题应换行，代码和表格只在自身区域滚动；导航若横向滚动，要提示还有内容并支持键盘操作。浏览器模拟不能代替真实设备验证。</p>
+              </div>
+            </article>
+
+            <article id="motion" class="card foundation-card">
+              <span class="tag proposal">部分接入 · 其余待实现</span>
+              <h3>05 动效与交互</h3>
+              <p>若叶睦与墨提斯共享同一节奏；夜间可用酒红点亮主题细节，正文始终保持稳定。</p>
+
+              <dl class="motion-spec">
+                <div class="motion-spec__row">
+                  <dt>160ms</dt>
+                  <dd><b>状态反馈</b><code class="motion-spec__token">--motion-feedback · ease-out</code>悬停、选中的颜色与边框；焦点环立即出现。</dd>
+                </div>
+                <div class="motion-spec__row">
+                  <dt>220ms</dt>
+                  <dd><b>浮层进出</b><code class="motion-spec__token">--motion-overlay<br />cubic-bezier(0.2, 0, 0, 1)</code>对话框与目录淡入淡出，位移不超过 8px；焦点和状态不等待动画。</dd>
+                </div>
+                <div class="motion-spec__row">
+                  <dt>240ms</dt>
+                  <dd><b>主题细节</b><code class="motion-spec__token">--motion-theme · ease-out</code>仅用于开关与头像附近的反馈；正文和画布同步切换，保持对比度。</dd>
+                </div>
+                <div class="motion-spec__row">
+                  <dt>即时</dt>
+                  <dd><b>按下与阅读</b><br />按下不缩放、不移动文字；页面内容直接呈现，不逐段错时入场。</dd>
+                </div>
+              </dl>
+
+              <details class="motion-sample">
+                <summary>预览浮层进入节奏</summary>
+                <div class="motion-sample__body">这是 220ms、最多 8px 的小范围进入示例；再次点击可收起。</div>
+              </details>
+
+              <p class="motion-note">
+                <b>减少动态效果：</b>响应 <code>prefers-reduced-motion</code>，关闭非必要过渡、位移、闪烁和平滑滚动；内容、状态、焦点与关闭方式仍完整保留。
+                终端光标只在输入焦点内闪烁，阅读区域不持续运动。
               </p>
-            </div>
-            <div class="card">
-              <h4>验收方法</h4>
-              <p>
-                分别检查首页、文章列表、文章详情：宽屏与
-                390px、若叶睦与墨提斯两主题。验证长标题、中文混排、链接、焦点、触控区域与减少动态效果。
-              </p>
-              <p>保留截图和实际对比度结果；未验证的提案不等于已经通过验收。</p>
-            </div>
+            </article>
+          </div>
+          <div class="hint" style="margin-top: 18px">
+            <b>实施与验证：</b>页框、导航换行、平滑字号和基于容器宽度的目录与列表侧栏已接入。模拟检查了日夜主题、320–1440px 的代表宽度和目录键盘操作；真实设备、安全区及缩放仍待验证。目录进入使用 220ms，其余动效尚未统一；页面仍有 300ms 入场和首页光标闪烁。详见
+            <a href="design-language.md">文字规范的差距清单</a>。
           </div>
         </section>
       </main>
       <footer class="footer">
-        <span>clerimia · 设计系统提案 / 内容为中心</span
+        <span>clerimia · 设计系统 / 内容为中心</span
         ><span
           ><a href="design-language.md">设计系统文字规范</a> ·
-          <a href="../Design.md">设计思想与方向</a> · <a href="../AGENTS.md">仓库入口</a></span
+          <a href="../DESIGN.md">设计思想与方向</a> · <a href="../AGENTS.md">仓库入口</a></span
         >
       </footer>
     </div>

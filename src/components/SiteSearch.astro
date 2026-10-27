@@ -94,6 +94,15 @@ import '@pagefind/default-ui/css/ui.css'
     font-weight: normal;
   }
 
+  /* 搜索命中沿用主题选中表面，保持文字清晰且不引入高亮黄。 */
+  #site-search :global(mark) {
+    padding-inline: 0.1em;
+    border-radius: var(--radius-code);
+    background: var(--color-selection);
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
   /* 子结果用一条短竖线代替 Pagefind 默认的「⤷」，在中文排版里更干净。
      这些节点由 Pagefind 在运行时渲染，必须用 :global 才能命中。 */
   #site-search :global(.pagefind-ui__result-nested .pagefind-ui__result-link::before) {

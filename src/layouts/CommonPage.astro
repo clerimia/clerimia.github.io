@@ -13,10 +13,11 @@ interface Props {
 }
 
 const { title, headings, view, comment: enableComment, ...props } = Astro.props
+const hasSidebar = headings?.some((heading) => heading.depth <= 3) ?? false
 ---
 
-<PageLayout meta={{ title }} {...props}>
-  {headings?.length && <PostTOC headings={headings} slot='sidebar' />}
+<PageLayout meta={{ title }} {hasSidebar} {...props}>
+  {hasSidebar && headings && <PostTOC headings={headings} slot='sidebar' />}
 
   <Fragment slot='header'>
     <h1 class='text-2xl font-medium sm:mb-2 sm:text-3xl'>{title}</h1>

@@ -9,31 +9,27 @@ import { integ } from '@/site-config'
 interface Props {
   meta: SiteMeta
   back?: string
+  hasSidebar?: boolean
+  searchIndex?: boolean
 }
 
-const { meta, back = '/', ...props } = Astro.props
+const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = Astro.props
 ---
 
 <PageLayout {meta} {...props}>
   <Button title='返回' href={back} variant='back' />
-  <main class='mt-6 items-start gap-x-10 md:flex'>
-    {/* Sidebar */}
-    <aside
-      class='animate top-20 min-w-48 basis-60 overflow-y-scroll max-md:hidden z-40 fixed md:sticky md:order-2 lg:shrink-0 max-md:border max-md:px-4 max-md:py-3 max-md:bg-muted max-md:rounded-xl'
-      style='height:calc(100vh - 7rem);'
-      id='sidebar'
-      data-pagefind-ignore
-    >
-      <slot name='sidebar' />
-    </aside>
-    <div
-      id='sidebar-shade'
-      class='fixed top-0 start-0 w-full h-full'
-      style='display:none;background-color:#00000091;z-index:31'
-    >
-    </div>
+  <main class:list={['article-layout', 'mt-6', { 'article-layout--with-sidebar': hasSidebar }]}>
+    {hasSidebar && (
+      <>
+        <aside id='sidebar' class='article-sidebar animate' aria-label='页面目录' tabindex='-1' data-pagefind-ignore>
+          <button id='sidebar-close' class='sidebar-close' type='button' aria-label='关闭目录'>关闭 ×</button>
+          <slot name='sidebar' />
+        </aside>
+        <div id='sidebar-shade' class='sidebar-shade' style='display:none' aria-hidden='true'></div>
+      </>
+    )}
 
-    <article class='min-w-0 grow' data-pagefind-body>
+    <article class='reading-column min-w-0 grow' data-pagefind-body={searchIndex ? '' : undefined}>
       {/* Content header */}
       <div id='content-header' class='animate'>
         <slot name='header' />
@@ -43,7 +39,7 @@ const { meta, back = '/', ...props } = Astro.props
       <div
         id='content'
         class={cn(
-          'max-w-none animate mt-8 md:min-w-[45ch] overflow-x-hidden',
+          'max-w-none animate mt-8 overflow-x-hidden',
           integ.typography.class
         )}
       >
@@ -52,105 +48,235 @@ const { meta, back = '/', ...props } = Astro.props
     </article>
   </main>
 
-  <div class='bottom mt-6 items-start gap-x-10 md:flex' data-pagefind-ignore>
-    {/* Bottom */}
-    <div class='flex-1 text-muted-foreground md:min-w-[50ch]'>
+  <div class='article-bottom mt-6' data-pagefind-ignore>
+    <div class='article-bottom__main text-muted-foreground'>
       <slot name='bottom' />
     </div>
-    <div class='min-w-48 basis-60'>
+    <div class='article-bottom__aside'>
       <slot name='bottom-sidebar' />
     </div>
   </div>
 
   <BackToTop header='content-header' content='content'>
-    <button
-      slot='other-icons'
-      aria-label='展开目录'
-      class='size-10 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 md:hidden sm:size-12'
-      id='sidebar-btn'
-    >
-      <Icon name='list' />
-    </button>
+    {hasSidebar && (
+      <button
+        slot='other-icons'
+        aria-label='展开目录'
+        aria-controls='sidebar'
+        aria-expanded='false'
+        type='button'
+        class='size-11 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 sm:size-12'
+        id='sidebar-btn'
+      >
+        <Icon name='list' />
+      </button>
+    )}
   </BackToTop>
 </PageLayout>
 
 <script>
-  // Toggle sidebar visibility on button click
   const sidebarButton = document.getElementById('sidebar-btn')
   const sidebar = document.getElementById('sidebar')
-  const sidebarShade = document.getElementById('sidebar-shade') as HTMLElement
+  const sidebarClose = document.getElementById('sidebar-close')
+  const sidebarShade = document.getElementById('sidebar-shade')
+  const contentFrame = document.getElementById('main-content')
 
-  if (sidebarShade) {
-    sidebarShade.addEventListener('click', () => {
-      toggleSidebar()
-    })
-  }
-
-  function toggleSidebar() {
-    if (sidebar && sidebar.classList.contains('show')) {
-      sidebar.classList.remove('show')
-      sidebarShade.style.display = 'none'
-    } else if (sidebar) {
-      sidebar.classList.add('show')
-      sidebarShade.style.display = 'block'
+  function setSidebar(open: boolean, restoreFocus = true) {
+    if (!sidebar || !sidebarShade || !sidebarButton) return
+    sidebar.classList.toggle('show', open)
+    sidebarShade.style.display = open ? 'block' : 'none'
+    sidebarButton.setAttribute('aria-expanded', String(open))
+    sidebarButton.setAttribute('aria-label', open ? '关闭目录' : '展开目录')
+    if (open) {
+      sidebar.setAttribute('role', 'dialog')
+      sidebar.setAttribute('aria-modal', 'true')
+      sidebarClose?.focus()
+    } else {
+      sidebar.removeAttribute('role')
+      sidebar.removeAttribute('aria-modal')
+      if (restoreFocus) sidebarButton.focus()
     }
   }
 
-  sidebarButton?.addEventListener('click', () => {
-    toggleSidebar()
+  sidebarButton?.addEventListener('click', () => setSidebar(!sidebar?.classList.contains('show')))
+  sidebarClose?.addEventListener('click', () => setSidebar(false))
+  sidebarShade?.addEventListener('click', () => setSidebar(false))
+
+  // Clicking a same-page entry closes the drawer and moves focus to the heading.
+  sidebar?.addEventListener('click', (event) => {
+    if (!sidebar.classList.contains('show')) return
+    const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href]')
+    if (!link) return
+    const target = new URL(link.href, window.location.href)
+    if (target.pathname !== window.location.pathname || !target.hash) return
+    const heading = document.getElementById(decodeURIComponent(target.hash.slice(1)))
+    setSidebar(false, false)
+    if (heading) {
+      if (!heading.hasAttribute('tabindex')) {
+        heading.setAttribute('tabindex', '-1')
+        heading.addEventListener('blur', () => heading.removeAttribute('tabindex'), { once: true })
+      }
+      heading.focus({ preventScroll: true })
+    }
   })
+
+  document.addEventListener('keydown', (event) => {
+    if (!sidebar?.classList.contains('show')) return
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      setSidebar(false)
+    } else if (event.key === 'Tab') {
+      const controls = Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]'))
+        .filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0)
+      const first = controls[0]
+      const last = controls[controls.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last?.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first?.focus()
+      }
+    }
+  })
+
+  // 容器查询是并列布局的唯一判断来源；窗口改变时同步关闭已打开的抽屉。
+  if (contentFrame && sidebar) {
+    new ResizeObserver(() => {
+      if (!sidebar.classList.contains('show') || getComputedStyle(sidebar).position !== 'sticky') return
+      const hadFocus = sidebar.contains(document.activeElement)
+      setSidebar(false, false)
+      if (hadFocus) (sidebar.querySelector<HTMLElement>('a[href]') ?? sidebar).focus()
+    }).observe(contentFrame)
+  }
 </script>
 <style>
-  @media (min-width: 769px) {
-    #sidebar-shade {
-      display: none !important;
+  .article-layout {
+    min-width: 0;
+  }
+
+  .article-sidebar {
+    position: fixed;
+    z-index: 40;
+    inset: 0 0 0 auto;
+    display: none;
+    width: min(320px, 85vw);
+    height: 100dvh;
+    overflow-y: auto;
+    padding: max(var(--space-6), env(safe-area-inset-top, 0px))
+      max(var(--space-4), env(safe-area-inset-right, 0px))
+      max(var(--space-6), env(safe-area-inset-bottom, 0px)) var(--space-6);
+    border-left: 1px solid var(--color-border);
+    border-radius: var(--radius-panel) 0 0 var(--radius-panel);
+    background: var(--color-surface);
+  }
+
+  .article-sidebar.show {
+    display: block;
+    opacity: 1;
+    animation: var(--motion-overlay) var(--motion-overlay-easing) fade-in-side both !important;
+  }
+
+  .sidebar-shade {
+    position: fixed;
+    z-index: 31;
+    inset: 0;
+    background: #00000091;
+    animation: var(--motion-overlay) var(--motion-overlay-easing) fade-in;
+  }
+
+  .sidebar-close {
+    display: block;
+    min-width: 44px;
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0 var(--space-2);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .article-sidebar :global(.toc-item) {
+    min-height: 44px;
+    padding-block: var(--space-2);
+  }
+
+  .article-sidebar :global(.docs-item > a) {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .article-bottom__main {
+    width: 100%;
+    max-width: var(--layout-reading);
+    min-width: 0;
+  }
+
+  .article-bottom__aside:empty {
+    display: none;
+  }
+
+  /* 只有页框实际容得下 680 + 32 + 224px 才并列。 */
+  @media (min-width: 1000px) {
+    @container site-content (min-width: 936px) {
+      .article-layout--with-sidebar {
+        display: grid;
+        grid-template-columns: minmax(0, var(--layout-reading)) var(--layout-aside);
+        align-items: start;
+        gap: var(--space-8);
+      }
+
+      .article-sidebar {
+        position: sticky;
+        inset: 5rem auto auto;
+        grid-column: 2;
+        grid-row: 1;
+        display: block;
+        width: var(--layout-aside);
+        height: auto;
+        max-height: calc(100dvh - 7rem);
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+
+      .article-sidebar.show {
+        animation: none !important;
+        transform: none;
+      }
+
+      .sidebar-close,
+      #sidebar-btn,
+      #sidebar-shade {
+        display: none !important;
+      }
+
+      .article-bottom:has(.article-bottom__aside:not(:empty)) {
+        display: grid;
+        grid-template-columns: minmax(0, var(--layout-reading)) var(--layout-aside);
+        gap: var(--space-8);
+      }
     }
   }
-  @media (max-width: 769px) {
-    aside.show {
-      display: block !important;
+
+  @keyframes fade-in-side {
+    0% {
+      transform: translateX(8px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
       opacity: 1;
     }
-
-    @keyframes fade-in-side {
-      0% {
-        transform: translateX(50%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-    @keyframes fade-in {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-    aside {
-      animation: 300ms fade-in-side !important;
-      animation-fill-mode: forwards;
-      right: 0;
-      top: 0 !important;
-      height: 100vh !important;
-      min-width: 40vw !important;
-      max-width: 75vw !important;
-      border-top-right-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-      padding-top: 1.5rem !important;
-      padding-bottom: 1.5rem !important;
-    }
-    #sidebar-shade {
-      animation: 300ms fade-in;
-    }
   }
-  @media (max-width: 640px) {
-    aside {
-      min-width: 55vw !important;
-    }
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {

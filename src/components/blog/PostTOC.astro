@@ -77,6 +77,8 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
           const isActive = index === active
           link.classList.toggle('highlight', isActive)
           bar.classList.toggle('highlight-bg', isActive)
+          if (isActive) link.setAttribute('aria-current', 'location')
+          else link.removeAttribute('aria-current')
         })
       }
 
@@ -88,7 +90,8 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
         link.addEventListener('click', (event) => {
           event.preventDefault()
           window.history.pushState(null, '', link.getAttribute('href'))
-          heading.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          heading.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' })
         })
       })
 

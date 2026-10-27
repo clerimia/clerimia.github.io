@@ -54,7 +54,7 @@ span.katex-display {
 .astro-code {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-code);
   border: 1px solid var(--card-edge);
   background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1)) !important;
   color: hsl(var(--code-fg));

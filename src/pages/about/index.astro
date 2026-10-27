@@ -12,10 +12,6 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 <PageLayout meta={{ title: 'About', description: '关于 clerimia。' }}>
   <Button title='返回' href='/' variant='back' />
   <main class='about-page'>
-    <div class='about-activity'>
-      <GitHubActivity username='clerimia' />
-    </div>
-
     <header class='about-profile'>
       <div>
         <h1>关于我</h1>
@@ -95,6 +91,10 @@ import PageLayout from '@/layouts/BaseLayout.astro'
           除了自己玩，也喜欢看电竞比赛。
         </p>
       </section>
+    </div>
+
+    <div class='about-activity'>
+      <GitHubActivity username='clerimia' />
     </div>
 
     <section class='about-site' aria-labelledby='site-heading'>

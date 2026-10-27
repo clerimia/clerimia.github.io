@@ -16,135 +16,152 @@
 
 :root {
   color-scheme: light;
-  /* Semantic roles for new UI. Existing theme HSL variables remain for astro-pure. */
-  --color-canvas: #fcfdfb;
-  --color-surface: var(--surface);
-  --color-text: var(--ink);
-  --color-text-muted: var(--quiet);
-  --color-action: var(--leaf);
-  --color-action-foreground: hsl(var(--primary-foreground));
-  --color-border: var(--rule);
-  --color-focus: var(--leaf);
+  /* 若叶睦：安静、轻盈、柔和。语义色是站点与主题组件的共同来源。 */
+  --color-canvas: #f9fcf9;
+  --color-surface: #ffffff;
+  --color-text: #263b2e;
+  --color-text-muted: #536a5b;
+  --color-action: #3f7050;
+  --color-action-ink: #ffffff;
+  --color-selection: #e8f2ea;
+  --color-border: #d0ded2;
+  --color-focus: #315a40;
+  --color-status-success: #3f7050;
+  --color-status-warning: #805417;
+  --color-status-error: #ab2e2e;
+  --color-action-foreground: var(--color-action-ink);
   --color-danger: hsl(var(--destructive));
   --color-danger-foreground: hsl(var(--destructive-foreground));
 
-  /* Shared starting scale; use a value for its role, not merely its proximity. */
+  /* 同一套尺度由日夜主题共用。 */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-18: 72px;
   --layout-wide: 1080px;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --layout-reading: 760px;
+  --layout-aside: 224px;
+  --motion-overlay: 220ms;
+  --motion-overlay-easing: cubic-bezier(0.2, 0, 0, 1);
+  --radius-code: 6px;
+  --radius-control: 10px;
+  --radius-panel: 16px;
+  --radius-dialog: 24px;
   --radius-pill: 999px;
-  --text-micro: 11px;
-  --text-small: 12px;
-  --text-body: 14px;
-  --text-lead: 15px;
-  --text-title: 21px;
-  --text-display: 46px;
-  --paper: #fbfdf6;
-  --surface: #fbfcf5;
-  --ink: #303b28;
-  --quiet: #68745e;
-  --reading-size: 16px;
-  --reading-leading: 1.75;
-  --rule: #dce3cb;
-  --wash: #f0f4e4;
-  --leaf: #637d43;
-  --leaf-soft: #e7eed5;
-  --background: 80 40% 98%;
-  --foreground: 95 19% 19%;
-  --card: 80 40% 98%;
-  --card-foreground: 95 19% 19%;
-  --popover: 80 40% 98%;
-  --popover-foreground: 95 19% 19%;
-  --primary: 87 30% 38%;
-  --primary-foreground: 69 54% 97%;
-  --secondary: 80 30% 95%;
-  --secondary-foreground: 95 19% 19%;
-  --muted: 80 30% 95%;
-  --muted-foreground: 92 10% 41%;
-  --accent: 80 30% 95%;
-  --accent-foreground: 95 19% 19%;
+  --font-display: clamp(34px, calc(26.6px + 2vw), 48px);
+  --font-page-title: clamp(28px, calc(23.6px + 1.2vw), 36px);
+  --font-section: clamp(22px, calc(20.8px + 0.3vw), 24px);
+  --font-item-title: 18px;
+  --font-lead: clamp(17px, calc(16.5px + 0.15vw), 18px);
+  --font-reading: 16px;
+  --font-ui: 14px;
+  --font-meta: 12px;
+
+  /* 旧组件别名：逐步迁移时仍指向相同语义，而不是维护第二套色板。 */
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-panel);
+  --radius-lg: var(--radius-panel);
+  --text-micro: var(--font-meta);
+  --text-small: var(--font-ui);
+  --text-body: var(--font-ui);
+  --text-lead: var(--font-item-title);
+  --text-title: var(--font-section);
+  --text-display: var(--font-display);
+  --paper: var(--color-canvas);
+  --surface: var(--color-surface);
+  --ink: var(--color-text);
+  --quiet: var(--color-text-muted);
+  --reading-size: var(--font-reading);
+  --reading-leading: 1.8;
+  --rule: var(--color-border);
+  --wash: var(--color-selection);
+  --leaf: var(--color-action);
+  --leaf-soft: var(--color-selection);
+
+  /* astro-pure / UnoCSS 的 HSL 通道，与上述语义色色值对应。 */
+  --background: 120 33.33% 98.24%;
+  --foreground: 142.86 21.65% 19.02%;
+  --card: 0 0% 100%;
+  --card-foreground: 142.86 21.65% 19.02%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 142.86 21.65% 19.02%;
+  --primary: 140.82 28% 34.31%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 132 27.78% 92.94%;
+  --secondary-foreground: 142.86 21.65% 19.02%;
+  --muted: 132 27.78% 92.94%;
+  --muted-foreground: 140.87 12.17% 37.06%;
+  --accent: 132 27.78% 92.94%;
+  --accent-foreground: 142.86 21.65% 19.02%;
   --destructive: 0 65% 48%;
   --destructive-foreground: 0 0% 98%;
-  --border: 80 22% 90%;
-  --input: 80 22% 90%;
-  --ring: 87 30% 38%;
-  --radius: 0.75rem;
-  --term-surface: 80 40% 98%;
-  --term-chrome: 80 30% 95%;
-  --term-ok: 87 30% 38%;
-  --code-bg: 80 30% 95%;
-  --code-fg: 95 19% 19%;
+  --border: 128.57 17.5% 84.31%;
+  --input: 128.57 17.5% 84.31%;
+  --ring: 141.95 29.5% 27.25%;
+  --radius: var(--radius-control);
+  --term-surface: var(--background);
+  --term-chrome: var(--muted);
+  --term-ok: var(--primary);
+  --code-bg: var(--muted);
+  --code-fg: var(--foreground);
   --un-default-border-color: hsl(var(--border) / 1);
 
-  /* One sheet of paper, one light source (top-left, 135deg).
-     Panels are not surfaces; they are the same paper with a hairline edge. */
   --panel-wash: 0;
-  --panel-edge: color-mix(in srgb, var(--rule) 62%, transparent);
-  --card-tint: rgb(95 122 62 / 0.05);
-  --card-tint-hover: rgb(95 122 62 / 0.1);
-  --card-edge: rgb(95 122 62 / 0.18);
-  --card-edge-hover: rgb(95 122 62 / 0.4);
-  --chip-tint: rgb(95 122 62 / 0.06);
-  --chip-tint-hover: rgb(95 122 62 / 0.12);
-  --active-tint: rgb(95 122 62 / 0.13);
-  --row-tint: rgb(95 122 62 / 0.06);
-  --avatar-ring: rgb(255 255 255 / 0.55);
+  --panel-edge: var(--color-border);
+  --card-tint: var(--color-surface);
+  --card-tint-hover: var(--color-selection);
+  --card-edge: var(--color-border);
+  --card-edge-hover: var(--color-action);
+  --chip-tint: var(--color-selection);
+  --chip-tint-hover: var(--color-selection);
+  --active-tint: var(--color-selection);
+  --row-tint: var(--color-selection);
+  --avatar-ring: var(--color-surface);
 }
 
 .dark {
   color-scheme: dark;
-  --color-canvas: #171d16;
-  --paper: #1c251b;
-  --surface: #253023;
-  --ink: #e9efdd;
-  --quiet: #a7b39a;
-  --rule: #3f4d35;
-  --wash: #2d3928;
-  --leaf: #bbd68c;
-  --leaf-soft: #37472c;
-  --background: 110 16% 12%;
-  --foreground: 80 36% 90%;
-  --card: 110 16% 12%;
-  --card-foreground: 80 36% 90%;
-  --popover: 110 16% 12%;
-  --popover-foreground: 80 36% 90%;
-  --primary: 81 47% 69%;
-  --primary-foreground: 110 16% 12%;
-  --secondary: 105 15% 17%;
-  --secondary-foreground: 80 36% 90%;
-  --muted: 105 15% 17%;
-  --muted-foreground: 94 14% 65%;
-  --accent: 105 15% 17%;
-  --accent-foreground: 80 36% 90%;
+  /* 墨提斯：绿色引导行动，酒红承载个人表达，不充当错误色。 */
+  --color-canvas: #191d1c;
+  --color-surface: #262d29;
+  --color-text: #eaf1eb;
+  --color-text-muted: #aebeb2;
+  --color-action: #a9d8b4;
+  --color-action-ink: #171e19;
+  --color-selection: #334638;
+  --color-expression: #80364b;
+  --color-expression-surface: #38232a;
+  --color-expression-ink: #efb9c7;
+  --color-border: #43544a;
+  --color-focus: #a9d8b4;
+  --color-status-success: #a9d8b4;
+  --color-status-warning: #e4c18a;
+  --color-status-error: #ffaaa4;
+  --background: 165 7.41% 10.59%;
+  --foreground: 128.57 20% 93.14%;
+  --card: 145.71 8.43% 16.27%;
+  --card-foreground: 128.57 20% 93.14%;
+  --popover: 145.71 8.43% 16.27%;
+  --popover-foreground: 128.57 20% 93.14%;
+  --primary: 134.04 37.6% 75.49%;
+  --primary-foreground: 137.14 13.21% 10.39%;
+  --secondary: 135.79 15.7% 23.73%;
+  --secondary-foreground: 128.57 20% 93.14%;
+  --muted: 145.71 8.43% 16.27%;
+  --muted-foreground: 135 10.96% 71.37%;
+  --accent: 135.79 15.7% 23.73%;
+  --accent-foreground: 128.57 20% 93.14%;
   --destructive: 0 58% 38%;
   --destructive-foreground: 0 0% 98%;
-  --border: 95 19% 25%;
-  --input: 95 19% 25%;
-  --ring: 81 47% 69%;
-  --term-surface: 110 16% 14%;
-  --term-chrome: 105 15% 17%;
-  --term-ok: 81 47% 69%;
-  --code-bg: 105 15% 17%;
-  --code-fg: 80 36% 90%;
-
-  --panel-edge: rgb(187 214 140 / 0.13);
-  --card-tint: rgb(187 214 140 / 0.035);
-  --card-tint-hover: rgb(187 214 140 / 0.08);
-  --card-edge: rgb(187 214 140 / 0.14);
-  --card-edge-hover: rgb(187 214 140 / 0.36);
-  --chip-tint: rgb(187 214 140 / 0.04);
-  --chip-tint-hover: rgb(187 214 140 / 0.09);
-  --active-tint: rgb(187 214 140 / 0.11);
-  --row-tint: rgb(187 214 140 / 0.05);
-  --avatar-ring: rgb(255 255 255 / 0.1);
+  --border: 144.71 11.26% 29.61%;
+  --input: 144.71 11.26% 29.61%;
+  --ring: 134.04 37.6% 75.49%;
+  --avatar-ring: var(--color-expression-surface);
 }
 
 *,
@@ -154,54 +171,19 @@
 }
 
 html {
-  min-width: 320px;
   scrollbar-gutter: stable;
-  background: #fbfdf6;
+  background: var(--color-canvas);
   font-family: Satoshi, 'Microsoft YaHei', system-ui, sans-serif;
 }
 
-html.dark {
-  background: #1a2218;
-}
-
-/* A single sheet of paper lit once from the top-left corner.
-   The base is near-white; the light itself is green, fading to white.
-   Everything below inherits that one direction; nothing lights itself. */
 body.site-body {
   position: relative;
   min-height: 100dvh;
   margin: 0;
   color: var(--ink);
-  background: #fbfdf6;
-  font-size: 14px;
+  background: var(--color-canvas);
+  font-size: var(--font-ui);
   line-height: 1.65;
-}
-
-body.site-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 85% 70% at 0% 0%,
-    rgb(167 193 106 / 0.3),
-    rgb(199 216 145 / 0.14) 45%,
-    transparent 72%
-  );
-}
-
-.dark body.site-body {
-  background: #1a2218;
-}
-
-.dark body.site-body::before {
-  background: radial-gradient(
-    ellipse 85% 70% at 0% 0%,
-    rgb(110 143 66 / 0.3),
-    rgb(88 118 54 / 0.14) 45%,
-    transparent 72%
-  );
 }
 
 button,
@@ -231,20 +213,29 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--leaf);
+  outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
 
 .site-shell {
+  --page-gutter: var(--space-5);
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(var(--layout-wide), calc(100% - 64px));
+  width: auto;
   min-height: 100dvh;
-  margin: 30px auto 0;
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  margin-top: 30px;
+  margin-left: max(var(--page-gutter), env(safe-area-inset-left, 0px), calc((100% - var(--layout-wide)) / 2));
+  margin-right: max(var(--page-gutter), env(safe-area-inset-right, 0px), calc((100% - var(--layout-wide)) / 2));
+}
+
+@media (min-width: 681px) {
+  .site-shell { --page-gutter: var(--space-6); }
+}
+
+@media (min-width: 1000px) {
+  .site-shell { --page-gutter: var(--space-8); }
 }
 
 /* 键盘用户跳转正文的入口，平时不可见。 */
@@ -256,7 +247,7 @@ input:focus-visible,
   padding: 8px 16px;
   border-radius: var(--radius-sm);
   background: var(--leaf);
-  color: #fff;
+  color: var(--color-action-ink);
   font-size: 13px;
   text-decoration: none;
   transform: translate(-50%, -160%);
@@ -278,7 +269,7 @@ input:focus-visible,
   align-items: center;
   min-height: 70px;
   gap: 24px;
-  padding: 12px 18px;
+  padding: 12px 0;
 }
 
 .site-brand {
@@ -313,10 +304,15 @@ input:focus-visible,
 }
 
 .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   padding: 6px 11px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   color: var(--ink);
-  font-size: 12px;
+  font-size: var(--font-ui);
   text-decoration: none;
 }
 
@@ -324,6 +320,12 @@ input:focus-visible,
 .site-nav a.active {
   background: var(--active-tint);
   color: var(--leaf);
+}
+
+.site-nav a.active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
 }
 
 .site-header__actions {
@@ -336,8 +338,8 @@ input:focus-visible,
   display: inline-grid;
   flex-shrink: 0;
   place-items: center;
-  width: 35px;
-  height: 35px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--panel-edge);
   border-radius: var(--radius-sm);
@@ -357,9 +359,17 @@ input:focus-visible,
   color: var(--leaf);
 }
 
+/* 主题开关是墨提斯的常驻身份细节，仍保持清楚的图标对比。 */
+.dark .site-theme-button,
+.dark .site-theme-button:hover {
+  border-color: var(--color-expression);
+  background: var(--color-expression-surface);
+  color: var(--color-expression-ink);
+}
+
 .site-square-button svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 .site-terminal-button {
@@ -377,28 +387,50 @@ input:focus-visible,
 }
 
 .site-content {
+  container: site-content / inline-size;
   flex: 1;
   width: 100%;
 }
 
 .site-content--inner {
   margin-top: 18px;
-  padding: 34px 38px 42px;
+  padding: 34px 0 42px;
   /* Fully merged with the page: no outline, no fill — content sits on the sheet itself. */
   border: 0;
   border-radius: 24px;
   background: transparent;
 }
 
-.site-content--inner #content-header h1 {
+.site-content--inner #content-header h1,
+.site-content--inner main > h1 {
   color: var(--ink);
+  font-size: var(--font-page-title);
   font-weight: 600;
-  letter-spacing: -0.035em;
+  line-height: 1.25;
+  letter-spacing: normal;
 }
 
 .site-content--inner #sidebar {
   scrollbar-width: thin;
   scrollbar-color: var(--rule) transparent;
+}
+
+.reading-column {
+  max-width: var(--layout-reading);
+}
+
+/* 列表的辅助信息先跟在内容之后，空间足够时再并列。 */
+.listing-layout {
+  display: grid;
+  gap: var(--space-12) var(--space-8);
+}
+
+@media (min-width: 1000px) {
+  @container site-content (min-width: 936px) {
+    .listing-layout {
+      grid-template-columns: minmax(0, 1fr) var(--layout-aside);
+    }
+  }
 }
 
 .site-content--inner .toc-item.highlight-bg-translucent {
@@ -415,7 +447,12 @@ input:focus-visible,
 
 .site-content--inner .prose :where(h2, h3, h4) {
   color: var(--ink);
-  letter-spacing: -0.02em;
+  letter-spacing: normal;
+}
+
+.site-content--inner .prose h2 {
+  font-size: var(--font-section);
+  line-height: 1.35;
 }
 
 .site-content--inner .prose :where(a) {
@@ -427,7 +464,7 @@ input:focus-visible,
   border-color: var(--rule);
 }
 
-/* Cards are just a slightly darker patch of the same paper. */
+/* 独立分组才使用表面；普通文章列表使用分隔行。 */
 .paper-card {
   border: 1px solid var(--card-edge);
   background: var(--card-tint);
@@ -459,6 +496,11 @@ a.paper-card:hover,
   color: var(--leaf);
 }
 
+/* 内容页返回入口沿用主题组件，但需要足够的触控高度。 */
+.site-content--inner > a[class~='bg-muted'] {
+  min-height: 44px;
+}
+
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -467,7 +509,7 @@ a.paper-card:hover,
   padding: 20px 10px 25px;
   border-top: 1px solid var(--rule);
   color: var(--quiet);
-  font-size: 10px;
+  font-size: var(--font-meta);
 }
 
 .site-footer a {
@@ -496,9 +538,9 @@ html.terminal-modal-open {
   overflow: auto;
   color: var(--ink);
   /* Modals are the one place that legitimately floats: flat paper, real shadow. */
-  background: color-mix(in srgb, var(--paper) 92%, var(--surface));
+  background: var(--color-surface);
   border: 1px solid var(--panel-edge);
-  border-radius: 18px;
+  border-radius: var(--radius-dialog);
   box-shadow: 0 40px 120px -30px #17211455;
 }
 
@@ -541,6 +583,7 @@ html.terminal-modal-open {
   display: flex;
   align-items: center;
   gap: 9px;
+  min-height: 44px;
   margin-left: auto;
   padding: 4px 8px;
   border: 0;
@@ -599,13 +642,12 @@ html.terminal-modal-open {
 
 @media (max-width: 900px) {
   .site-shell {
-    width: calc(100% - 40px);
     margin-top: 16px;
   }
 
   .site-header {
     min-height: 64px;
-    padding: 10px 12px;
+    padding: 10px 0;
     gap: 12px;
   }
 
@@ -622,20 +664,19 @@ html.terminal-modal-open {
   }
 
   .site-content--inner {
-    padding: 30px 28px 36px;
+    padding: 30px 0 36px;
   }
 }
 
 @media (max-width: 680px) {
   .site-shell {
-    width: calc(100% - 32px);
     margin-top: 10px;
   }
 
   .site-header {
     flex-wrap: wrap;
     row-gap: 10px;
-    padding: 10px 4px;
+    padding: 10px 0;
   }
 
   .site-brand {
@@ -649,15 +690,9 @@ html.terminal-modal-open {
   .site-nav {
     order: 3;
     width: 100%;
-    /* 5 个栏目在窄屏改成可横向滑动的 chip 行，不再把字号压到 11px */
+    /* 空间不足时换行，全部栏目始终可见、可触及。 */
+    flex-wrap: wrap;
     gap: 2px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .site-nav::-webkit-scrollbar {
-    display: none;
   }
 
   .site-nav a {
@@ -666,29 +701,34 @@ html.terminal-modal-open {
     align-items: center;
     /* 44px 触控目标 */
     min-height: 44px;
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 6px 6px;
+    font-size: var(--font-ui);
     white-space: nowrap;
   }
 
   .site-content--inner {
     margin-top: 15px;
-    /* The outer shell already supplies 16px on each side. */
-    padding: 24px 4px 30px;
+    /* 页面两侧由外层 shell 提供 20px。 */
+    padding: 24px 0 30px;
     border-radius: var(--radius-lg);
+  }
+
+  .site-content--inner #content-header h1,
+  .site-content--inner main > h1 {
+    line-height: 1.3;
   }
 
   .site-footer {
     flex-wrap: wrap;
     margin-top: 24px;
     padding-inline: 2px;
-    font-size: 9px;
+    font-size: var(--font-meta);
   }
 
   .terminal-dialog {
     width: calc(100% - 24px);
     max-height: calc(100dvh - 24px);
-    border-radius: 15px;
+    border-radius: var(--radius-dialog);
   }
 
   .dialog-header {

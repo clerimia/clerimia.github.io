@@ -288,6 +288,7 @@ const isPanel = variant === 'panel'
           try {
             localStorage.setItem('theme', nowDark ? 'dark' : 'light')
           } catch (e) {}
+          document.dispatchEvent(new Event('site:theme-change'))
           emit('已切换到' + (nowDark ? '暗色' : '亮色') + '主题', 'ok')
           break
         }

@@ -91,22 +91,6 @@ const getAvatarSrc = (friend: Friend) =>
                 <p class='my-0 line-clamp-1 text-xs text-muted-foreground'>{frd.intro}</p>
               </div>
             </div>
-            {/* avatar bg */}
-            <img
-              class='absolute -start-2 top-0 z-0 my-0 h-full w-2/3 bg-white object-cover opacity-15'
-              src={getAvatarSrc(frd)}
-              height={80}
-              width={80}
-              alt=''
-              loading='lazy'
-              style={{
-                msMaskImage:
-                  '-ms-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%)',
-                WebkitMaskImage:
-                  '-webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%)',
-                maskImage: 'linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%)'
-              }}
-            />
           </div>
         </a>
       ))

@@ -11,7 +11,7 @@ const { post, class: className } = Astro.props
 ---
 
 {post.data.tags.length > 0 && (
-  <ul class:list={['not-prose flex flex-wrap gap-2', className]} aria-label='标签'>
+  <ul class:list={['tag-links not-prose flex flex-wrap gap-2', className]} aria-label='标签'>
     {post.data.tags.map((tag) => (
       <li>
         <Button title={tag} href={getTagUrl(getEntrySection(post), tag)} variant='pill' data-pagefind-filter='标签' />
@@ -19,3 +19,11 @@ const { post, class: className } = Astro.props
     ))}
   </ul>
 )}
+
+<style>
+  .tag-links :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

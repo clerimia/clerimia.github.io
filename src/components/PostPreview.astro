@@ -1,17 +1,15 @@
 ---
 import { Image } from 'astro:assets'
 import { type CollectionEntry, render } from 'astro:content'
-
-import { cn } from 'astro-pure/utils'
+import { FormattedDate, Icon } from 'astro-pure/user'
 import { getMusingUrl } from '@/utils/posts'
 import { getEntrySection, getTagUrl } from '@/utils/tags'
-import { Button, FormattedDate, Icon } from 'astro-pure/user'
 
 type Props = {
   post: CollectionEntry<'blog'> | CollectionEntry<'musings'>
   detailed?: boolean
   description?: string
-  /** Bare row without a card surface, e.g. for year archives. */
+  /** Compact row, e.g. for year archives. */
   plain?: boolean
   class?: string
 }
@@ -22,159 +20,155 @@ const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
 ---
 
-<li
-  class:list={['post-preview', { 'post-preview--plain': plain }, className]}
-  style={detailed &&
-    data.heroImage?.color &&
-    `--preview-highlight:color-mix(in srgb,${data.heroImage.color} 40%,hsl(var(--foreground)/var(--un-text-opacity,1)));
-    --preview-highlight-bg:hsl(from ${data.heroImage.color} h s l/20%)`}
->
-  <a
-    class={cn(
-      'post-preview__card block w-full relative group rounded-2xl border transition-colors ease-in-out px-5 py-2.5 hover:text-primary',
-      detailed && 'max-sm:px-4 sm:py-5',
-      detailed && data.heroImage && 'max-md:pt-24'
-    )}
-    href={getMusingUrl(post)}
-    data-astro-prefetch
-  >
-    {
-      detailed && data.heroImage && (
-        <Image
-          alt={data.heroImage.alt ?? data.title ?? ''}
-          class='cover-image absolute end-0 top-0 z-0 h-2/3 w-full rounded-2xl object-cover opacity-50 transition-opacity duration-300 group-hover:opacity-70 md:h-full md:w-3/5'
-          loading='eager'
-          {...data.heroImage}
-        />
-      )
-    }
-    <div
-      class={cn('relative flex flex-col gap-1', !detailed && 'sm:flex-row sm:items-center')}
-      style='z-index:1'
-    >
-      <FormattedDate class='min-w-[95px] text-xs' date={postDate} />
-
-      {/* title */}
-      <div class='flex justify-between flex-grow'>
-        <div class={detailed ? 'font-medium' : undefined}>
-          {data.draft && <span class='text-red-500'>(草稿) </span>}
-          {data.title}
+<li class:list={['post-preview', { 'post-preview--plain': plain }, className]}>
+  <a class='post-preview__link' href={getMusingUrl(post)} data-astro-prefetch>
+    <div class='post-preview__content'>
+      <FormattedDate class='post-preview__date' date={postDate} />
+      {data.title && (
+        <div class='post-preview__title'>
+          {data.draft && <span>(草稿) </span>}{data.title}
         </div>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          width='16'
-          height='16'
-          viewBox='0 0 24 24'
-          fill='none'
-          stroke-width='2.5'
-          stroke-linecap='round'
-          stroke-linejoin='round'
-          class='preview-redirect my-1 stroke-muted-foreground group-hover:stroke-primary'
-          ><line
-            x1='5'
-            y1='12'
-            x2='19'
-            y2='12'
-            class='translate-x-4 scale-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:scale-x-100'
-          ></line><polyline
-            points='12 5 19 12 12 19'
-            class='translate-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1'
-          ></polyline></svg
-        >
-      </div>
-      {
-        detailed && (
-          <>
-            {/* desc */}
-            <p
-              class={cn(
-                'line-clamp-2 text-sm text-muted-foreground sm:line-clamp-3',
-                data.heroImage && 'sm:me-24'
-              )}
-            >
-              {description}
-            </p>
-            <div class='py-2 flex items-center gap-2 text-sm italic leading-4 text-muted-foreground'>
-              {/* reading time */}
-              <span class='flex items-center gap-1'>
-                <Icon name='time' class='size-4' />
-                {remarkPluginFrontmatter.minutesRead}
-              </span>
-              {/* language */}
-              {data.language && (
-                <span class='flex items-center gap-1'>
-                  <Icon name='earth' class='size-4' />
-                  {data.language}
-                </span>
-              )}
-            </div>
-            {data.tags.length > 0 && (
-              <object title='Tags' aria-label='Tags' aria-labelledby='Tags'>
-                <ul class='tag-list mt-1 flex flex-wrap gap-1.5'>
-                  {data.tags.map((tag: string) => (
-                    <li>
-                      <Button as='a' title={tag} href={getTagUrl(getEntrySection(post), tag)} variant='pill' />
-                    </li>
-                  ))}
-                </ul>
-              </object>
-            )}
-          </>
-        )
-      }
+      )}
+      {detailed && description && <p class='post-preview__summary'>{description}</p>}
+      {detailed && (
+        <div class='post-preview__meta'>
+          <span><Icon name='time' />{remarkPluginFrontmatter.minutesRead}</span>
+          {data.language && <span><Icon name='earth' />{data.language}</span>}
+        </div>
+      )}
     </div>
+    {detailed && data.heroImage && (
+      <Image
+        class='post-preview__image'
+        alt={data.heroImage.alt ?? data.title ?? ''}
+        loading='lazy'
+        {...data.heroImage}
+      />
+    )}
+    <span class='post-preview__arrow' aria-hidden='true'>↗</span>
   </a>
+
+  {detailed && data.tags.length > 0 && (
+    <ul class='post-preview__tags' aria-label='文章标签'>
+      {data.tags.map((tag: string) => (
+        <li><a href={getTagUrl(getEntrySection(post), tag)}>{tag}</a></li>
+      ))}
+    </ul>
+  )}
 
   <style>
     .post-preview {
-      --preview-highlight-final: var( --preview-highlight, hsl(var(--primary) / var(--un-text-opacity, 1))
-      );
-    }
-    /* Cards are the same paper, slightly shaded; bare rows are plain. */
-    .post-preview .post-preview__card {
-      background: var(--card-tint);
-      border-color: var(--card-edge);
-      transition:
-        background 180ms ease,
-        border-color 180ms ease,
-        color 180ms ease;
-    }
-    .tag-list :global(a) {
-      padding: 0.125rem 0.5rem;
-      border-radius: 0.5rem;
-      background: var(--chip-tint);
-      border-color: transparent;
-      font-size: 0.75rem;
-      line-height: 1.25rem;
-    }
-    .post-preview:hover .post-preview__card {
-      background: var(--card-tint-hover);
-      border-color: var(--card-edge-hover);
-    }
-    .post-preview:hover {
-      & .tag-list a {
-        background-color: var(--preview-highlight-bg, var(--chip-tint-hover)) !important;
-        border-color: var(--card-edge-hover);
-      }
-      & > a,
-      & .tag-list a:hover {
-        color: var(--preview-highlight-final) !important;
-      }
-      & > a .preview-redirect {
-        stroke: var(--preview-highlight-final) !important;
-      }
-    }
-    .cover-image {
-      -webkit-mask-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-      -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-      mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+      padding: 0 0 var(--space-3);
+      border-bottom: 1px solid var(--color-border);
     }
 
-    @media (max-width: 768px) {
-      .cover-image {
-        -webkit-mask-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-        -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-        mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    .post-preview__link {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-4) 0 var(--space-2);
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .post-preview__content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-preview__content :global(.post-preview__date) {
+      display: block;
+      margin-bottom: var(--space-2);
+      color: var(--color-text-muted);
+      font-size: var(--font-meta);
+      line-height: 1.5;
+    }
+
+    .post-preview__title {
+      color: var(--color-text);
+      font-size: var(--font-item-title);
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .post-preview__summary {
+      margin: var(--space-2) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--font-ui);
+      line-height: 1.6;
+    }
+
+    .post-preview__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      margin-top: var(--space-2);
+      color: var(--color-text-muted);
+      font-size: var(--font-meta);
+    }
+
+    .post-preview__meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .post-preview__meta :global(svg) {
+      width: 16px;
+      height: 16px;
+    }
+
+    .post-preview__image {
+      width: 112px;
+      height: 84px;
+      flex: none;
+      object-fit: cover;
+      border-radius: var(--radius-control);
+    }
+
+    .post-preview__arrow {
+      color: var(--color-text-muted);
+      font-size: 18px;
+    }
+
+    .post-preview__link:hover .post-preview__title,
+    .post-preview__link:hover .post-preview__arrow {
+      color: var(--color-action);
+    }
+
+    .post-preview__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .post-preview__tags a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--color-text-muted);
+      font-size: var(--font-meta);
+      text-decoration: underline;
+      text-decoration-color: var(--color-border);
+      text-underline-offset: 0.25em;
+    }
+
+    .post-preview__tags a:hover {
+      color: var(--color-action);
+      text-decoration-color: currentColor;
+    }
+
+    .post-preview--plain {
+      padding-bottom: 0;
+    }
+
+    @media (max-width: 680px) {
+      .post-preview__image {
+        width: 72px;
+        height: 72px;
       }
     }
   </style>

@@ -31,7 +31,7 @@ const { description, title } = post.data
 const editPath = `https://github.com/clerimia/clerimia.github.io/edit/main/${post.filePath}`
 ---
 
-<PageLayout meta={{ description, title }} back='/notes'>
+<PageLayout meta={{ description, title }} back='/notes' hasSidebar>
   <Fragment slot='sidebar'>
     {!!headings.length && <PostTOC {headings} />}
     <NotesContents class='docs-toc block mt-3' />

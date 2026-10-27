@@ -38,7 +38,7 @@ for (const entry of entries) {
       <h1 class='mb-4 text-3xl font-medium'>Musings</h1>
       <p class='mb-6 text-muted-foreground'>{meta.description}</p>
     </div>
-    <div class='grid gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-8'>
+    <div class='listing-layout'>
       <section id='content' class='animate min-w-0' aria-label='随笔列表'>
         {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
         {Array.from(byYear).map(([year, musings]) => (

@@ -316,13 +316,13 @@ html.dark .wt-shell {
   color: hsl(var(--wt-accent));
 }
 .wt-tone-ok {
-  color: #34d399;
+  color: var(--color-status-success);
 }
 .wt-tone-err {
-  color: #ef4444;
+  color: var(--color-status-error);
 }
 .wt-tone-warn {
-  color: #f59e0b;
+  color: var(--color-status-warning);
 }
 
 .wt-link {

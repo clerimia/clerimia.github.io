@@ -39,3 +39,10 @@ test('policy overview addresses visitors and retains all policy destinations', a
     assert.ok(html.includes(`href="/terms/${path}"`), `${path} must remain reachable`)
   }
 })
+
+test('policy detail pages do not enter the article search index', async () => {
+  for (const path of ['privacy-policy', 'terms-and-conditions', 'copyright', 'disclaimer']) {
+    const html = await readPage(`terms/${path}/index.html`)
+    assert.ok(!html.includes('data-pagefind-body'), `${path} remains outside article search`)
+  }
+})

@@ -66,3 +66,11 @@ test('a theme change in another tab updates this page and its toggle', () => {
   assert.equal(page.isDark(), true)
   assert.equal(page.attributes.get('aria-pressed'), 'true')
 })
+
+test('a theme changed by another site control updates the header toggle', () => {
+  const page = createPage('light')
+  page.document.documentElement.classList.toggle('dark', true)
+  page.document.dispatchEvent(new Event('site:theme-change'))
+  assert.equal(page.attributes.get('aria-pressed'), 'true')
+  assert.equal(page.attributes.get('aria-label'), '切换到浅色')
+})

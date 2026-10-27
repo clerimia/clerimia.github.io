@@ -80,17 +80,19 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
     const isDark = document.documentElement.classList.contains('dark')
     themeButton?.setAttribute('aria-pressed', String(isDark))
     themeButton?.setAttribute('title', isDark ? '切换到浅色' : '切换到深色')
+    themeButton?.setAttribute('aria-label', isDark ? '切换到浅色' : '切换到深色')
 
     // 主题色跟随站点配色；astro-pure 默认写的 #0B0B10 / #FCFCFD 和本站的绿调不搭。
     const meta =
       typeof document.querySelector === 'function'
         ? document.querySelector('meta[name="theme-color"]')
         : null
-    meta?.setAttribute('content', isDark ? '#1c251b' : '#fbfdf6')
+    meta?.setAttribute('content', isDark ? '#191d1c' : '#f9fcf9')
   }
 
   applyStoredTheme()
   document.addEventListener('prerenderingchange', applyStoredTheme)
+  document.addEventListener('site:theme-change', syncThemeButton)
   window.addEventListener('pageshow', applyStoredTheme)
   window.addEventListener('storage', (event) => {
     if (event.key === 'theme' || event.key === null) applyStoredTheme()

@@ -17,7 +17,7 @@ const title = `${sectionTitles[section]} · Tags`
   <main class='mt-6 lg:mt-10'>
     <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
     {tags.length > 0 ? (
-      <ul class='flex flex-wrap gap-4'>
+      <ul class='tag-index flex flex-wrap gap-4'>
         {tags.map(([tag, count]) => (
           <li>
             <Button href={getTagUrl(section, tag)} variant='pill'>
@@ -29,3 +29,11 @@ const title = `${sectionTitles[section]} · Tags`
     ) : <p class='text-muted-foreground'>还没有标签。</p>}
   </main>
 </PageLayout>
+
+<style>
+  .tag-index :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

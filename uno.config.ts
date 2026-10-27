@@ -68,7 +68,7 @@ const typographyConfig: TypographyOptions = {
       ':not(pre) > code': {
         padding: '0.3em 0.5em',
         border: `1px solid ${border}`,
-        'border-radius': radius,
+        'border-radius': 'var(--radius-code)',
         'background-color': bgMuted
       },
       ':not(pre)>code::before': {
@@ -80,26 +80,12 @@ const typographyConfig: TypographyOptions = {
     }),
     // Blockquote
     blockquote: {
-      position: 'relative',
-      overflow: 'hidden',
-      'border-width': '1px',
-      'border-inline-start-color': 'inherit',
-      'border-radius': `calc(1.5 * ${radius})`,
-      'padding-inline': '1.6rem',
-      'box-shadow': `0 5px 0 ${bgMuted}`,
-      ...(typographyCustom.blockquoteStyle === 'normal' && { 'font-style': 'normal' })
-    },
-    'blockquote::after': {
-      color: fgMuted,
-      position: 'absolute',
-      content: '"”"',
-      top: '2.6rem',
-      right: '-1.4rem',
-      'font-size': '10rem',
-      'font-family':
-        '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
-      transform: 'rotate(-15deg)',
-      opacity: '0.1'
+      'border-width': '0',
+      'border-inline-start': '3px solid var(--color-border)',
+      'border-radius': '0',
+      'padding-inline': '1rem',
+      'box-shadow': 'none',
+      'font-style': 'normal'
     },
     // Table
     table: { display: 'block', 'font-size': '.875em', 'overflow-x': 'auto' },
@@ -116,10 +102,7 @@ const typographyConfig: TypographyOptions = {
     li: { 'margin-top': '.5em', 'margin-bottom': '.5em' },
     // Others
     img: { 'border-radius': radius, margin: '0 auto' },
-    kbd: {
-      'border-color': border,
-      'box-shadow': '0 0 0 1px hsl(var(--card) / 1), 0 3px hsl(var(--card) / 1)'
-    },
+    kbd: { 'border-color': border, 'box-shadow': 'none' },
     'sup>a': { 'scroll-margin-top': '4rem' }
   }
 }
