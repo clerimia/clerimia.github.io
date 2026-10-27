@@ -1,0 +1,1492 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>clerimia · 设计系统提案</title>
+    <style>
+      @font-face {
+        font-family: Satoshi;
+        src: url('../public/fonts/Satoshi-Variable.ttf') format('truetype');
+        font-weight: 300 900;
+        font-display: swap;
+      }
+      :root {
+        color-scheme: light;
+        --bg: #f9fcf9;
+        --panel: #fff;
+        --ink: #263b2e;
+        --muted: #536a5b;
+        --line: #d0ded2;
+        --soft: #e8f2ea;
+        --green: #3f7050;
+        --wine: #873a50;
+        --wine-soft: #f4e9eb;
+        --wine-text: #773248;
+        --shadow: 0 16px 40px #24301b14;
+      }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --bg: #191d1c;
+        --panel: #262d29;
+        --ink: #eaf1eb;
+        --muted: #aebeb2;
+        --line: #3f4d35;
+        --soft: #334638;
+        --green: #a9d8b4;
+        --wine: #80364b;
+        --wine-soft: #38232a;
+        --wine-text: #efb9c7;
+        --shadow: 0 16px 40px #0005;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.75 Satoshi,
+          'Microsoft YaHei',
+          system-ui,
+          sans-serif;
+      }
+      a {
+        color: inherit;
+        text-underline-offset: 4px;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--green);
+        outline-offset: 4px;
+      }
+      code,
+      .mono {
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.84em;
+      }
+      .wrap {
+        width: min(1180px, calc(100% - 64px));
+        margin: auto;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        min-height: 80px;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        font-size: 17px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .brand b {
+        color: var(--green);
+      }
+      .nav {
+        display: flex;
+        gap: 24px;
+        margin-left: auto;
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 13px;
+      }
+      .nav a {
+        text-decoration: none;
+        color: var(--muted);
+      }
+      .nav a:hover {
+        color: var(--green);
+      }
+      .toggle {
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .toggle:hover {
+        border-color: var(--green);
+      }
+      :root[data-theme='dark'] .toggle {
+        border-color: var(--wine);
+      }
+      .hero {
+        padding: 68px 0 76px;
+        border-bottom: 1px solid var(--line);
+      }
+      .eyebrow {
+        font:
+          600 12px/1.5 ui-monospace,
+          monospace;
+        color: var(--green);
+        letter-spacing: 0.07em;
+      }
+      .hero h1 {
+        font-size: clamp(36px, 4vw, 52px);
+        line-height: 1.2;
+        margin: 18px 0;
+        font-weight: 650;
+        letter-spacing: 0;
+      }
+      .hero p {
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 16px;
+        margin: 0;
+      }
+      .hero-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+        font-size: 12px;
+      }
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 10px;
+        color: var(--muted);
+      }
+      .section {
+        padding: 86px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .section-head {
+        margin-bottom: 42px;
+        max-width: 830px;
+      }
+      .section-head h2 {
+        font-size: clamp(30px, 3.5vw, 44px);
+        line-height: 1.25;
+        margin: 14px 0;
+        font-weight: 650;
+      }
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .subhead {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: end;
+        margin: 52px 0 18px;
+      }
+      .subhead h3 {
+        margin: 0;
+        font-size: 23px;
+        line-height: 1.3;
+      }
+      .subhead p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .card {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+      }
+      .card h4 {
+        font-size: 17px;
+        margin: 0 0 8px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .card p + p {
+        margin-top: 12px;
+      }
+      .swatch {
+        overflow: hidden;
+        padding: 0;
+      }
+      .swatch-block {
+        height: 118px;
+        background: var(--c);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: end;
+        padding: 15px;
+        color: var(--label, #263b2e);
+        font:
+          12px ui-monospace,
+          monospace;
+      }
+      .swatch-body {
+        padding: 18px;
+      }
+      .swatch-body h4 {
+        margin-bottom: 3px;
+      }
+      .swatch-body p {
+        min-height: 44px;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .tag.proposal {
+        background: var(--wine-soft);
+        color: var(--wine-text);
+      }
+      .hint {
+        margin-top: 20px;
+        border-left: 3px solid var(--green);
+        padding: 15px 18px;
+        background: var(--soft);
+        font-size: 13px;
+      }
+      .hint.wine {
+        border-left-color: var(--wine);
+        background: var(--wine-soft);
+      }
+      .scroll-hint {
+        display: none;
+        color: var(--muted);
+        font-size: 12px;
+        margin: 0 0 8px;
+      }
+      .tablebox {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 770px;
+        text-align: left;
+        font-size: 13px;
+      }
+      th,
+      td {
+        padding: 14px 17px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      th {
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--soft);
+        font-size: 12px;
+      }
+      tr:last-child td {
+        border: 0;
+      }
+      td code {
+        color: var(--green);
+      }
+      td small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .dot {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 1px solid #8886;
+        border-radius: 5px;
+        background: var(--c);
+        vertical-align: middle;
+        margin-right: 7px;
+      }
+      .sectionrow td {
+        font-weight: 700;
+        background: var(--soft);
+      }
+      .avatar-line {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .avatar-line img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .avatar-line b {
+        display: block;
+      }
+      .avatar-line span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .no {
+        color: var(--wine-text);
+        font-size: 12px !important;
+      }
+      .type-ex {
+        font-size: var(--size);
+        line-height: var(--leading, 1.3);
+        font-weight: var(--weight, 600);
+        letter-spacing: 0;
+      }
+      .type-sm {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .space-row {
+        display: grid;
+        grid-template-columns: 72px 160px 1fr;
+        gap: 14px;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+        font-size: 13px;
+      }
+      .bar {
+        height: 8px;
+        width: var(--size);
+        background: var(--green);
+        border-radius: 999px;
+      }
+      .space-row span {
+        color: var(--muted);
+      }
+      .radius-list {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin: 22px 0;
+      }
+      .radius-item {
+        width: 75px;
+        text-align: center;
+        font-size: 12px;
+      }
+      .shape {
+        width: 70px;
+        height: 70px;
+        background: var(--soft);
+        border: 1px solid var(--green);
+        border-radius: var(--r);
+        margin-bottom: 7px;
+      }
+      .controls {
+        display: flex;
+        gap: 12px;
+        align-items: end;
+        flex-wrap: wrap;
+        margin: 22px 0;
+      }
+      .control {
+        display: grid;
+        place-items: center;
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        padding: 0 14px;
+        height: var(--h);
+        font-size: 13px;
+      }
+      .control.target {
+        border-color: var(--green);
+      }
+      .icons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+      }
+      .iconbox {
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: var(--ink);
+      }
+      .iconbox svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .layout {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--soft);
+        padding: 14px;
+        margin: 20px 0;
+      }
+      .layout-inner {
+        max-width: 90%;
+        margin: auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 12px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .columns div {
+        background: var(--soft);
+        height: 50px;
+        border-radius: 5px;
+      }
+      .migration td:first-child {
+        color: var(--wine-text);
+      }
+      .footer {
+        padding: 30px 0 50px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer a {
+        color: var(--green);
+      }
+      .themeplates {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .themeplate {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .themeplate-day {
+        --t-bg: #f9fcf9;
+        --t-surface: #fbfcf5;
+        --t-text: #263b2e;
+        --t-muted: #68745e;
+        --t-green: #3f7050;
+        --t-border: #d0ded2;
+        --t-chip: #e7eed5;
+        --t-detail: #3f7050;
+      }
+      .themeplate-night {
+        --t-bg: #191d1c;
+        --t-surface: #253023;
+        --t-text: #eaf1eb;
+        --t-muted: #aebeb2;
+        --t-green: #a9d8b4;
+        --t-border: #3f4d35;
+        --t-chip: #39232b;
+        --t-detail: #efb9c7;
+      }
+      .themeplate {
+        background: var(--t-bg);
+        color: var(--t-text);
+        border-color: var(--t-border);
+      }
+      .plate-head {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        padding: 24px;
+        border-bottom: 1px solid var(--t-border);
+      }
+      .plate-head img {
+        width: 66px;
+        height: 66px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .plate-head h4 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .plate-head p {
+        margin: 2px 0 0;
+        color: var(--t-muted);
+        font-size: 13px;
+      }
+      .plate-content {
+        padding: 24px;
+      }
+      .plate-summary {
+        font-size: 13px;
+        color: var(--t-muted);
+        margin: 0 0 20px;
+      }
+      .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .palette-item {
+        border: 1px solid var(--t-border);
+        border-radius: 9px;
+        overflow: hidden;
+        background: var(--t-surface);
+      }
+      .palette-chip {
+        height: 60px;
+        background: var(--color);
+        border-bottom: 1px solid var(--t-border);
+      }
+      .palette-info {
+        padding: 9px 10px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .palette-info b,
+      .palette-info code {
+        display: block;
+      }
+      .palette-info code {
+        color: var(--t-muted);
+        margin-top: 3px;
+      }
+      .plate-preview {
+        margin-top: 20px;
+        padding: 18px;
+        background: var(--t-surface);
+        border: 1px solid var(--t-border);
+        border-radius: 10px;
+      }
+      .plate-preview .preview-label {
+        font:
+          600 10px/1.5 ui-monospace,
+          monospace;
+        color: var(--t-detail);
+      }
+      .plate-preview h5 {
+        font-size: 18px;
+        margin: 6px 0;
+        color: var(--t-text);
+      }
+      .plate-preview p {
+        font-size: 12px;
+        color: var(--t-muted);
+        margin: 0;
+      }
+      .preview-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 13px;
+      }
+      .preview-link {
+        color: var(--t-green);
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .preview-chip {
+        font-size: 11px;
+        padding: 3px 8px;
+        background: var(--t-chip);
+        color: var(--t-detail);
+        border-radius: 999px;
+      }
+      .plate-foot {
+        margin: 16px 0 0;
+        font-size: 12px;
+        color: var(--t-muted);
+      }
+      @media (max-width: 760px) {
+        .themeplates {
+          grid-template-columns: 1fr;
+        }
+        .plate-head,
+        .plate-content {
+          padding: 18px;
+        }
+        .palette-grid {
+          gap: 8px;
+        }
+        .palette-chip {
+          height: 52px;
+        }
+      }
+      @media (max-width: 760px) {
+        .scroll-hint {
+          display: block;
+        }
+        .wrap {
+          width: calc(100% - 36px);
+        }
+        .top {
+          flex-wrap: wrap;
+          padding: 14px 0;
+          gap: 10px;
+        }
+        .nav {
+          order: 3;
+          width: 100%;
+          margin: 0;
+          gap: 20px;
+          padding-bottom: 4px;
+        }
+        .toggle {
+          margin-left: auto;
+        }
+        .hero {
+          padding: 56px 0;
+        }
+        .section {
+          padding: 60px 0;
+        }
+        .grid,
+        .grid.two {
+          grid-template-columns: 1fr;
+        }
+        .grid.four {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .subhead {
+          display: block;
+        }
+        .subhead p {
+          margin-top: 6px;
+        }
+        .space-row {
+          grid-template-columns: 60px 95px 1fr;
+        }
+        .footer {
+          flex-direction: column;
+        }
+        .swatch-block {
+          height: 90px;
+        }
+        .swatch-body {
+          padding: 14px;
+        }
+        .swatch-body p {
+          min-height: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+    <style>
+      .themeplate-day {
+        --t-bg: #f9fcf9;
+        --t-surface: #ffffff;
+        --t-text: #263b2e;
+        --t-muted: #536a5b;
+        --t-green: #3f7050;
+        --t-border: #d0ded2;
+        --t-chip: #e8f2ea;
+        --t-detail: #3f7050;
+      }
+      .themeplate-night {
+        --t-bg: #191d1c;
+        --t-surface: #262d29;
+        --t-text: #eaf1eb;
+        --t-muted: #aebeb2;
+        --t-green: #a9d8b4;
+        --t-border: #43544a;
+        --t-chip: #38232a;
+        --t-detail: #efb9c7;
+      }
+      .spec-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .chip-swatch {
+        height: 90px;
+        background: var(--c);
+        border-radius: 9px 9px 0 0;
+      }
+      .palette-info small {
+        display: block;
+        color: var(--t-muted);
+      }
+      .rulelist {
+        margin: 0;
+        padding-left: 1.2em;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .rulelist li + li {
+        margin-top: 8px;
+      }
+      .themeplate {
+        border-color: var(--t-border);
+      }
+      .plate-preview {
+        background: var(--t-surface);
+      }
+      .context {
+        padding: 16px 20px;
+        background: var(--wine-soft);
+        border-left: 3px solid var(--wine);
+        margin: 20px 0;
+        font-size: 13px;
+      }
+      .good {
+        color: var(--green);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      @media (max-width: 760px) {
+        .spec-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <a class="brand" href="#top"
+          ><b>c.</b> clerimia
+          <span style="font-weight: 400; color: var(--muted)">/ 设计系统</span></a
+        >
+        <nav class="nav" aria-label="规范目录">
+          <a href="#color">01 色彩</a><a href="#type">02 字体与字号</a
+          ><a href="#scale">03 间距、圆角、尺寸、图标</a>
+        </nav>
+        <button id="theme" class="toggle" type="button" aria-pressed="false">切换墨提斯主题</button>
+      </header>
+      <main id="top">
+        <div class="hero">
+          <div class="eyebrow">CLERIMIA / DESIGN SYSTEM · PROPOSAL</div>
+          <h1>安静，但有自己的声音。</h1>
+          <p>
+            这是一套为未来博客设计的新系统，与文字规范共同描述具体规则。设计思想见
+            Design.md；若叶睦与墨提斯各有完整色板，共用内容结构、排版和组件。
+          </p>
+          <div class="hero-meta">
+            <span class="pill">设计提案 · 尚未实施</span
+            ><span class="pill">两套主题 / 一套组件语言</span
+            ><span class="pill">数值需在真实页面验证</span>
+          </div>
+        </div>
+        <section id="color" class="section">
+          <div class="section-head">
+            <div class="eyebrow">01 · FOUNDATIONS / COLOR</div>
+            <h2>色彩系统</h2>
+            <p>
+              以主题情绪确定色彩，再为每个颜色安排职责。两套色板均为新设计，不是现有 CSS 的记录。
+            </p>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>两个主题 · 两套色板</h3>
+              <p>固定并列显示：切换整页主题也不影响比较。鼠标或键盘可操作右上角切换。</p>
+            </div>
+          </div>
+          <div class="themeplates">
+            <article class="themeplate themeplate-day">
+              <div class="plate-head">
+                <img src="../src/assets/avatar.png" alt="若叶睦 · 日间头像" />
+                <div>
+                  <h4>若叶睦 · 日间</h4>
+                  <p>安静 / 轻盈 / 柔和</p>
+                </div>
+              </div>
+              <div class="plate-content">
+                <p class="plate-summary">
+                  近白与清透薄荷为画布，深灰绿建立阅读层级，苔绿给行动一个安静的信号。
+                </p>
+                <div class="palette-grid">
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #f9fcf9"></div>
+                    <div class="palette-info">
+                      <b>画布</b><code>#f9fcf9</code><small>页面背景</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #ffffff"></div>
+                    <div class="palette-info">
+                      <b>表面</b><code>#ffffff</code><small>弹层 / 面板</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #263b2e"></div>
+                    <div class="palette-info">
+                      <b>正文</b><code>#263b2e</code><small>标题 / 正文</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #536a5b"></div>
+                    <div class="palette-info">
+                      <b>辅助文字</b><code>#536a5b</code><small>摘要 / 元信息</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #3f7050"></div>
+                    <div class="palette-info">
+                      <b>苔绿</b><code>#3f7050</code><small>链接 / 主要行动</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #e8f2ea"></div>
+                    <div class="palette-info">
+                      <b>薄荷底</b><code>#e8f2ea</code><small>选中 / 局部反馈</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #d0ded2"></div>
+                    <div class="palette-info">
+                      <b>分隔线</b><code>#d0ded2</code><small>装饰性分组</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #315a40"></div>
+                    <div class="palette-info">
+                      <b>焦点绿</b><code>#315a40</code><small>键盘焦点</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #ffffff"></div>
+                    <div class="palette-info">
+                      <b>绿上文字</b><code>#ffffff</code><small>实心操作文字</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="plate-preview">
+                  <span class="preview-label">DAY / WAKABA MUTSUMI</span>
+                  <h5>最近写下的</h5>
+                  <p>从一个安静的念头开始，慢慢写成属于自己的故事。</p>
+                  <div class="preview-actions">
+                    <span class="preview-link">阅读文章 ↗</span
+                    ><span class="preview-chip">日间 · 柔和</span>
+                  </div>
+                </div>
+                <p class="plate-foot">
+                  白色文字与苔绿填充用于主要操作；薄荷底用于轻微选中，不用于大面积染色。
+                </p>
+              </div>
+            </article>
+            <article class="themeplate themeplate-night">
+              <div class="plate-head">
+                <img src="../src/assets/avatar-dark.png" alt="墨提斯 · 夜间头像" />
+                <div>
+                  <h4>墨提斯 · 夜间</h4>
+                  <p>开放 / 活力 / 戏剧性</p>
+                </div>
+              </div>
+              <div class="plate-content">
+                <p class="plate-summary">
+                  炭灰承托鲜绿与酒红：绿色让行动明亮，酒红让人格、创造和表达更有张力。
+                </p>
+                <div class="palette-grid">
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #191d1c"></div>
+                    <div class="palette-info">
+                      <b>画布</b><code>#191d1c</code><small>页面背景</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #262d29"></div>
+                    <div class="palette-info">
+                      <b>表面</b><code>#262d29</code><small>弹层 / 面板</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #eaf1eb"></div>
+                    <div class="palette-info">
+                      <b>正文</b><code>#eaf1eb</code><small>标题 / 正文</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #aebeb2"></div>
+                    <div class="palette-info">
+                      <b>辅助文字</b><code>#aebeb2</code><small>摘要 / 元信息</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #a9d8b4"></div>
+                    <div class="palette-info">
+                      <b>鲜绿</b><code>#a9d8b4</code><small>链接 / 主要行动</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #80364b"></div>
+                    <div class="palette-info">
+                      <b>酒红</b><code>#80364b</code><small>主题表达 / 局部底</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #38232a"></div>
+                    <div class="palette-info">
+                      <b>酒红浅底</b><code>#38232a</code><small>夜间情绪表面</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #efb9c7"></div>
+                    <div class="palette-info">
+                      <b>浅酒红</b><code>#efb9c7</code><small>酒红细节文字</small>
+                    </div>
+                  </div>
+                  <div class="palette-item">
+                    <div class="palette-chip" style="--color: #43544a"></div>
+                    <div class="palette-info">
+                      <b>分隔线</b><code>#43544a</code><small>装饰性分组</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="plate-preview">
+                  <span class="preview-label">NIGHT / MORTIS</span>
+                  <h5>让想法被听见</h5>
+                  <p>绿色指向行动，酒红让表达带有温度和存在感。</p>
+                  <div class="preview-actions">
+                    <span class="preview-link">阅读文章 ↗</span
+                    ><span class="preview-chip">夜间 · 鲜活</span>
+                  </div>
+                </div>
+                <p class="plate-foot">
+                  鲜绿用于操作；酒红用于主题表达、精选内容和少量强调，错误状态另有语义。
+                </p>
+              </div>
+            </article>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>语义色 · 一种职责，两种主题</h3>
+              <p>
+                未来代码使用语义名；表中为提案色值，按主题映射。焦点和按钮前景需与实际背景配对。
+              </p>
+            </div>
+          </div>
+          <p class="scroll-hint">表格可左右滑动查看完整内容 →</p>
+          <div class="tablebox" tabindex="0" role="region" aria-label="可横向滚动的主题色表">
+            <table>
+              <thead>
+                <tr>
+                  <th>语义 Token · 提议</th>
+                  <th>若叶睦 · 日间</th>
+                  <th>墨提斯 · 夜间</th>
+                  <th>用途</th>
+                  <th>限制</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="sectionrow">
+                  <td colspan="5">画布与文字</td>
+                </tr>
+                <tr>
+                  <td><code>--color-canvas</code></td>
+                  <td>#f9fcf9</td>
+                  <td>#191d1c</td>
+                  <td>页面底色</td>
+                  <td>正文不叠加大面积渐变</td>
+                </tr>
+                <tr>
+                  <td><code>--color-surface</code></td>
+                  <td>#ffffff</td>
+                  <td>#262d29</td>
+                  <td>需要独立的内容表面、对话框</td>
+                  <td>普通文章行不默认加底色</td>
+                </tr>
+                <tr>
+                  <td><code>--color-text</code></td>
+                  <td>#263b2e</td>
+                  <td>#eaf1eb</td>
+                  <td>正文与标题</td>
+                  <td>对画布 11.63:1 / 14.82:1</td>
+                </tr>
+                <tr>
+                  <td><code>--color-text-muted</code></td>
+                  <td>#536a5b</td>
+                  <td>#aebeb2</td>
+                  <td>摘要、元信息</td>
+                  <td>对画布 5.68:1 / 8.76:1</td>
+                </tr>
+                <tr class="sectionrow">
+                  <td colspan="5">强调、边界与状态</td>
+                </tr>
+                <tr>
+                  <td><code>--color-action</code></td>
+                  <td>#3f7050</td>
+                  <td>#a9d8b4</td>
+                  <td>链接、主要操作、当前状态</td>
+                  <td>对画布 5.57:1 / 10.67:1</td>
+                </tr>
+                <tr>
+                  <td><code>--color-action-ink</code></td>
+                  <td>#ffffff</td>
+                  <td>#171e19</td>
+                  <td>实心主要按钮文字</td>
+                  <td>对 action 5.76:1 / 10.65:1</td>
+                </tr>
+                <tr>
+                  <td><code>--color-selection</code></td>
+                  <td>#e8f2ea</td>
+                  <td>#334638</td>
+                  <td>导航选中、轻量反馈</td>
+                  <td>文字与边界按实际组合验证</td>
+                </tr>
+                <tr>
+                  <td><code>--color-expression</code></td>
+                  <td>无默认值</td>
+                  <td>#80364b</td>
+                  <td>墨提斯情绪性视觉标记与精选内容</td>
+                  <td>夜间专用，不作为错误色</td>
+                </tr>
+                <tr>
+                  <td><code>--color-expression-surface / ink</code></td>
+                  <td>无默认值</td>
+                  <td>#38232a / #efb9c7</td>
+                  <td>酒红背景与可读文字配对</td>
+                  <td>配对 8.62:1；不可代替错误语义</td>
+                </tr>
+                <tr>
+                  <td><code>--color-border</code></td>
+                  <td>#d0ded2</td>
+                  <td>#43544a</td>
+                  <td>装饰性分隔线</td>
+                  <td>不承担必要控件边界；需另定强边界</td>
+                </tr>
+                <tr>
+                  <td><code>--color-focus</code></td>
+                  <td>#315a40</td>
+                  <td>#a9d8b4</td>
+                  <td>键盘焦点环，2px 起</td>
+                  <td>在所有实际表面测量；不单靠色彩</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hint">
+            <b>对比度范围：</b
+            >上表数值为纯色相对亮度计算，不包含透明度、渐变、图像和实际状态。普通文字目标至少
+            4.5:1；重要边界及状态至少
+            3:1。成功、警告、错误色在真实需求出现时另行设计，配文字和图标，不能把酒红等同错误。
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>为什么这样分配</h3>
+              <p>各自有表达，也有明确边界。</p>
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <h4>若叶睦：轻盈而有方向</h4>
+              <p>
+                画布近白，文字偏深灰绿；苔绿给主要链接、选中态与焦点提供明确方向，薄荷只用于局部的柔和反馈。
+              </p>
+              <p class="no">不要：整页铺绿，或让浅薄荷承载关键正文。</p>
+            </div>
+            <div class="card">
+              <h4>墨提斯：鲜活且有张力</h4>
+              <p>
+                鲜绿承担主要行动；酒红承载精选、主题细节与个人表达。它们共享舞台，但无需让所有内容同时高亮。
+              </p>
+              <p class="no">不要：将酒红默认等同危险，或让颜色削弱文章阅读。</p>
+            </div>
+          </div>
+        </section>
+        <section id="type" class="section">
+          <div class="section-head">
+            <div class="eyebrow">02 · FOUNDATIONS / TYPOGRAPHY</div>
+            <h2>字体与字号系统</h2>
+            <p>
+              共用一套排版，让两个主题保持同一阅读节奏。以下是未来系统的明确提案，字号及行高需用真实内容验证。
+            </p>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>字体 · 按职责分工</h3>
+              <p>优先使用项目已具备的字体，避免为规范增加不必要的下载。</p>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <h4 style="font-size: 27px">clerimia · 标题</h4>
+              <p>
+                <b>标题 / 品牌：</b>Satoshi，中文回退 Microsoft
+                YaHei、system-ui；600–700。中英文可分别调整字距。
+              </p>
+              <p class="no">不要：对中文标题统一施加负字距。</p>
+            </div>
+            <div class="card">
+              <h4 style="font-size: 25px">写下，慢慢思考。</h4>
+              <p>
+                <b>正文 / 界面：</b>Satoshi + 中文系统回退；正文 400，强调 600。中文默认正常字距。
+              </p>
+              <p class="no">不要：用低对比或极细字重换取“安静”。</p>
+            </div>
+            <div class="card">
+              <h4 class="mono" style="font-size: 25px">2026.10 / code</h4>
+              <p>
+                <b>代码 / 时间：</b
+                >ui-monospace、Consolas、monospace；长代码单独控制行高与横向滚动。
+              </p>
+              <p class="no">不要：用等宽字体排整段中文正文。</p>
+            </div>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>字号 · 8 个语义档位</h3>
+              <p>单位 px / 行高；手机为 680px 以下的设计起点。token 是提议名称，尚未写入站点。</p>
+            </div>
+          </div>
+          <p class="scroll-hint">表格可左右滑动查看完整内容 →</p>
+          <div class="tablebox" tabindex="0" role="region" aria-label="可横向滚动的字号表">
+            <table>
+              <thead>
+                <tr>
+                  <th>角色 / 提议 Token</th>
+                  <th>桌面</th>
+                  <th>手机</th>
+                  <th>样例</th>
+                  <th>使用场景</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Display<br /><code>--font-display</code></td>
+                  <td>48 / 1.2</td>
+                  <td>34 / 1.2</td>
+                  <td><span class="type-ex" style="--size: 40px">你好，我是 clerimia</span></td>
+                  <td>首页主标题；每页最多一处</td>
+                </tr>
+                <tr>
+                  <td>Page title<br /><code>--font-page-title</code></td>
+                  <td>36 / 1.25</td>
+                  <td>28 / 1.3</td>
+                  <td><span class="type-ex" style="--size: 32px">关于创造与表达</span></td>
+                  <td>文章或页面标题</td>
+                </tr>
+                <tr>
+                  <td>Section<br /><code>--font-section</code></td>
+                  <td>24 / 1.35</td>
+                  <td>22 / 1.35</td>
+                  <td><span class="type-ex" style="--size: 24px">最近写下的</span></td>
+                  <td>页面区块标题</td>
+                </tr>
+                <tr>
+                  <td>Item title<br /><code>--font-item-title</code></td>
+                  <td>18 / 1.45</td>
+                  <td>18 / 1.45</td>
+                  <td><span class="type-ex" style="--size: 18px">把 Agent 当作同事</span></td>
+                  <td>文章条目或小型分组标题</td>
+                </tr>
+                <tr>
+                  <td>Lead<br /><code>--font-lead</code></td>
+                  <td>18 / 1.75</td>
+                  <td>17 / 1.75</td>
+                  <td>
+                    <span class="type-ex" style="--size: 18px">这里记录正在生长的想法。</span>
+                  </td>
+                  <td>简介、引言与导语</td>
+                </tr>
+                <tr>
+                  <td>Reading<br /><code>--font-reading</code></td>
+                  <td>16 / 1.8</td>
+                  <td>16 / 1.8</td>
+                  <td><span class="type-ex" style="--size: 16px">文字为思考留下空间。</span></td>
+                  <td>文章正文与长段落</td>
+                </tr>
+                <tr>
+                  <td>UI body<br /><code>--font-ui</code></td>
+                  <td>14 / 1.6</td>
+                  <td>14 / 1.6</td>
+                  <td><span class="type-ex" style="--size: 14px">阅读文章　·　翻翻笔记</span></td>
+                  <td>导航、按钮、短摘要</td>
+                </tr>
+                <tr>
+                  <td>Meta<br /><code>--font-meta</code></td>
+                  <td>12 / 1.5</td>
+                  <td>12 / 1.5</td>
+                  <td>
+                    <span class="type-ex" style="--size: 12px">2026.10.19 · 阅读约 5 分钟</span>
+                  </td>
+                  <td>日期、标签与辅助信息</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hint">
+            <b>阅读准则：</b>中文标题字距从 0 开始；正文列先以 680–760px
+            为比较起点并随屏幕收缩。数字、英文、长标题和代码需单独检查。12px
+            仅用于少量元信息，不作为关键操作或长文默认值。
+          </div>
+          <div class="grid two" style="margin-top: 18px">
+            <div class="card">
+              <h4>层级如何建立</h4>
+              <p>
+                一个区块优先使用标题、正文与元信息三种角色，利用留白、字重和对齐形成关系。需要强调时先调整层级，再考虑绿色。
+              </p>
+            </div>
+            <div class="card">
+              <h4>何时调整</h4>
+              <p>
+                如果长标题换行不自然，优先调整容器和字号，而不是压缩中文字符；正式固化前对比 390px
+                与宽屏的真实文本。
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="scale" class="section">
+          <div class="section-head">
+            <div class="eyebrow">03 · FOUNDATIONS / SPACE & COMPONENTS</div>
+            <h2>间距、圆角、尺寸、图标</h2>
+            <p>共同的尺度保持两套主题在结构和使用体验上的一致。数值均为未来系统提案。</p>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>间距 · 9 档</h3>
+              <p>4px 基础节奏；间距表达关系，不要求所有场景套同一个值。</p>
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <div class="space-row">
+                <code>--space-1</code>
+                <div class="bar" style="--size: 4px"></div>
+                <span>4px · 图标与紧邻标记</span>
+              </div>
+              <div class="space-row">
+                <code>--space-2</code>
+                <div class="bar" style="--size: 8px"></div>
+                <span>8px · 图标与文字</span>
+              </div>
+              <div class="space-row">
+                <code>--space-3</code>
+                <div class="bar" style="--size: 12px"></div>
+                <span>12px · 同组元素与元信息</span>
+              </div>
+              <div class="space-row">
+                <code>--space-4</code>
+                <div class="bar" style="--size: 16px"></div>
+                <span>16px · 小控件内边距</span>
+              </div>
+              <div class="space-row">
+                <code>--space-5</code>
+                <div class="bar" style="--size: 20px"></div>
+                <span>20px · 移动端内容边距</span>
+              </div>
+              <div class="space-row">
+                <code>--space-6</code>
+                <div class="bar" style="--size: 24px"></div>
+                <span>24px · 面板内边距 / 标题到内容</span>
+              </div>
+              <div class="space-row">
+                <code>--space-8</code>
+                <div class="bar" style="--size: 32px"></div>
+                <span>32px · 标题与主要内容</span>
+              </div>
+              <div class="space-row">
+                <code>--space-12</code>
+                <div class="bar" style="--size: 48px"></div>
+                <span>48px · 同一页面中的区块</span>
+              </div>
+              <div class="space-row">
+                <code>--space-18</code>
+                <div class="bar" style="--size: 72px"></div>
+                <span>72px · 大区块之间，手机可缩小至 40</span>
+              </div>
+            </div>
+            <div class="card">
+              <h4>关系优先</h4>
+              <p>同一组内使用较小间距，不同内容组使用更大间距；长文段落按阅读节奏安排。</p>
+              <p>
+                <b>建议起点：</b>组件内部 24px；手机左右 20px；重要区块间 72px，手机
+                40px。遇到长文或复杂布局时根据真实内容调整。
+              </p>
+              <p class="no">不要：用固定值把不同信息关系压成同一种节奏。</p>
+            </div>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>圆角与控件尺寸</h3>
+              <p>视觉尺寸表达结构，交互命中范围满足使用需求。</p>
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <h4>圆角 · 4 档 + 胶囊</h4>
+              <div class="radius-list">
+                <div class="radius-item">
+                  <div class="shape" style="--r: 6px"></div>
+                  <b>6px</b><br />代码
+                </div>
+                <div class="radius-item">
+                  <div class="shape" style="--r: 10px"></div>
+                  <b>10px</b><br />控件
+                </div>
+                <div class="radius-item">
+                  <div class="shape" style="--r: 16px"></div>
+                  <b>16px</b><br />面板
+                </div>
+                <div class="radius-item">
+                  <div class="shape" style="--r: 24px"></div>
+                  <b>24px</b><br />对话框
+                </div>
+                <div class="radius-item">
+                  <div class="shape" style="--r: 999px"></div>
+                  <b>999px</b><br />胶囊
+                </div>
+              </div>
+              <p>
+                提议
+                <code>--radius-code / control / panel / dialog / pill</code
+                >。文章行默认不加卡片；只有需要独立分组的内容才使用面板。
+              </p>
+            </div>
+            <div class="card">
+              <h4>控件高度 · 3 档</h4>
+              <div class="controls">
+                <div class="control" style="--h: 32px">小 · 32</div>
+                <div class="control target" style="--h: 44px">默认 · 44</div>
+                <div class="control" style="--h: 52px">突出 · 52</div>
+              </div>
+              <p>
+                <b>32px：</b>标签、密集筛选；交互命中区扩至 44px。<br /><b>44px：</b
+                >默认按钮、输入框与图标按钮。<br /><b>52px：</b>确有必要的突出入口。
+              </p>
+              <p class="no">不要：一个屏幕的所有操作都使用突出规格。</p>
+            </div>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>图标、表面与动效</h3>
+              <p>使用一致的图标语言，动效只为交互和主题表达服务。</p>
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <h4>图标 · 16 / 18 / 20px</h4>
+              <div class="icons">
+                <div class="iconbox">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m15.5 15.5 5 5" />
+                  </svg>
+                </div>
+                <div class="iconbox">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                      d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"
+                    />
+                  </svg>
+                </div>
+                <div class="iconbox">
+                  <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" /></svg>
+                </div>
+              </div>
+              <p>
+                16px 用于行内；18px 为常规控件；20px 用于突出控件。默认线性风格，视觉线宽约
+                1.75–2px；优先复用项目图标集。
+              </p>
+              <p class="no">不要：图标按钮缺少可访问名称，或仅靠图标传达复杂状态。</p>
+            </div>
+            <div class="card">
+              <h4>表面与动效</h4>
+              <p>
+                普通内容保持平面；对话框、弹出菜单等可使用阴影。Hover / 颜色反馈 160ms，弹层进入
+                200ms，主题切换约 220ms，均为提案。
+              </p>
+              <p>
+                夜间可用酒红与绿色表现主题反馈；正文静止。尊重减少动态偏好，关闭非必要过渡并保留状态变化。
+              </p>
+            </div>
+          </div>
+          <div class="subhead">
+            <div>
+              <h3>页面框架与验证</h3>
+              <p>主题共享布局，优先真实内容与使用体验。</p>
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <h4>页面与阅读宽度</h4>
+              <div class="layout">
+                <div class="layout-inner">
+                  站点最大宽度 1080px · 阅读列约 680–760px
+                  <div class="columns">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+              <p>
+                站点宽度为布局提案；文章正文应单独限制行长。手机两侧 20px 起；内容较宽时自然收缩。
+              </p>
+            </div>
+            <div class="card">
+              <h4>验收方法</h4>
+              <p>
+                分别检查首页、文章列表、文章详情：宽屏与
+                390px、若叶睦与墨提斯两主题。验证长标题、中文混排、链接、焦点、触控区域与减少动态效果。
+              </p>
+              <p>保留截图和实际对比度结果；未验证的提案不等于已经通过验收。</p>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <span>clerimia · 设计系统提案 / 内容为中心</span
+        ><span
+          ><a href="design-language.md">设计系统文字规范</a> ·
+          <a href="../Design.md">设计思想与方向</a> · <a href="../AGENTS.md">仓库入口</a></span
+        >
+      </footer>
+    </div>
+    <script>
+      const root = document.documentElement
+      const button = document.getElementById('theme')
+      button.addEventListener('click', () => {
+        const dark = root.dataset.theme !== 'dark'
+        root.dataset.theme = dark ? 'dark' : 'light'
+        button.setAttribute('aria-pressed', String(dark))
+        button.textContent = dark ? '切换若叶睦主题' : '切换墨提斯主题'
+      })
+    </script>
+  </body>
+</html>

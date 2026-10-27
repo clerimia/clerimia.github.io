@@ -35,15 +35,15 @@ src/
 ├── content.config.ts         内容集合 schema
 ├── content/
 │   ├── blog/<slug>/index.md  博客文章 / 长随笔（section: essays）
-│   ├── docs/<slug>/index.md  笔记
+│   ├── notes/<slug>/index.md 笔记
 │   └── musings/<YYYY-MM-DD-slug>/index.md  随笔（短随想 / 语录）
 ├── config/giscus.ts        ★ Giscus 评论参数
 ├── components/
 │   ├── comments/             Giscus 评论与留言入口
 │   ├── home/Terminal.astro   首页可交互终端（原生 JS）
-│   └── links/ projects/ about/ home/
+│   └── links/ about/ home/
 ├── layouts/                  BaseLayout / CommonPage / BlogPost …
-├── pages/                    路由（含 docs / tags / archives / search）
+├── pages/                    路由（含 notes / tags / archives / search）
 └── assets/
     ├── avatar.png            首页头像
     └── styles/terminal.css   终端组件样式
@@ -77,7 +77,7 @@ draft: false
 正文用普通 Markdown 写即可。
 ```
 
-笔记放 `src/content/docs/`，额外支持 `order` 字段控制目录中的排序。
+笔记放 `src/content/notes/`，额外支持 `order` 字段控制目录中的排序。
 
 长随笔同样放在 `src/content/blog/`，增加 `section: 'essays'`。页面统一发布在 `/musings/<slug>`，
 首页、标签和 RSS 使用这个地址；旧 `/essays/<slug>` 与 `/blog/<slug>` 随笔地址保留跳转。

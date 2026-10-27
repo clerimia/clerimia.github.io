@@ -16,6 +16,37 @@
 
 :root {
   color-scheme: light;
+  /* Semantic roles for new UI. Existing theme HSL variables remain for astro-pure. */
+  --color-canvas: #fcfdfb;
+  --color-surface: var(--surface);
+  --color-text: var(--ink);
+  --color-text-muted: var(--quiet);
+  --color-action: var(--leaf);
+  --color-action-foreground: hsl(var(--primary-foreground));
+  --color-border: var(--rule);
+  --color-focus: var(--leaf);
+  --color-danger: hsl(var(--destructive));
+  --color-danger-foreground: hsl(var(--destructive-foreground));
+
+  /* Shared starting scale; use a value for its role, not merely its proximity. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --layout-wide: 1080px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --text-micro: 11px;
+  --text-small: 12px;
+  --text-body: 14px;
+  --text-lead: 15px;
+  --text-title: 21px;
+  --text-display: 46px;
   --paper: #fbfdf6;
   --surface: #fbfcf5;
   --ink: #303b28;
@@ -70,6 +101,7 @@
 
 .dark {
   color-scheme: dark;
+  --color-canvas: #171d16;
   --paper: #1c251b;
   --surface: #253023;
   --ink: #e9efdd;
@@ -208,7 +240,7 @@ input:focus-visible,
   z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(1080px, calc(100% - 64px));
+  width: min(var(--layout-wide), calc(100% - 64px));
   min-height: 100dvh;
   margin: 30px auto 0;
   padding-left: env(safe-area-inset-left);

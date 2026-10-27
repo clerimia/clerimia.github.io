@@ -144,7 +144,7 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   // 主题内置的是 Waline（需要自建服务端）；本站改用基于 GitHub Discussions 的 Giscus，
-  // 组件在 `src/components/waline/` 中已替换实现，故此处保持关闭。
+  // 组件在 `src/components/comments/` 中实现，故此处保持关闭。
   waline: {
     enable: false,
     showMeta: false,

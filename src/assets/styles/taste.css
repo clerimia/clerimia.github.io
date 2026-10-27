@@ -13,29 +13,6 @@
  */
 
 :root {
-  /* ── 圆角：按「容器层级」而不是按元素定，只有三档 ──
-     sm  → 行内小控件（图标按钮、chip、代码）
-     md  → 面板（唯一的「卡片」层，用于确实需要被读成一整块的内容）
-     pill→ 胶囊（导航、标签、状态） */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-pill: 999px;
-
-  /* ── 字号：六档，每档有明确职责 ──
-     micro → 元信息、标签、时间戳（不承担阅读）
-     small → 辅助说明
-     body  → 正文（唯一的长文阅读字号）
-     lead  → 引言、摘要（略大于正文，被阅读）
-     title → 区块标题
-     display → 页面主标题 */
-  --text-micro: 11px;
-  --text-small: 12px;
-  --text-body: 14px;
-  --text-lead: 15px;
-  --text-title: 21px;
-  --text-display: 46px;
-
   /* ── 描边：只有两种强度，分别表示「分区」与「可交互」 ──
      hairline → 内容分组（列表行、侧栏）；结构性，不显眼
      edge     → 可交互元素的轮廓；只有它需要被看见 */
@@ -49,12 +26,12 @@
    作用仅是「不是死白」，不参与构图。 */
 html,
 body.site-body {
-  background: #fcfdfb;
+  background: var(--color-canvas);
 }
 
 html.dark,
 .dark body.site-body {
-  background: #171d16;
+  background: var(--color-canvas);
 }
 
 body.site-body::before {
