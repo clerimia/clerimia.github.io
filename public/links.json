@@ -3,7 +3,14 @@
     {
       "id_name": "cf-links",
       "desc": "Common links included in circle friends",
-      "link_list": []
+      "link_list": [
+        {
+          "name": "Joye Blog",
+          "intro": "Stay hungry, stay foolish",
+          "link": "https://joyehuang.me/",
+          "avatar": "https://joyehuang.me/favicon/favicon.ico"
+        }
+      ]
     },
     {
       "id_name": "inactive-links",
