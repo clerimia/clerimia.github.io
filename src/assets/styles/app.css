@@ -53,6 +53,7 @@
   --layout-wide: 1080px;
   --layout-reading: 760px;
   --layout-aside: 224px;
+  --motion-header: 300ms;
   --motion-feedback: 160ms;
   --motion-feedback-easing: ease-out;
   --motion-overlay: 220ms;
@@ -296,121 +297,8 @@ input:focus-visible,
   outline: none;
 }
 
-.site-header {
-  display: flex;
-  align-items: center;
-  min-height: 70px;
-  gap: 24px;
-  padding: 12px 0;
-}
-
-.site-brand {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  color: var(--ink);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  text-decoration: none;
-}
-
-.site-brand__wordmark {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.site-brand__mark {
-  color: var(--color-brand);
-  font-size: 27px;
-  font-weight: 800;
-}
-
-.site-brand__tagline {
-  padding-left: 12px;
-  border-left: 1px solid var(--rule);
-  color: var(--quiet);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.site-nav {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-}
-
-.site-nav a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 6px 11px;
-  border-radius: var(--radius-control);
-  color: var(--ink);
-  font-size: var(--font-ui);
-  text-decoration: none;
-}
-
-.site-nav a:hover,
-.site-nav a.active {
-  color: var(--color-action);
-}
-
-.site-nav a.active {
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-}
-
-.site-nav a:active {
-  color: var(--color-action-active);
-}
-
-.site-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.site-square-button {
-  display: inline-grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--ink);
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease;
-}
-
-.site-square-button:hover {
-  color: var(--color-action);
-}
-
-.site-square-button:active {
-  color: var(--color-action-active);
-}
-
-.site-square-button svg {
-  width: 18px;
-  height: 18px;
-}
-
-.site-terminal-button {
-  font: 15px ui-monospace, Consolas, monospace;
-}
+/* 正文锚点避开悬浮页头；不改变吸顶控件的聚焦滚动。 */
+:where(h1, h2, h3, h4, h5, h6, #comments, #main-content) { scroll-margin-top: 96px; }
 
 .theme-icon--moon,
 .dark .theme-icon--sun {
@@ -649,7 +537,20 @@ html.terminal-modal-open {
 }
 /* 圆点沿用 macOS 系统色，属于外来窗口语言，不参与本站语义色板：
    它不表达成功、错误或身份，所以不映射到 --color-*。 */
-.dialog-light--r { background: #ff5f57; }
+.dialog-light--r {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+}
+.dialog-light--r::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+}
 .dialog-light--y { background: #febc2e; }
 .dialog-light--g { background: #28c840; }
 
@@ -706,27 +607,9 @@ html.terminal-modal-open {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 880px) {
   .site-shell {
     margin-top: 16px;
-  }
-
-  .site-header {
-    min-height: 64px;
-    padding: 10px 0;
-    gap: 12px;
-  }
-
-  .site-brand__tagline {
-    display: none;
-  }
-
-  .site-nav {
-    gap: 0;
-  }
-
-  .site-nav a {
-    padding-inline: 8px;
   }
 
   .site-content--inner {
@@ -737,39 +620,6 @@ html.terminal-modal-open {
 @media (max-width: 680px) {
   .site-shell {
     margin-top: 10px;
-  }
-
-  .site-header {
-    flex-wrap: wrap;
-    row-gap: 10px;
-    padding: 10px 0;
-  }
-
-  .site-brand {
-    font-size: 18px;
-  }
-
-  .site-header__actions {
-    margin-left: auto;
-  }
-
-  .site-nav {
-    order: 3;
-    width: 100%;
-    /* 空间不足时换行，全部栏目始终可见、可触及。 */
-    flex-wrap: wrap;
-    gap: 2px;
-  }
-
-  .site-nav a {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    /* 44px 触控目标 */
-    min-height: 44px;
-    padding: 6px 6px;
-    font-size: var(--font-ui);
-    white-space: nowrap;
   }
 
   .site-content--inner {
@@ -818,6 +668,9 @@ html.terminal-modal-open {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    /* 0.01ms 会让原本没有过渡的子元素也对继承的 visibility 生成过渡，
+       导致面板已显示而链接暂时仍不可聚焦；减少动态效果时真正即时切换。 */
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }

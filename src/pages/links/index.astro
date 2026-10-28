@@ -2,9 +2,10 @@
 import links from '@/public/links.json'
 import config from 'virtual:config'
 
-import { Collapse, Timeline } from 'astro-pure/user'
+import { Timeline } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
+import LinkDisclosure from '@/components/links/LinkDisclosure.astro'
 
 const headings = [
   { depth: 2, slug: 'common-links', text: '友链' },
@@ -21,12 +22,12 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
   <p>顺序随机。</p>
   <h2 id='common-links'>友链</h2>
   <FriendList list={friends[0]} />
-  <Collapse title='暂时失联的站点'>
+  <LinkDisclosure title='暂时失联的站点'>
     <FriendList list={friends[1]} />
-  </Collapse>
-  <Collapse title='友链变动记录'>
+  </LinkDisclosure>
+  <LinkDisclosure title='友链变动记录'>
     <Timeline events={linksConf.logbook} />
-  </Collapse>
+  </LinkDisclosure>
 
   <h2 id='special-links'>推荐链接</h2>
   <FriendList list={friends[2]} />

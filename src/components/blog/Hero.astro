@@ -40,7 +40,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 {draft ? <span class='draft-status'>(草稿 · 不会发布)</span> : null}
 
 <div class='article-info max-lg:mx-auto'>
-  <div class='flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground'>
+  <div class='article-metadata flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground' data-pagefind-ignore>
     {/* Article date */}
     <div class='flex items-center gap-1'>
       <Icon name='calendar' class='size-5' />
@@ -62,10 +62,10 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
       }
     </div>
     {/* Times read */}
-    <div class='flex items-center gap-1'>
+    {remarkPluginFrontmatter.minutesRead && <div class='flex items-center gap-1'>
       <Icon name='time' class='size-5' />
       {remarkPluginFrontmatter.minutesRead}
-    </div>
+    </div>}
     {
       // Language
       language && (
@@ -78,14 +78,13 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     {
       // Tags
       !!tags?.length && (
-        <span class='flex items-center gap-1'>
+        <div class='article-tags flex flex-wrap items-center gap-1'>
           <Icon name='hashtag' class='size-5' />
           {tags.map((tag: string, i: number) => (
             <div>
               <a
                 aria-label={`查看「${section}」里标签为「${tag}」的更多文章`}
-                class='hover:underline hover:underline-offset-4'
-                data-pagefind-filter='标签'
+                data-pagefind-filter={`标签:${tag}`}
                 href={getTagUrl(section, tag)}
               >
                 {tag}
@@ -93,7 +92,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
               {i < tags.length - 1 && '/'}
             </div>
           ))}
-        </span>
+        </div>
       )
     }
   </div>
@@ -112,6 +111,22 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 <div class='mt-4 w-1/2 border-t max-md:mx-auto sm:mt-6 sm:w-1/3'></div>
 
 <style>
+  .article-tags a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding-inline: var(--space-1);
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .article-tags a:hover,
+  .article-tags a:focus-visible {
+    color: var(--color-action);
+  }
+
   .article-description {
     max-width: var(--layout-reading);
     color: var(--color-text-muted);

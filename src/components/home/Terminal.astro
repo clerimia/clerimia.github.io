@@ -475,14 +475,15 @@ const helpRows: Array<[string, string]> = [
       appendNode(intro)
     }
 
-    shell.querySelectorAll('[data-wt-command]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var cmd = button.getAttribute('data-wt-command')
-        inputEl.focus()
-        inputEl.value = ''
-        syncCaret()
-        run(cmd)
-      })
+    // 指引按钮由 renderIntro 动态生成；委托给壳子，避免在生成前绑定空列表。
+    shell.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-wt-command]')
+      if (!button || !shell.contains(button)) return
+      var cmd = button.getAttribute('data-wt-command')
+      inputEl.focus()
+      inputEl.value = ''
+      syncCaret()
+      run(cmd)
     })
 
     /* ===== 初始 ===== */

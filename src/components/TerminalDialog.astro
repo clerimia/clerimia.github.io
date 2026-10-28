@@ -17,7 +17,7 @@ const routes = {
   aria-describedby='terminal-description'
 >
   <header class='dialog-header'>
-    <div class='dialog-lights' aria-hidden='true'>
+    <div class='dialog-lights'>
       <button
         class='dialog-light dialog-light--r'
         id='terminal-close'
@@ -80,9 +80,10 @@ const routes = {
     terminalDialog.showModal()
     document.documentElement.classList.add('terminal-modal-open')
     setTriggerState(true)
-    requestAnimationFrame(() => {
-      terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
-    })
+    // 触屏先聚焦关闭按钮，避免打开时软键盘立即盖住帮助内容。
+    // 键盘/宽屏仍可直接输入；焦点不延迟到可能已关闭的下一帧。
+    if (window.matchMedia('(max-width: 680px), (pointer: coarse)').matches) terminalClose?.focus()
+    else terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
   }
 
   terminalTriggers.forEach((button) => {

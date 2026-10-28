@@ -6,58 +6,186 @@ const pathname = Astro.url.pathname
 const isActive = (link: string) => pathname === link || pathname.startsWith(`${link}/`)
 ---
 
-<header class='site-header'>
-  <a class='site-brand' href='/' aria-label='clerimia 首页' data-astro-prefetch>
-    <span class='site-brand__wordmark'>
-      <span class='site-brand__mark' aria-hidden='true'>c.</span>
-      <span>clerimia</span>
-    </span>
-    <span class='site-brand__tagline'>安静，但有自己的声音</span>
-  </a>
-
-  <nav class='site-nav' aria-label='主导航'>
-    {
-      theme.header.menu?.map((item) => (
-        <a
-          href={item.link}
-          class:list={{ active: isActive(item.link) }}
-          aria-current={isActive(item.link) ? 'page' : undefined}
-          data-astro-prefetch
-        >
-          {item.title}
-        </a>
-      ))
-    }
-  </nav>
-
-  <div class='site-header__actions'>
-    <a class='site-square-button site-search-button' href='/search' aria-label='搜索' title='搜索'>
-      <Icon name='search' />
+<div class='site-header-frame'>
+  <header class='site-header'>
+    <a class='site-brand' href='/' aria-label='clerimia 首页' data-astro-prefetch>
+      <span class='site-brand__wordmark'>
+        <span class='site-brand__mark' aria-hidden='true'>c.</span>
+        <span class='site-brand__name'>clerimia</span>
+      </span>
+      <span class='site-brand__tagline'>安静，但有自己的声音</span>
     </a>
-    <button
-      class='site-square-button site-terminal-button'
-      data-terminal-trigger
-      type='button'
-      aria-label='打开终端'
-      title='打开终端 (`)'
-      aria-haspopup='dialog'
-      aria-controls='terminal-dialog'
-      aria-expanded='false'
-    >
-      <span aria-hidden='true'>&gt;_</span>
-    </button>
-    <button
-      class='site-square-button site-theme-button'
-      id='site-theme-toggle'
-      type='button'
-      aria-label='切换深浅色'
-      title='切换深浅色'
-    >
-      <Icon class='theme-icon theme-icon--sun' name='sun' />
-      <Icon class='theme-icon theme-icon--moon' name='moon' />
-    </button>
-  </div>
-</header>
+    <nav class='site-nav' id='site-navigation' aria-label='主导航'>
+      <div class='site-nav__body'>
+        <div class='site-nav__links'>
+          {
+            theme.header.menu?.map((item) => (
+              <a
+                href={item.link}
+                class:list={{ active: isActive(item.link) }}
+                aria-current={isActive(item.link) ? 'page' : undefined}
+                data-astro-prefetch
+              >
+                {item.title}
+              </a>
+            ))
+          }
+        </div>
+        <a
+          class='site-square-button site-search-button site-search-button--mobile'
+          href='/search'
+          aria-label='搜索'
+          title='搜索'
+        >
+          <span class='site-search-label'>搜索</span><Icon name='search' />
+        </a>
+      </div>
+    </nav>
+
+    <div class='site-header__actions' role='group' aria-label='站点工具'>
+      <a
+        class='site-square-button site-search-button site-search-button--desktop'
+        href='/search'
+        aria-label='搜索'
+        title='搜索'
+      >
+        <Icon name='search' />
+      </a>
+      <button
+        class='site-square-button site-terminal-button'
+        data-terminal-trigger
+        type='button'
+        aria-label='打开终端'
+        title='打开终端 (`)'
+        aria-haspopup='dialog'
+        aria-controls='terminal-dialog'
+        aria-expanded='false'
+      >
+        <span aria-hidden='true'>&gt;_</span>
+      </button>
+      <button
+        class='site-square-button site-theme-button'
+        id='site-theme-toggle'
+        type='button'
+        aria-label='切换深浅色'
+        title='切换深浅色'
+      >
+        <Icon class='theme-icon theme-icon--sun' name='sun' />
+        <Icon class='theme-icon theme-icon--moon' name='moon' />
+      </button>
+      <button
+        class='site-square-button site-menu-button'
+        id='site-menu-toggle'
+        type='button'
+        aria-label='展开主导航'
+        aria-controls='site-navigation'
+        aria-expanded='false'
+      >
+        <svg
+          class='site-menu-glyph'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          stroke-width='1.75'
+          stroke-linecap='round'
+          aria-hidden='true'
+        >
+          <path d='M5 7h14'></path><path d='M5 12h14'></path><path d='M5 17h14'></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+</div>
+
+<script is:inline>
+  ;(() => {
+    const header = document.querySelector('.site-header')
+    const menu = document.getElementById('site-menu-toggle')
+    const nav = document.getElementById('site-navigation')
+    if (!header || !menu || !nav) return
+    const narrow = matchMedia('(max-width: 760px)')
+    let compact = false
+    let ticking = false
+    function setMenu(open, restoreFocus = false) {
+      open = open && narrow.matches
+      // 关闭动画开始前移走焦点，折叠内容同时退出键盘和辅助技术的浏览范围。
+      if (!open && (restoreFocus || nav.contains(document.activeElement))) {
+        const target = narrow.matches ? menu : header.querySelector('.site-brand')
+        target?.focus({ preventScroll: true })
+      }
+      menu.setAttribute('aria-expanded', String(open))
+      menu.setAttribute('aria-label', open ? '收起主导航' : '展开主导航')
+      nav.inert = narrow.matches && !open
+      header.classList.toggle('menu-open', open)
+    }
+    function render() {
+      ticking = false
+      const next = compact ? scrollY > 8 : scrollY > 32
+      if (next === compact) return
+      compact = next
+      header.classList.toggle('is-compact', compact)
+    }
+    menu.addEventListener('click', () => setMenu(menu.getAttribute('aria-expanded') !== 'true'))
+    header.addEventListener('keydown', (event) => {
+      if (menu.getAttribute('aria-expanded') !== 'true') return
+      if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') {
+        event.preventDefault()
+        setMenu(false, true)
+      } else if (event.key === 'Tab') {
+        const controls = [...nav.querySelectorAll('a[href], button')].filter(
+          (el) => !el.hidden && el.getClientRects().length
+        )
+        if (!event.shiftKey && document.activeElement === menu) {
+          event.preventDefault()
+          controls[0]?.focus()
+        } else if (event.shiftKey && document.activeElement === controls[0]) {
+          event.preventDefault()
+          menu.focus()
+        } else if (!event.shiftKey && document.activeElement === controls.at(-1)) {
+          // 菜单在视觉上位于工具之后，离开最后一项后继续进入页面正文。
+          const next = [
+            ...document.querySelectorAll(
+              '#main-content a[href], #main-content button:not([disabled]), #main-content input'
+            )
+          ].find((el) => !el.closest('[inert]') && el.getClientRects().length)
+          if (next) {
+            event.preventDefault()
+            setMenu(false)
+            next.focus()
+          }
+        }
+      }
+    })
+    nav.addEventListener('click', (event) => {
+      if (narrow.matches && event.target.closest('a[href]')) setMenu(false)
+    })
+    document.addEventListener('click', (event) => {
+      if (!header.contains(event.target)) setMenu(false, nav.contains(document.activeElement))
+    })
+    header.addEventListener('focusout', (event) => {
+      if (!header.contains(event.relatedTarget)) setMenu(false)
+    })
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true
+          requestAnimationFrame(render)
+        }
+      },
+      { passive: true }
+    )
+    narrow.addEventListener('change', () => {
+      const menuFocused = document.activeElement === menu
+      setMenu(false)
+      if (!narrow.matches && menuFocused)
+        header.querySelector('.site-brand')?.focus({ preventScroll: true })
+    })
+    setMenu(false)
+    render()
+    window.addEventListener('pageshow', render)
+  })()
+</script>
 
 <script>
   const themeButton = document.getElementById('site-theme-toggle')
@@ -91,7 +219,8 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
       const saved = localStorage.getItem('theme')
       const isDark =
         saved === 'dark' ||
-        ((!saved || saved === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ((!saved || saved === 'system') &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
       setTheme(isDark)
     } catch {
       // 浏览器禁用存储时保持当前主题

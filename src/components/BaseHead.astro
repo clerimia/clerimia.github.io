@@ -44,7 +44,7 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 
 {/* Primary Meta Tags */}
 <meta content={siteTitle} name='title' />
-<meta content={description} name='description' />
+<meta content={description} name='description' data-pagefind-meta='description[content]' />
 <meta content={config.author} name='author' />
 
 {/* Theme Color */}

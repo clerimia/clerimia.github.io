@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string
+}
+const { title } = Astro.props
+---
+
+<details class='link-disclosure not-prose'>
+  <summary>{title}<span aria-hidden='true'>⌄</span></summary>
+  <div class='link-disclosure__content'><slot /></div>
+</details>
+
+<style>
+  .link-disclosure {
+    margin-block: var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    gap: var(--space-3);
+    list-style: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-ui);
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover,
+  summary:focus-visible {
+    color: var(--color-action);
+  }
+  summary span {
+    font-size: 20px;
+  }
+  details[open] summary span {
+    transform: rotate(180deg);
+  }
+  .link-disclosure__content {
+    padding-block: var(--space-3);
+  }
+</style>

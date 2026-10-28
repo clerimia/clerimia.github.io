@@ -3,7 +3,41 @@ import assert from 'node:assert/strict'
 
 export async function checkMobileToc(page) {
   await page.evaluate(() => window.scrollTo(0, 600))
-  await page.waitForFunction(() => document.getElementById('sidebar-btn')?.getBoundingClientRect().width > 0)
+  await page.waitForFunction(
+    () => document.getElementById('sidebar-btn')?.getBoundingClientRect().width > 0 &&
+      document.getElementById('action-buttons')?.classList.contains('show')
+  )
+  const placement = await page.evaluate(() => {
+    const button = document.getElementById('sidebar-btn')
+    const top = document.getElementById('to-top-btn')
+    const buttonBox = button.getBoundingClientRect()
+    const topBox = top.getBoundingClientRect()
+    return {
+      buttonRight: buttonBox.right,
+      buttonBottom: buttonBox.bottom,
+      topRight: topBox.right,
+      edgeRight: document.documentElement.clientWidth - buttonBox.right,
+      edgeBottom: innerHeight - buttonBox.bottom,
+      row: Math.abs(buttonBox.top - topBox.top) <= 3,
+      target: buttonBox.width >= 44 && buttonBox.height >= 44,
+      topTarget: topBox.width >= 44 && topBox.height >= 44,
+      label: button.getAttribute('aria-label'),
+      parentTransform: getComputedStyle(document.getElementById('action-buttons')).transform,
+      topInert: top.closest('scroll-button').inert,
+      headerDirectoryTools: document.querySelectorAll('.site-nav__page-tools, #sidebar-menu-btn')
+        .length
+    }
+  })
+  assert.ok(placement.target, 'floating directory has a 44px touch target')
+  assert.ok(placement.topTarget, 'back-to-top has a 44px touch target')
+  assert.equal(placement.label, '展开目录')
+  assert.ok(placement.buttonRight > placement.topRight, 'directory is the rightmost action')
+  assert.ok(placement.row, 'directory and back-to-top share one floating row')
+  assert.ok(placement.edgeRight >= 19 && placement.edgeRight <= 24)
+  assert.ok(placement.edgeBottom >= 19 && placement.edgeBottom <= 24)
+  assert.equal(placement.parentTransform, 'none')
+  assert.equal(placement.headerDirectoryTools, 0)
+  assert.equal(placement.topInert, false, 'visible back-to-top control remains available')
   await page.focus('#sidebar-btn')
   await page.keyboard.press('Enter')
 
@@ -13,22 +47,35 @@ export async function checkMobileToc(page) {
     modal: document.getElementById('sidebar')?.getAttribute('aria-modal'),
     focus: document.activeElement?.id
   }))
-  assert.deepEqual(opened, { expanded: 'true', role: 'dialog', modal: 'true', focus: 'sidebar-close' })
+  assert.deepEqual(opened, {
+    expanded: 'true',
+    role: 'dialog',
+    modal: 'true',
+    focus: 'sidebar-close'
+  })
 
   await page.keyboard.press('Shift+Tab')
-  assert.equal(await page.evaluate(() => {
-    const controls = [...document.querySelectorAll('#sidebar a[href], #sidebar button')]
-      .filter((element) => element.getClientRects().length > 0)
-    return document.activeElement === controls.at(-1)
-  }), true, 'focus stays inside the open directory')
+  assert.equal(
+    await page.evaluate(() => {
+      const controls = [...document.querySelectorAll('#sidebar a[href], #sidebar button')].filter(
+        (element) => element.getClientRects().length > 0
+      )
+      return document.activeElement === controls.at(-1)
+    }),
+    true,
+    'focus stays inside the open directory'
+  )
   await page.keyboard.press('Tab')
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'sidebar-close')
 
   await page.keyboard.press('Escape')
-  assert.deepEqual(await page.evaluate(() => ({
-    expanded: document.getElementById('sidebar-btn')?.getAttribute('aria-expanded'),
-    focus: document.activeElement?.id
-  })), { expanded: 'false', focus: 'sidebar-btn' })
+  assert.deepEqual(
+    await page.evaluate(() => ({
+      expanded: document.getElementById('sidebar-btn')?.getAttribute('aria-expanded'),
+      focus: document.activeElement?.id
+    })),
+    { expanded: 'false', focus: 'sidebar-btn' }
+  )
 
   await page.keyboard.press('Enter')
   await page.evaluate(() => {
@@ -56,5 +103,5 @@ export async function checkMobileToc(page) {
   assert.equal(selected.focusedHeading, true)
   assert.ok(selected.hash)
   assert.equal(selected.behavior, selected.reduced ? 'auto' : 'smooth')
-  return { opened, selected }
+  return { placement, opened, selected }
 }

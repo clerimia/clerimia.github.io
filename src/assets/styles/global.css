@@ -1,33 +1,6 @@
-/* [Animation] */
-@keyframes fade-in-up {
-  0% {
-    transform: translateY(2rem);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+/* 阅读内容立即呈现；动效保留给用户触发的浮层和操作。 */
 .animate {
-  opacity: 0;
-  animation: 300ms fade-in-up;
-  animation-fill-mode: forwards;
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate {
-    opacity: 1;
-    animation: none !important;
-  }
-}
-#content-header {
-  animation-delay: 50ms;
-}
-#content {
-  animation-delay: 100ms;
-}
-#sidebar {
-  animation-delay: 150ms;
+  opacity: 1;
 }
 
 /* [Katex] */

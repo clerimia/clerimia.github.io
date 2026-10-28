@@ -17,16 +17,33 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
 ---
 
 <PageLayout {meta} {back} {...props}>
-  <main class:list={['site-page-main', 'article-layout', { 'article-layout--with-sidebar': hasSidebar }]}>
-    {hasSidebar && (
-      <>
-        <aside id='sidebar' class='article-sidebar animate' aria-label='页面目录' tabindex='-1' data-pagefind-ignore>
-          <button id='sidebar-close' class='sidebar-close' type='button' aria-label='关闭目录'>关闭 ×</button>
-          <slot name='sidebar' />
-        </aside>
-        <div id='sidebar-shade' class='sidebar-shade' style='display:none' aria-hidden='true'></div>
-      </>
-    )}
+  <main
+    class:list={[
+      'site-page-main',
+      'article-layout',
+      { 'article-layout--with-sidebar': hasSidebar }
+    ]}
+  >
+    {
+      hasSidebar && (
+        <>
+          <aside
+            id='sidebar'
+            class='article-sidebar'
+            aria-label='页面目录'
+            tabindex='-1'
+            data-pagefind-ignore
+            inert
+          >
+            <button id='sidebar-close' class='sidebar-close' type='button' aria-label='关闭目录'>
+              关闭 ×
+            </button>
+            <slot name='sidebar' />
+          </aside>
+          <div id='sidebar-shade' class='sidebar-shade' aria-hidden='true' />
+        </>
+      )
+    }
 
     <article class='reading-column min-w-0 grow' data-pagefind-body={searchIndex ? '' : undefined}>
       {/* Content header */}
@@ -37,10 +54,7 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
       {/* Content */}
       <div
         id='content'
-        class={cn(
-          'max-w-none animate mt-8 overflow-x-hidden',
-          integ.typography.class
-        )}
+        class={cn('max-w-none animate mt-8 overflow-x-hidden', integ.typography.class)}
       >
         <slot />
       </div>
@@ -57,35 +71,42 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
   </div>
 
   <BackToTop header='content-header' content='content'>
-    {hasSidebar && (
-      <button
-        slot='other-icons'
-        aria-label='展开目录'
-        aria-controls='sidebar'
-        aria-expanded='false'
-        type='button'
-        class='size-11 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 sm:size-12'
-        id='sidebar-btn'
-      >
-        <Icon name='list' />
-      </button>
-    )}
+    {
+      hasSidebar && (
+        <button
+          slot='other-icons'
+          id='sidebar-btn'
+          class='article-directory-fab'
+          data-sidebar-trigger
+          type='button'
+          aria-label='展开目录'
+          aria-controls='sidebar'
+          aria-expanded='false'
+          data-pagefind-ignore
+        >
+          <Icon name='list' />
+        </button>
+      )
+    }
   </BackToTop>
 </PageLayout>
 
 <script>
   const sidebarButton = document.getElementById('sidebar-btn')
+  const sidebarTriggers = [...document.querySelectorAll<HTMLElement>('[data-sidebar-trigger]')]
   const sidebar = document.getElementById('sidebar')
   const sidebarClose = document.getElementById('sidebar-close')
   const sidebarShade = document.getElementById('sidebar-shade')
   const contentFrame = document.getElementById('main-content')
+  let sidebarReturnFocus: HTMLElement | null = sidebarButton
 
   function setSidebar(open: boolean, restoreFocus = true) {
     if (!sidebar || !sidebarShade || !sidebarButton) return
+    if (open) sidebar.inert = false
+    else if (restoreFocus) sidebarReturnFocus?.focus({ preventScroll: true })
     sidebar.classList.toggle('show', open)
-    sidebarShade.style.display = open ? 'block' : 'none'
-    sidebarButton.setAttribute('aria-expanded', String(open))
-    sidebarButton.setAttribute('aria-label', open ? '关闭目录' : '展开目录')
+    sidebarShade.classList.toggle('show', open)
+    sidebarTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', String(open)))
     if (open) {
       sidebar.setAttribute('role', 'dialog')
       sidebar.setAttribute('aria-modal', 'true')
@@ -93,11 +114,18 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     } else {
       sidebar.removeAttribute('role')
       sidebar.removeAttribute('aria-modal')
-      if (restoreFocus) sidebarButton.focus()
+      sidebar.inert = getComputedStyle(sidebar).position !== 'sticky'
     }
   }
 
-  sidebarButton?.addEventListener('click', () => setSidebar(!sidebar?.classList.contains('show')))
+  sidebarTriggers.forEach((trigger) =>
+    trigger.addEventListener('click', () => {
+      sidebarReturnFocus = trigger.closest('.site-nav')
+        ? document.getElementById('site-menu-toggle')
+        : trigger
+      setSidebar(true)
+    })
+  )
   sidebarClose?.addEventListener('click', () => setSidebar(false))
   sidebarShade?.addEventListener('click', () => setSidebar(false))
 
@@ -125,8 +153,9 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
       event.preventDefault()
       setSidebar(false)
     } else if (event.key === 'Tab') {
-      const controls = Array.from(sidebar.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]'))
-        .filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0)
+      const controls = Array.from(
+        sidebar.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')
+      ).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0)
       const first = controls[0]
       const last = controls[controls.length - 1]
       if (event.shiftKey && document.activeElement === first) {
@@ -142,11 +171,31 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
   // 容器查询是并列布局的唯一判断来源；窗口改变时同步关闭已打开的抽屉。
   if (contentFrame && sidebar) {
     new ResizeObserver(() => {
-      if (!sidebar.classList.contains('show') || getComputedStyle(sidebar).position !== 'sticky') return
+      const wide = getComputedStyle(sidebar).position === 'sticky'
+      const triggerFocused = sidebarTriggers.includes(document.activeElement as HTMLElement)
+      sidebarTriggers.forEach((trigger) => {
+        trigger.hidden = wide
+      })
+      if (!sidebar.classList.contains('show')) sidebar.inert = !wide
+      if (wide && triggerFocused)
+        (sidebar.querySelector<HTMLElement>('a[href]') ?? sidebar).focus({ preventScroll: true })
+      if (!sidebar.classList.contains('show') || !wide) return
       const hadFocus = sidebar.contains(document.activeElement)
       setSidebar(false, false)
       if (hadFocus) (sidebar.querySelector<HTMLElement>('a[href]') ?? sidebar).focus()
     }).observe(contentFrame)
+  }
+
+  const actionButtons = document.getElementById('action-buttons')
+  const backToTop = actionButtons?.querySelector<HTMLElement>('scroll-button')
+  if (actionButtons && backToTop && sidebarButton) {
+    const syncBackToTopAvailability = () => {
+      backToTop.inert = !sidebarButton.hidden && !actionButtons.classList.contains('show')
+    }
+    syncBackToTopAvailability()
+    const actionObserver = new MutationObserver(syncBackToTopAvailability)
+    actionObserver.observe(actionButtons, { attributes: true, attributeFilter: ['class'] })
+    actionObserver.observe(sidebarButton, { attributes: true, attributeFilter: ['hidden'] })
   }
 </script>
 <style>
@@ -154,11 +203,67 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     min-width: 0;
   }
 
+  .article-directory-fab {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--motion-feedback) var(--motion-feedback-easing),
+      border-color var(--motion-feedback) var(--motion-feedback-easing);
+  }
+  .article-directory-fab[hidden] {
+    display: none;
+  }
+  .article-directory-fab:hover {
+    color: var(--color-action);
+    border-color: var(--color-action);
+  }
+  .article-directory-fab :global(svg) {
+    width: 19px;
+    height: 19px;
+  }
+
+  :global(#action-buttons:has(#sidebar-btn:not([hidden]))) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: var(--space-2) !important;
+    inset-inline-end: max(20px, env(safe-area-inset-right, 0px));
+    bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    transform: none !important;
+  }
+
+  :global(#action-buttons:has(#sidebar-btn:not([hidden])) scroll-button) {
+    order: 1;
+  }
+
+  :global(#action-buttons:has(#sidebar-btn:not([hidden])) #to-top-btn) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .article-directory-fab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .article-directory-fab {
+    order: 2;
+  }
+
   .article-sidebar {
     position: fixed;
     z-index: 40;
     inset: 0 0 0 auto;
-    display: none;
+    display: block;
     width: min(320px, 85vw);
     height: 100dvh;
     overflow-y: auto;
@@ -168,12 +273,22 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     border-left: 1px solid var(--color-border);
     border-radius: var(--radius-panel) 0 0 var(--radius-panel);
     background: var(--color-surface);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(8px);
+    transition:
+      opacity var(--motion-overlay) var(--motion-overlay-easing),
+      transform var(--motion-overlay) var(--motion-overlay-easing),
+      visibility 0s linear var(--motion-overlay);
   }
 
   .article-sidebar.show {
-    display: block;
     opacity: 1;
-    animation: var(--motion-overlay) var(--motion-overlay-easing) fade-in-side both !important;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+    transition-delay: 0s;
   }
 
   .sidebar-shade {
@@ -181,7 +296,16 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     z-index: 31;
     inset: 0;
     background: #00000091;
-    animation: var(--motion-overlay) var(--motion-overlay-easing) fade-in;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--motion-overlay) var(--motion-overlay-easing),
+      visibility 0s linear var(--motion-overlay);
+  }
+  .sidebar-shade.show {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   .sidebar-close {
@@ -241,6 +365,11 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
         border: 0;
         border-radius: 0;
         background: transparent;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+        transition: none;
       }
 
       .article-sidebar.show {
@@ -262,29 +391,10 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     }
   }
 
-  @keyframes fade-in-side {
-    0% {
-      transform: translateX(8px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes fade-in {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     #sidebar,
     #sidebar-shade {
-      animation: none !important;
-      animation-delay: 0s !important;
-      opacity: 1;
-      transform: none !important;
+      transition: none !important;
     }
   }
 </style>

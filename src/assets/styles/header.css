@@ -1,0 +1,296 @@
+/* 页头的断点决定导航结构；滚动只改变同一容器的表面和内缩。 */
+.site-header-frame {
+  position: sticky;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  z-index: 30;
+  flex-shrink: 0;
+  height: 72px;
+  pointer-events: none;
+}
+
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 72px;
+  margin-inline: 0;
+  padding-inline: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-panel);
+  background: transparent;
+  pointer-events: auto;
+  transition:
+    height var(--motion-header) var(--motion-overlay-easing),
+    margin-inline var(--motion-header) var(--motion-overlay-easing),
+    padding-inline var(--motion-header) var(--motion-overlay-easing),
+    background-color var(--motion-feedback) var(--motion-feedback-easing),
+    border-color var(--motion-feedback) var(--motion-feedback-easing),
+    box-shadow var(--motion-feedback) var(--motion-feedback-easing);
+}
+
+.site-header.is-compact {
+  height: 60px;
+  margin-inline: clamp(12px, 4vw, 48px);
+  padding-inline: 12px;
+  border-color: var(--color-border);
+  background: var(--color-canvas);
+  /* 只在浮于正文上方时标明层次，普通页头无阴影。 */
+  box-shadow: 0 4px 12px -6px rgb(0 0 0 / 18%);
+}
+
+.site-brand {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-brand__wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.site-brand__mark {
+  color: var(--color-brand);
+  font-size: 24px;
+  font-weight: 800;
+}
+.site-brand__tagline {
+  display: none;
+  margin-left: 14px;
+  padding-left: 12px;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+@media (min-width: 1100px) {
+  .site-brand__tagline {
+    display: inline;
+  }
+}
+
+.site-nav {
+  margin-left: auto;
+}
+.site-nav__body,
+.site-nav__links,
+.site-header__actions {
+  display: flex;
+  align-items: center;
+}
+.site-nav__body {
+  gap: 8px;
+}
+.site-nav__links {
+  gap: 4px;
+}
+.site-nav__links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  font-size: var(--font-ui);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav__links a:hover {
+  color: var(--color-action);
+}
+.site-nav__links a[aria-current] {
+  font-weight: 650;
+}
+.site-nav__links a:active {
+  color: var(--color-action-active);
+}
+.site-search-label {
+  display: none;
+}
+.site-nav .site-search-button--mobile {
+  display: none;
+}
+.site-header__actions {
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+/* 命中区域 44px，36px 的细边框只表达工具按钮的分组。 */
+.site-square-button {
+  position: relative;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--motion-feedback) var(--motion-feedback-easing);
+}
+.site-square-button::before {
+  position: absolute;
+  inset: 4px;
+  content: '';
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.site-square-button:hover {
+  color: var(--color-action);
+}
+.site-square-button:active {
+  color: var(--color-action-active);
+}
+.site-square-button svg {
+  width: 18px;
+  height: 18px;
+}
+.site-terminal-button {
+  font:
+    14px ui-monospace,
+    Consolas,
+    monospace;
+}
+.site-menu-button {
+  display: none;
+}
+.site-menu-glyph path {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform var(--motion-overlay) var(--motion-overlay-easing),
+    opacity var(--motion-feedback) ease-out;
+}
+.menu-open .site-menu-glyph path:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+.menu-open .site-menu-glyph path:nth-child(2) {
+  opacity: 0;
+}
+.menu-open .site-menu-glyph path:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+@media (max-width: 960px) {
+  .site-header {
+    gap: 8px;
+  }
+  .site-nav__links {
+    gap: 0;
+  }
+  .site-nav__links a {
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-header-frame {
+    height: 64px;
+  }
+  .site-header {
+    height: 64px;
+    gap: 12px;
+  }
+  .site-header.is-compact {
+    height: 56px;
+    margin-inline: 0;
+    padding-inline: 8px;
+  }
+  .site-brand {
+    font-size: 18px;
+  }
+  .site-header__actions {
+    margin-left: auto;
+  }
+  .site-menu-button {
+    display: inline-grid;
+  }
+  .site-nav {
+    position: absolute;
+    inset: calc(100% + 8px) 0 auto;
+    display: grid;
+    grid-template-rows: 0fr;
+    margin: 0;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+    background: var(--color-canvas);
+    box-shadow: 0 8px 20px -12px rgb(0 0 0 / 24%);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      grid-template-rows var(--motion-overlay) var(--motion-overlay-easing),
+      opacity var(--motion-feedback) ease-out,
+      transform var(--motion-overlay) var(--motion-overlay-easing),
+      visibility 0s linear var(--motion-overlay);
+  }
+  .menu-open .site-nav {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  .site-nav__body {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    max-height: calc(100dvh - 128px - env(safe-area-inset-top, 0px));
+    overflow-y: auto;
+    gap: 0;
+  }
+  .site-nav__links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .site-nav__links a {
+    justify-content: flex-end;
+    min-height: 48px;
+    padding: 8px;
+    font-size: 16px;
+  }
+  .site-header__actions .site-search-button--desktop {
+    display: none;
+  }
+  .site-nav .site-search-button--mobile {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 8px;
+  }
+  .site-nav .site-search-button::before {
+    content: none;
+  }
+  .site-search-label {
+    display: inline;
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-nav,
+  .site-menu-glyph path {
+    transition: none !important;
+  }
+}
