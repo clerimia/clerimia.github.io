@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  src: ImageMetadata
+  title: string
+}
+
+const { src, title } = Astro.props
+---
+
+<details class='design-image-card not-prose'>
+  <summary>
+    <Image src={src} alt='' width={64} height={80} fit='cover' loading='lazy' />
+    <span class='card-label'>
+      <span class='card-title'>{title}</span>
+      <span class='card-action card-action--closed'>查看大图</span>
+      <span class='card-action card-action--open'>收起图片</span>
+    </span>
+    <span class='card-arrow' aria-hidden='true'>⌄</span>
+  </summary>
+  <div class='card-image'>
+    <Image src={src} alt={`Joye 的 QQBot 前端设计图：${title}`} loading='lazy' />
+  </div>
+</details>
+
+<style>
+  .design-image-card {
+    margin-block: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    min-height: 96px;
+    gap: var(--space-4);
+    padding: var(--space-2);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover, summary:focus-visible { color: var(--color-action); }
+  summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-control);
+  }
+  summary img {
+    flex: none;
+    width: 64px;
+    height: 80px;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 6px;
+  }
+  .card-label { display: grid; gap: var(--space-1); }
+  .card-title { color: var(--color-text); font-weight: 600; }
+  .card-action { font-size: var(--font-ui); }
+  .card-action--open { display: none; }
+  details[open] .card-action--closed { display: none; }
+  details[open] .card-action--open { display: inline; }
+  .card-arrow { margin-inline-start: auto; padding-inline: var(--space-2); font-size: 20px; }
+  details[open] .card-arrow { transform: rotate(180deg); }
+  .card-image { padding: 0 var(--space-3) var(--space-3); }
+  .card-image img { display: block; width: 100%; height: auto; }
+</style>

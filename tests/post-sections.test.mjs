@@ -24,7 +24,10 @@ test('homepage latest posts exclude essays', async () => {
   const home = await readPage('index.html')
   const sections = [...home.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/g)].map(([html]) => html)
   const blog = sections.find((html) => html.includes('id="home-latest-heading"'))
-  assert.ok(blog?.includes('href="/blog/hello-world"'))
+  assert.ok(blog, 'homepage has a latest posts section')
+  const postLinks = [...blog.matchAll(/<a\b[^>]*class="[^"]*\bhome-post-row\b[^"]*"[^>]*href="([^"]+)"/g)]
+  assert.ok(postLinks.length > 0, 'latest posts include blog entries')
+  assert.ok(postLinks.every(([, href]) => href.startsWith('/blog/')))
   assert.ok(!blog.includes(essayTitle))
 })
 
