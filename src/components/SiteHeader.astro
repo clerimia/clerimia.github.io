@@ -104,8 +104,6 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
     const nav = document.getElementById('site-navigation')
     if (!header || !menu || !nav) return
     const narrow = matchMedia('(max-width: 760px)')
-    let compact = false
-    let ticking = false
     function setMenu(open, restoreFocus = false) {
       open = open && narrow.matches
       // 关闭动画开始前移走焦点，折叠内容同时退出键盘和辅助技术的浏览范围。
@@ -117,13 +115,6 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
       menu.setAttribute('aria-label', open ? '收起主导航' : '展开主导航')
       nav.inert = narrow.matches && !open
       header.classList.toggle('menu-open', open)
-    }
-    function render() {
-      ticking = false
-      const next = compact ? scrollY > 8 : scrollY > 32
-      if (next === compact) return
-      compact = next
-      header.classList.toggle('is-compact', compact)
     }
     menu.addEventListener('click', () => setMenu(menu.getAttribute('aria-expanded') !== 'true'))
     header.addEventListener('keydown', (event) => {
@@ -165,16 +156,6 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
     header.addEventListener('focusout', (event) => {
       if (!header.contains(event.relatedTarget)) setMenu(false)
     })
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          ticking = true
-          requestAnimationFrame(render)
-        }
-      },
-      { passive: true }
-    )
     narrow.addEventListener('change', () => {
       const menuFocused = document.activeElement === menu
       setMenu(false)
@@ -182,8 +163,6 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         header.querySelector('.site-brand')?.focus({ preventScroll: true })
     })
     setMenu(false)
-    render()
-    window.addEventListener('pageshow', render)
   })()
 </script>
 

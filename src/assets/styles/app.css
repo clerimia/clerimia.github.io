@@ -53,7 +53,6 @@
   --layout-wide: 1080px;
   --layout-reading: 760px;
   --layout-aside: 224px;
-  --motion-header: 300ms;
   --motion-feedback: 160ms;
   --motion-feedback-easing: ease-out;
   --motion-overlay: 220ms;
@@ -297,8 +296,8 @@ input:focus-visible,
   outline: none;
 }
 
-/* 正文锚点避开悬浮页头；不改变吸顶控件的聚焦滚动。 */
-:where(h1, h2, h3, h4, h5, h6, #comments, #main-content) { scroll-margin-top: 96px; }
+/* 锚点留出少量阅读间距。 */
+:where(h1, h2, h3, h4, h5, h6, #comments, #main-content) { scroll-margin-top: 24px; }
 
 .theme-icon--moon,
 .dark .theme-icon--sun {
@@ -368,6 +367,13 @@ input:focus-visible,
 }
 
 /* Long-form text shares one reading rhythm; code keeps its own line height. */
+.site-content--inner .prose :where(:not(pre) > code) {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  vertical-align: baseline;
+}
+
 .site-content--inner .prose {
   color: var(--ink);
   font-size: var(--reading-size);

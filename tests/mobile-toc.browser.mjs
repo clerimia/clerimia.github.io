@@ -16,9 +16,10 @@ export async function checkMobileToc(page) {
       buttonRight: buttonBox.right,
       buttonBottom: buttonBox.bottom,
       topRight: topBox.right,
+      topBottom: topBox.bottom,
+      buttonTop: buttonBox.top,
       edgeRight: document.documentElement.clientWidth - buttonBox.right,
       edgeBottom: innerHeight - buttonBox.bottom,
-      row: Math.abs(buttonBox.top - topBox.top) <= 3,
       target: buttonBox.width >= 44 && buttonBox.height >= 44,
       topTarget: topBox.width >= 44 && topBox.height >= 44,
       label: button.getAttribute('aria-label'),
@@ -31,8 +32,8 @@ export async function checkMobileToc(page) {
   assert.ok(placement.target, 'floating directory has a 44px touch target')
   assert.ok(placement.topTarget, 'back-to-top has a 44px touch target')
   assert.equal(placement.label, '展开目录')
-  assert.ok(placement.buttonRight > placement.topRight, 'directory is the rightmost action')
-  assert.ok(placement.row, 'directory and back-to-top share one floating row')
+  assert.ok(Math.abs(placement.buttonRight - placement.topRight) <= 3, 'actions align at the right edge')
+  assert.ok(placement.buttonTop - placement.topBottom >= 7, 'directory sits below back-to-top with a gap')
   assert.ok(placement.edgeRight >= 19 && placement.edgeRight <= 24)
   assert.ok(placement.edgeBottom >= 19 && placement.edgeBottom <= 24)
   assert.equal(placement.parentTransform, 'none')
@@ -45,13 +46,13 @@ export async function checkMobileToc(page) {
     expanded: document.getElementById('sidebar-btn')?.getAttribute('aria-expanded'),
     role: document.getElementById('sidebar')?.getAttribute('role'),
     modal: document.getElementById('sidebar')?.getAttribute('aria-modal'),
-    focus: document.activeElement?.id
+    focus: document.activeElement === document.querySelector('#sidebar a[href]')
   }))
   assert.deepEqual(opened, {
     expanded: 'true',
     role: 'dialog',
     modal: 'true',
-    focus: 'sidebar-close'
+    focus: true
   })
 
   await page.keyboard.press('Shift+Tab')
@@ -66,7 +67,7 @@ export async function checkMobileToc(page) {
     'focus stays inside the open directory'
   )
   await page.keyboard.press('Tab')
-  assert.equal(await page.evaluate(() => document.activeElement?.id), 'sidebar-close')
+  assert.equal(await page.evaluate(() => document.activeElement === document.querySelector('#sidebar a[href]')), true)
 
   await page.keyboard.press('Escape')
   assert.deepEqual(

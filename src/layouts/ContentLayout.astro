@@ -35,9 +35,6 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
             data-pagefind-ignore
             inert
           >
-            <button id='sidebar-close' class='sidebar-close' type='button' aria-label='关闭目录'>
-              关闭 ×
-            </button>
             <slot name='sidebar' />
           </aside>
           <div id='sidebar-shade' class='sidebar-shade' aria-hidden='true' />
@@ -95,7 +92,6 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
   const sidebarButton = document.getElementById('sidebar-btn')
   const sidebarTriggers = [...document.querySelectorAll<HTMLElement>('[data-sidebar-trigger]')]
   const sidebar = document.getElementById('sidebar')
-  const sidebarClose = document.getElementById('sidebar-close')
   const sidebarShade = document.getElementById('sidebar-shade')
   const contentFrame = document.getElementById('main-content')
   let sidebarReturnFocus: HTMLElement | null = sidebarButton
@@ -110,7 +106,7 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     if (open) {
       sidebar.setAttribute('role', 'dialog')
       sidebar.setAttribute('aria-modal', 'true')
-      sidebarClose?.focus()
+      ;(sidebar.querySelector<HTMLElement>('a[href]') ?? sidebar).focus({ preventScroll: true })
     } else {
       sidebar.removeAttribute('role')
       sidebar.removeAttribute('aria-modal')
@@ -126,7 +122,6 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
       setSidebar(true)
     })
   )
-  sidebarClose?.addEventListener('click', () => setSidebar(false))
   sidebarShade?.addEventListener('click', () => setSidebar(false))
 
   // Clicking a same-page entry closes the drawer and moves focus to the heading.
@@ -233,8 +228,8 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
 
   :global(#action-buttons:has(#sidebar-btn:not([hidden]))) {
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
+    flex-direction: column !important;
+    align-items: flex-end;
     gap: var(--space-2) !important;
     inset-inline-end: max(20px, env(safe-area-inset-right, 0px));
     bottom: max(20px, env(safe-area-inset-bottom, 0px));
@@ -308,19 +303,6 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     transition-delay: 0s;
   }
 
-  .sidebar-close {
-    display: block;
-    min-width: 44px;
-    min-height: 44px;
-    margin-left: auto;
-    padding: 0 var(--space-2);
-    border: 0;
-    border-radius: var(--radius-control);
-    background: transparent;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
   .article-sidebar :global(.toc-item) {
     min-height: 44px;
     padding-block: var(--space-2);
@@ -377,7 +359,6 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
         transform: none;
       }
 
-      .sidebar-close,
       #sidebar-btn,
       #sidebar-shade {
         display: none !important;

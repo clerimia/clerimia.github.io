@@ -56,11 +56,11 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
             if (term) s.setAttribute('data-term', term)
             s.setAttribute('data-strict', '0')
             s.setAttribute('data-reactions-enabled', reactions)
-            s.setAttribute('data-emit-metadata', '0')
+            s.setAttribute('data-emit-metadata', '1')
             s.setAttribute('data-input-position', inputPosition)
             s.setAttribute('data-theme', currentTheme())
             s.setAttribute('data-lang', 'zh-CN')
-            s.setAttribute('data-loading', 'lazy')
+            s.setAttribute('data-loading', 'eager')
             s.crossOrigin = 'anonymous'
             s.async = true
             el.appendChild(s)
@@ -74,6 +74,18 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
               { giscus: { setConfig: { theme: currentTheme() } } },
               'https://giscus.app'
             )
+          }
+
+          if (!window.__giscusMetadataBound) {
+            window.__giscusMetadataBound = true
+            window.addEventListener('message', function (event) {
+              var iframe = document.querySelector('iframe.giscus-frame')
+              if (event.origin !== 'https://giscus.app' || event.source !== iframe?.contentWindow) return
+              var count = event.data?.giscus?.discussion?.totalCommentCount
+              if (!Number.isSafeInteger(count) || count < 0) return
+              var label = document.querySelector('[data-comment-count]')
+              if (label) label.textContent = count + (count === 1 ? ' comment' : ' comments')
+            })
           }
 
           if (!window.__giscusBound) {
@@ -93,6 +105,6 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
 }
 
 <style>
-  #comments { scroll-margin-top: 7rem; }
+  #comments { scroll-margin-top: 24px; }
   #comments:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 8px; border-radius: 0.75rem; }
 </style>

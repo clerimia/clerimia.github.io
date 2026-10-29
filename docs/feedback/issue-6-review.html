@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Issue #6 · 反馈检查报告</title><style>
+:root{color-scheme:light dark;font-family:system-ui,"Microsoft YaHei",sans-serif;line-height:1.75}body{margin:0;background:#f7faf7;color:#263b2e}main{max-width:1000px;margin:auto;padding:48px 24px 80px}h1,h2,h3{line-height:1.3}h1{font-size:clamp(30px,5vw,46px)}h2{margin-top:64px;border-top:1px solid #cbd9ce;padding-top:32px}h3{margin-top:32px}p,li{max-width:76ch}a{color:#315f43}code{background:#e7efe9;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}figure{margin:24px 0}img{max-width:100%;height:auto;border:1px solid #cbd9ce;border-radius:8px}figcaption,.muted{font-size:14px;color:#536a5b}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;align-items:start}.gallery img{display:block}.tag{font-size:14px;font-weight:700;color:#315f43}.box{padding:16px 20px;border-left:3px solid #608b6b;background:#edf4ee}table{border-collapse:collapse;width:100%}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #cbd9ce;padding:10px} @media(max-width:600px){main{padding:24px 20px 56px}.gallery{grid-template-columns:1fr}table,tbody,tr,td,th{display:block}thead{display:none}td{border:0;padding:3px 0}tr{border-bottom:1px solid #cbd9ce;padding:10px 0}}@media(prefers-color-scheme:dark){body{background:#191d1c;color:#eaf1eb}a,.tag{color:#a9d8b4}code,.box{background:#26332b}.muted,figcaption{color:#aebeb2}img,h2,td,tr{border-color:#43544a}}
+</style></head><body><main>
+<p class="tag">设计检查 · 2026-10-29</p><h1>Issue #6 反馈检查报告</h1>
+<p>对照群友原始截图、当前本地页面和设计规范，重点检查文章阅读、移动端深色主题与文章末尾。本文记录观察与建议，<strong>没有修改网站 UI</strong>。</p>
+<div class="box"><strong>最明确的问题：</strong>390px 下文章中的文件路径在连字符处分成两行，代码标签的背景和边框也被拆开。版权卡信息与操作集中，值得减负。悬浮页头已有实色背景；其与正文的重叠仍值得在真实手机上复核，但不能据此说当前版本完全没有背景。</div>
+<h2>检查范围与结论</h2><p>基于本地仓库当前版本 <code>4618507</code>，用 Chromium 模拟 390 × 844 CSS px 和约 1498px 宽桌面视口；观察首页及文章《就决定是你了——小睦！记录我的第一次博客设计》，重点查看深色主题。截图是本地开发服务，不代表线上部署与真实手机完全一致。原反馈截图来自手机内置网页视图，具体 CSS 视口、字体和缩放未知。</p>
+<table><thead><tr><th>反馈</th><th>判断</th><th>建议优先级</th></tr></thead><tbody>
+<tr><td>路径换行</td><td>已在 390px 复现</td><td>高：局部调整并验证窄屏</td></tr>
+<tr><td>左上角未对齐</td><td>反馈未标注具体对象；现有截图不足以确定比较基线</td><td>待补充：先确认指向</td></tr>
+<tr><td>悬浮导航遮罩</td><td>当前有背景、边框和阴影；正文仍会滚至栏下</td><td>中：验证重叠的可读性与锚点定位</td></tr>
+<tr><td>底部信息卡与分区</td><td>信息及操作集中；推荐阅读已在讨论之前</td><td>中：调整层级与分组</td></tr>
+<tr><td>移动端深色体验</td><td>发现上述具体问题；整体反馈过宽，不能据此判定其他缺陷</td><td>持续检查</td></tr>
+<tr><td>既视感与标题风格</td><td>属于主观感受，缺乏具体对照，不能当作已证实缺陷</td><td>设计判断，不急于改动</td></tr></tbody></table>
+<h2>01 · 文件路径被拆开</h2><p class="tag">已复现 · 中等影响阅读</p><p>原图中 <code>docs/design-language.md</code> 在 <code>design-</code> 后断行。当前版本在 390px 模拟视口再次出现同样的分行：浏览器测得同一个 <code>code</code> 元素有两个行内矩形，分别从 x=168px 和 x=20px 开始。代码标签的背景与边框随之分段，路径作为一个完整文件名的识别被打断。原文位于 <a href="../../src/content/blog/first-blog-design/index.mdx">文章源文件</a>第 97 行。</p>
+<div class="gallery"><figure><img src="issue-6-review/original-feedback.png" alt="群友提供的手机截图，文件路径在连字符处分两行"><figcaption>证据 A：issue 原始手机截图。文件路径在 design- 后分行。</figcaption></figure><figure><img src="issue-6-review/390-dark-article.png" alt="当前版本 390px 深色文章截图，文件路径同样分两行"><figcaption>证据 B：本次 390px 深色模拟，路径分为两个视觉片段。</figcaption></figure></div>
+<h3>建议与原因</h3><p>针对这类<strong>较短、可整体容纳的行内文件路径</strong>，优先让其整体换到下一行；保留极长路径的安全断行机制，并在 320、390、430px 和两套主题下检查是否溢出或被裁切。这样既保留文件名的整体识别，也不为了一个例子让长代码在手机上溢出。避免对所有正文统一禁止换行。</p>
+<h2>02 · 左上角对齐与悬浮页头</h2><p class="tag">对齐：待确认 · 页头：部分核实</p><p>issue 说“左上角未对齐”，但没有指出具体是哪两个边缘。原图左边的页头外框和正文大致同处一个页面边距，字标则在外框内另有内边距；这可能是有意的容器内缩，也可能不是群友所指的位置。不能仅凭这张图断定存在错位。建议请反馈者标出比较对象，或以页框、页头外框、正文左边缘分别测量，再决定是否调整；不要仅为了让字标与正文重合而消除必要的按钮内边距。</p>
+<p>参考图说顶部悬浮导航没有遮罩。当前 <a href="../../src/assets/styles/header.css">header.css</a> 的 <code>.site-header.is-compact</code> 已设置画布色背景、边框和轻阴影，滚动时切换为悬浮状态。本次深色截图中正文在页头后方滚动，栏的矩形区域有背景；栏外的内容仍然可见。悬浮栏遮住其下内容是这一布局的自然结果，实际需要判断的是<strong>内容是否能继续滚出、锚点是否被遮住，以及背景边界是否足够清楚</strong>。</p>
+<figure><img src="issue-6-review/desktop-dark-article.png" alt="桌面深色文章中悬浮页头及其后方正文"><figcaption>证据 C：当前桌面深色滚动态。页头已有表面；其周围的正文仍可见。移动端效果见证据 B。</figcaption></figure>
+<h3>建议与原因</h3><p>先在真实手机的日夜主题下缓慢滚动，并测试目录跳转、浏览器顶部安全区和放大字体。如果文字在栏内透出或锚点长期被挡，再针对背景不透明度、顶部安全区或 <code>scroll-margin-top</code> 调整。无需先添加覆盖整屏的遮罩：它会改变页面阅读和交互层级。设计规范已经规定悬浮栏使用画布、边线和轻阴影。</p>
+<h2>03 · 文章末尾的信息与分区</h2><p class="tag">信息密度值得优化 · 讨论前的顺序已符合反馈</p><p>参考图明确指出信息卡承载较多内容和操作，并建议推荐阅读放在讨论之前。当前页面依次出现正文里的“推荐阅读”、版权卡、文章导航、讨论区；<a href="../../src/layouts/BlogPost.astro">BlogPost.astro</a> 第 68–82 行也显示版权卡 → 文章导航 → 评论的顺序。推荐阅读已在评论之前，不需要为了满足这一条盲目调序。</p>
+<div class="gallery"><figure><img src="2026-10-28-zoning-reference.png" alt="群友对版权信息卡和悬浮页头的标注"><figcaption>证据 D：群友的分区参考图，红线标出了卡片中多层信息与操作。</figcaption></figure><figure><img src="issue-6-review/390-dark-bottom.png" alt="当前 390px 深色文章末尾，依次为推荐阅读、版权卡、文章导航和讨论"><figcaption>证据 E：当前移动端文章末尾。版权卡与下一篇入口紧接在讨论之前。</figcaption></figure></div>
+<p>版权卡同时列出标题、地址、作者、日期、许可和五个图标操作，来源见 <a href="../../src/components/blog/Copyright.astro">Copyright.astro</a>。这些内容并非都没有价值，但卡片集中了多种不同任务，读者刚结束正文就要面对一组密集信息；五个图标的用途也需要逐一辨认。</p>
+<h3>建议与原因</h3><p>保留作者与许可等必要归属信息，优先弱化重复标题、长地址及低频分享操作的视觉权重；把复制链接作为清晰入口，其他分享方式可考虑收进有明确名称的次级入口。版权、继续阅读与讨论应通过留白和标题体现各自职责。是否折叠分享需要实际检查可发现性和触屏命中区域；不是直接删除所有操作。这样能缩短阅读结束到讨论的视觉路径，同时保留归属与分享能力。</p>
+<h2>04 · 深色移动端与个人风格</h2><p>本次深色移动模拟可以清楚看到正文、页头和操作入口，但只覆盖一篇文章及有限状态；不能据此证明所有文字对比度、触屏操作、软键盘、安全区或第三方评论组件都已通过。建议继续在真实设备检查 320–430px、横屏及日夜主题，特别关注浮动目录/返回顶部是否遮挡正文与底部操作。设计规范也把真实设备、安全区和第三方组件列为待验证项。</p>
+<p>“像某位设计师”与“标题和风格有一股味”是值得听取的感受，但反馈没有给出可比较的具体元素或对象。当前博客的设计主张是“安静，但有自己的声音”，内容、绿色身份与双主题共同承担辨识度。建议保留标题和个人表达，后续通过更多真实内容以及对版式、头像、交互细节的具体比较判断辨识度；不要因为一句相似的感受就整体换风格。</p>
+<h2>建议处理顺序</h2><ol><li>局部修正短文件路径换行，验证极窄屏与长路径回退。</li><li>梳理版权卡的信息层级和分享入口，保持推荐阅读及讨论的顺序清楚。</li><li>确认左上角的具体对齐对象，并在真实手机复核悬浮栏、锚点和安全区。</li><li>积累更多具体风格反馈，再决定是否调整个人表达。</li></ol>
+<p class="muted">证据来源：<a href="https://github.com/clerimia/clerimia.github.io/issues/6">GitHub issue #6</a>、原始反馈图、本地 Chromium 截图、<a href="../../DESIGN.md">DESIGN.md</a> 与 <a href="../design-language.md">设计系统文字规范</a>。截图为观察记录，不是全设备验收。</p>
+</main></body></html>

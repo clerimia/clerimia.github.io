@@ -8,7 +8,6 @@ export async function checkHeaderNavigation(page) {
       .getAnimations({ subtree: true })
       .some((animation) => animation.playState === 'running')
   await page.evaluate(() => scrollTo(0, 0))
-  await page.waitForFunction(() => !document.querySelector('.site-header.is-compact'))
   await page.waitForFunction(settled)
   const read = () => {
     const header = document.querySelector('.site-header')
@@ -18,6 +17,8 @@ export async function checkHeaderNavigation(page) {
       top: box.top,
       left: box.left,
       right: box.right,
+      contentLeft: document.getElementById('main-content').getBoundingClientRect().left,
+      contentRight: document.getElementById('main-content').getBoundingClientRect().right,
       height: box.height,
       narrow: matchMedia('(max-width: 760px)').matches,
       layout: getComputedStyle(header).display,
@@ -48,6 +49,8 @@ export async function checkHeaderNavigation(page) {
     }
   }
   const origin = await page.evaluate(read)
+  assert.ok(Math.abs(origin.left - origin.contentLeft) <= 1, 'header aligns with content left edge')
+  assert.ok(Math.abs(origin.right - origin.contentRight) <= 1, 'header aligns with content right edge')
   assert.equal(
     origin.menuVisible,
     origin.narrow,
@@ -58,11 +61,12 @@ export async function checkHeaderNavigation(page) {
   assert.equal(origin.desktopSearchVisible, !origin.narrow)
   assert.equal(origin.mobileSearchDisplay, origin.narrow ? 'flex' : 'none')
   await page.evaluate(() => scrollTo(0, 400))
-  await page.waitForFunction(() => document.querySelector('.site-header.is-compact'))
-  await page.waitForFunction(settled)
+  await page.waitForFunction(() => window.scrollY > 32)
   const compact = await page.evaluate(read)
-  assert.ok(Math.abs(compact.top - 12) <= 1, 'floating header has breathing space above it')
-  assert.ok(compact.height <= 61)
+  assert.ok(compact.top < origin.top - 32, 'header scrolls with the page')
+  assert.ok(Math.abs(compact.left - origin.left) <= 1, 'header left edge stays in place')
+  assert.ok(Math.abs(compact.right - origin.right) <= 1, 'header right edge stays in place')
+  assert.equal(compact.height, origin.height)
   assert.ok(Math.abs(compact.contentTop - origin.contentTop) <= 1, 'reading content does not jump')
   assert.equal(compact.frameHeight, origin.frameHeight)
   assert.equal(compact.layout, origin.layout)
@@ -72,7 +76,7 @@ export async function checkHeaderNavigation(page) {
   assert.equal(compact.tools.length, origin.tools.length)
   assert.equal(compact.utilityRole, origin.utilityRole)
   assert.equal(compact.utilityGap, origin.utilityGap)
-  assert.ok(compact.overflow <= 1)
+  assert.ok(compact.overflow <= 1, `page overflows by ${compact.overflow}px`)
   for (const tool of compact.tools)
     assert.ok(tool.width >= 44 && tool.height >= 44, `${tool.label} has a 44px target`)
 
@@ -99,7 +103,7 @@ export async function checkHeaderNavigation(page) {
       true
     )
     await page.evaluate(() => scrollTo(0, 0))
-    await page.waitForFunction(() => !document.querySelector('.is-compact'))
+    await page.waitForFunction(() => window.scrollY === 0)
     assert.equal(
       await page.evaluate(() =>
         document.getElementById('site-menu-toggle').getAttribute('aria-expanded')
@@ -117,7 +121,7 @@ export async function checkHeaderNavigation(page) {
     )
   } else assert.equal(compact.navInert, false)
   await page.evaluate(() => scrollTo(0, 0))
-  await page.waitForFunction(() => !document.querySelector('.is-compact'))
+  await page.waitForFunction(() => window.scrollY === 0)
   await page.waitForFunction(settled)
   return { origin, compact }
 }

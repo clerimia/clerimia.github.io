@@ -1,7 +1,6 @@
-/* 页头的断点决定导航结构；滚动只改变同一容器的表面和内缩。 */
+/* 页头随页面滚动；断点决定导航结构。 */
 .site-header-frame {
-  position: sticky;
-  top: max(12px, env(safe-area-inset-top, 0px));
+  position: relative;
   z-index: 30;
   flex-shrink: 0;
   height: 72px;
@@ -10,6 +9,7 @@
 
 .site-header {
   position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -20,29 +20,10 @@
   border-radius: var(--radius-panel);
   background: transparent;
   pointer-events: auto;
-  transition:
-    height var(--motion-header) var(--motion-overlay-easing),
-    margin-inline var(--motion-header) var(--motion-overlay-easing),
-    padding-inline var(--motion-header) var(--motion-overlay-easing),
-    background-color var(--motion-feedback) var(--motion-feedback-easing),
-    border-color var(--motion-feedback) var(--motion-feedback-easing),
-    box-shadow var(--motion-feedback) var(--motion-feedback-easing);
-}
-
-.site-header.is-compact {
-  height: 60px;
-  margin-inline: clamp(12px, 4vw, 48px);
-  padding-inline: 12px;
-  border-color: var(--color-border);
-  background: var(--color-canvas);
-  /* 只在浮于正文上方时标明层次，普通页头无阴影。 */
-  box-shadow: 0 4px 12px -6px rgb(0 0 0 / 18%);
 }
 
 .site-brand {
-  display: inline-flex;
   flex-shrink: 0;
-  align-items: center;
   min-height: 44px;
   color: var(--color-text);
   font-size: 20px;
@@ -207,11 +188,6 @@
   .site-header {
     height: 64px;
     gap: 12px;
-  }
-  .site-header.is-compact {
-    height: 56px;
-    margin-inline: 0;
-    padding-inline: 8px;
   }
   .site-brand {
     font-size: 18px;

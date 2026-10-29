@@ -25,7 +25,7 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
             <a
               aria-label={`跳到「${label(heading.text)}」`}
               class:list={[
-                'toc-item line-clamp-2 px-3 py-1 ms-2 text-foreground/75 transition-colors hover:text-foreground',
+                'toc-item line-clamp-2 px-3 py-1 ms-2 text-foreground/75',
                 heading.depth > 2 && 'ps-7'
               ]}
               href={`#${heading.slug}`}
@@ -106,8 +106,17 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
 </script>
 
 <style>
+  toc-heading {
+    --toc-hover-color: #2b4e38;
+  }
+
+  :global(.dark) toc-heading {
+    --toc-hover-color: #f5c4d0;
+  }
+
   toc-heading :global(.toc-item) {
     display: flow-root;
+    transition: color var(--motion-feedback) var(--motion-feedback-easing);
   }
 
   toc-heading :global(.toc-item.highlight) {
@@ -117,5 +126,18 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
 
   toc-heading :global(.toc-bar.highlight-bg) {
     background: hsl(var(--primary));
+  }
+
+  @media (hover: hover) {
+    toc-heading :global(.toc-item:hover),
+    toc-heading :global(.toc-item.highlight:hover) {
+      color: var(--toc-hover-color);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    toc-heading :global(.toc-item) {
+      transition: none;
+    }
   }
 </style>
