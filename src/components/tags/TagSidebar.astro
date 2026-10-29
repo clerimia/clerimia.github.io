@@ -1,5 +1,6 @@
 ---
 import { Button, Icon } from 'astro-pure/user'
+import TextArrowLink from '@/components/TextArrowLink.astro'
 import { getSectionTags, getTagUrl, sectionTitles, type ContentSection } from '@/utils/tags'
 
 interface Props {
@@ -22,9 +23,9 @@ const tags = await getSectionTags(section)
       ))}
     </ul>
     <span class='mt-4 block sm:text-end'>
-      <a aria-label={`View all ${section} categories`} href={getTagUrl(section)} data-astro-prefetch>
-        查看全部 →
-      </a>
+      <TextArrowLink ariaLabel={`View all ${section} categories`} href={getTagUrl(section)}>
+        查看全部
+      </TextArrowLink>
     </span>
   </aside>
 )}

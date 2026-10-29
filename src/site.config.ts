@@ -1,5 +1,7 @@
 import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/types'
 
+const tagline = '一边创作，一边成为自己'
+
 export const theme: ThemeUserConfig = {
   // [Basic]
   /** Title for your website. Will be used in metadata and as browser tab title. */
@@ -7,9 +9,9 @@ export const theme: ThemeUserConfig = {
   /** Will be used in index page & copyright declaration */
   author: 'clerimia',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: 'Hefei University of Technology student building AI agents and full-stack products.',
+  description: tagline,
   /** The tagline for your website. */
-  tagline: 'Stay curious, build useful things',
+  tagline,
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */

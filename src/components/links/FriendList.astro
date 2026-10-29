@@ -1,101 +1,57 @@
 ---
 import config from '@/site-config'
 
-interface AvatarCache {
-  hash: string
-  path: string
-}
-
 interface Friend {
   avatar: string
-  avatar_cache?: AvatarCache
+  avatar_cache?: { hash: string; path: string }
   name: string
   intro: string
   link: string
 }
-
-interface FriendList {
-  id_name: string
-  desc: string
-  link_list: Friend[]
-}
-
-function shuffle(arr: Friend[]) {
-  return arr.sort(() => {
-    return Math.random() - 0.5
-  })
-}
-
 interface Props {
   title?: string
-  list: FriendList
+  list: { id_name: string; desc: string; link_list: Friend[] }
 }
-const { title, list: friendList, ...props } = Astro.props
-
-const getAvatarSrc = (friend: Friend) =>
-  (config.integ?.links?.cacheAvatar ?? false)
-    ? (friend.avatar_cache?.path ?? friend.avatar)
-    : friend.avatar
+const { title, list } = Astro.props
+const friends = [...list.link_list].sort(() => Math.random() - 0.5)
+const avatarSrc = (friend: Friend) =>
+  config.integ?.links?.cacheAvatar ? (friend.avatar_cache?.path ?? friend.avatar) : friend.avatar
 ---
 
-{title && <h2 id={friendList.id_name}>{title}</h2>}
-<div class='grid gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3' {...props}>
-  {
-    friendList.link_list.length > 0 ? (
-      shuffle(friendList.link_list).map((frd: Friend) => (
-        <a href={frd.link} target='_blank' class='no-underline'>
-          <div class='paper-card group relative h-full overflow-hidden rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2'>
-            <div class='relative z-10 flex h-full items-center gap-3'>
-              {/* avatar */}
-              <div class='relative h-14 w-14 min-w-14 overflow-hidden rounded-full'>
-                {/* 头像为外部动态资源，这里用原生 img，避免构建期下载与重定向失败 */}
+{title && <h2 id={list.id_name}>{title}</h2>}
+{
+  friends.length ? (
+    <ul class='friend-garden'>
+      {friends.map((friend) => (
+        <li>
+          <a class='friend-plot' href={friend.link} target='_blank' rel='noopener noreferrer'>
+            <span class='friend-plot__top'>
+              <span class='friend-plot__avatar' aria-hidden='true'>
+                <span>{friend.name.charAt(0)}</span>
                 <img
-                  class='my-0 h-full w-full bg-card object-cover'
-                  src={getAvatarSrc(frd)}
-                  height={80}
-                  width={80}
-                  alt={frd.name}
+                  src={avatarSrc(friend)}
+                  alt=''
+                  width={56}
+                  height={56}
                   loading='lazy'
+                  onerror="this.setAttribute('hidden', '')"
                 />
-                <div class='absolute start-0 top-0 h-full w-full'>
-                  <div class='flex h-full w-full items-center justify-center rounded-full bg-foreground opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-50'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='32'
-                      height='32'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke-width='2.5'
-                      stroke-linecap='round'
-                      stroke-linejoin='round'
-                      class='me-2 stroke-background'
-                    >
-                      <line
-                        x1='5'
-                        y1='12'
-                        x2='19'
-                        y2='12'
-                        class='translate-x-4 scale-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:scale-x-100'
-                      />
-                      <polyline
-                        points='12 5 19 12 12 19'
-                        class='translate-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1'
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              {/* details */}
-              <div class='min-w-0 flex flex-col gap-y-1'>
-                <p class='my-0 line-clamp-1 text-sm'>{frd.name} </p>
-                <p class='my-0 text-xs text-muted-foreground'>{frd.intro}</p>
-              </div>
-            </div>
-          </div>
-        </a>
-      ))
-    ) : (
-      <p>这里还空着。</p>
-    )
-  }
-</div>
+              </span>
+              <span class='friend-plot__identity'>
+                <strong>{friend.name}</strong>
+                <span class='friend-plot__host'>{new URL(friend.link).hostname}</span>
+              </span>
+            </span>
+            <span class='friend-plot__description'>{friend.intro}</span>
+            <span class='friend-plot__visit' aria-hidden='true'>
+              <span>去串门</span>
+              <span>→</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class='garden-empty'>这里还空着。</p>
+  )
+}

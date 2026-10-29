@@ -22,10 +22,10 @@ export async function checkHeaderNavigation(page) {
       height: box.height,
       narrow: matchMedia('(max-width: 760px)').matches,
       layout: getComputedStyle(header).display,
-      brand: brand.textContent.trim(),
-      brandSize: getComputedStyle(brand).fontSize,
+      brand: brand.getAttribute('aria-label'),
+      brandSize: brand.querySelector('.site-brand__logo').getBoundingClientRect().width,
       brandNameVisible:
-        getComputedStyle(header.querySelector('.site-brand__name')).display !== 'none',
+        header.querySelector('.site-brand__logo').getBoundingClientRect().width > 0,
       frameHeight: document.querySelector('.site-header-frame').getBoundingClientRect().height,
       contentTop: document.getElementById('main-content').getBoundingClientRect().top + scrollY,
       menuVisible: document.getElementById('site-menu-toggle').getBoundingClientRect().width > 0,

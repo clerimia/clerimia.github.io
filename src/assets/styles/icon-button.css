@@ -1,0 +1,36 @@
+/* Shared feedback for header tools and profile social links. */
+.site-icon-button {
+  --icon-button-edge: var(--color-border);
+  position: relative;
+  color: var(--color-text);
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.site-icon-button::before {
+  content: '';
+  position: absolute;
+  inset: var(--icon-button-inset, 0px);
+  border: 1px solid var(--icon-button-edge);
+  border-radius: var(--icon-button-radius, var(--radius-sm));
+  pointer-events: none;
+  transition: border-color 200ms ease;
+}
+
+.site-icon-button:hover {
+  --icon-button-edge: var(--color-action);
+  color: var(--color-action);
+}
+
+.site-icon-button:active {
+  --icon-button-edge: var(--color-action-active);
+  color: var(--color-action-active);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .site-icon-button:hover { transform: translateY(-3px); }
+  .site-icon-button:active { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-icon-button, .site-icon-button::before { transition: none; }
+}

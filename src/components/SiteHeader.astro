@@ -9,11 +9,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
 <div class='site-header-frame'>
   <header class='site-header'>
     <a class='site-brand' href='/' aria-label='clerimia 首页' data-astro-prefetch>
-      <span class='site-brand__wordmark'>
-        <span class='site-brand__mark' aria-hidden='true'>c.</span>
-        <span class='site-brand__name'>clerimia</span>
-      </span>
-      <span class='site-brand__tagline'>安静，但有自己的声音</span>
+      <span class='site-brand__logo' aria-hidden='true'></span>
     </a>
     <nav class='site-nav' id='site-navigation' aria-label='主导航'>
       <div class='site-nav__body'>
@@ -44,7 +40,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
 
     <div class='site-header__actions' role='group' aria-label='站点工具'>
       <a
-        class='site-square-button site-search-button site-search-button--desktop'
+        class='site-square-button site-icon-button site-search-button site-search-button--desktop'
         href='/search'
         aria-label='搜索'
         title='搜索'
@@ -52,7 +48,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         <Icon name='search' />
       </a>
       <button
-        class='site-square-button site-terminal-button'
+        class='site-square-button site-icon-button site-terminal-button'
         data-terminal-trigger
         type='button'
         aria-label='打开终端'
@@ -64,7 +60,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         <span aria-hidden='true'>&gt;_</span>
       </button>
       <button
-        class='site-square-button site-theme-button'
+        class='site-square-button site-icon-button site-theme-button'
         id='site-theme-toggle'
         type='button'
         aria-label='切换深浅色'
@@ -74,7 +70,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         <Icon class='theme-icon theme-icon--moon' name='moon' />
       </button>
       <button
-        class='site-square-button site-menu-button'
+        class='site-square-button site-icon-button site-menu-button'
         id='site-menu-toggle'
         type='button'
         aria-label='展开主导航'

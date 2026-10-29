@@ -1,11 +1,11 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "clerimia",
+  "short_name": "clerimia",
   "icons": [
-    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/favicon/android-chrome-192x192.png?v=clerimia-20261029", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon/android-chrome-512x512.png?v=clerimia-20261029", "sizes": "512x512", "type": "image/png" }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#f9fcf9",
+  "background_color": "#f9fcf9",
   "display": "standalone"
 }

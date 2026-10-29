@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content'
 
 import { Paginator } from 'astro-pure/components/pages'
 import PostPreview from '@/components/PostPreview.astro'
+import TextArrowLink from '@/components/TextArrowLink.astro'
 import TagSidebar from '@/components/tags/TagSidebar.astro'
 import { getPosts } from '@/utils/posts'
 import PageLayout from '@/layouts/BaseLayout.astro'
@@ -64,9 +65,7 @@ const paginationProps = {
               <span class='text-muted-foreground'>
                 第 {page.currentPage} 页 · 本页 {page.data.length} 篇，共 {collectionsCount} 篇
               </span>
-              <a aria-label='按年份查看全部文章' href='/archives' data-astro-prefetch>
-                按年份查看全部文章 →
-              </a>
+              <TextArrowLink href='/archives'>按年份查看全部文章</TextArrowLink>
             </div>
             {/* posts */}
             <ul class='flex flex-col gap-y-4 text-start'>

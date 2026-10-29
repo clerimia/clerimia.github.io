@@ -23,41 +23,22 @@
 }
 
 .site-brand {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
   min-height: 44px;
-  color: var(--color-text);
-  font-size: 20px;
-  font-weight: 650;
-  letter-spacing: -0.3px;
+  color: var(--color-brand);
   text-decoration: none;
-  white-space: nowrap;
 }
 
-.site-brand__wordmark {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
+.site-brand__logo {
+  display: block;
+  width: 150px;
+  aspect-ratio: 1898 / 394;
+  background: currentColor;
+  mask: url('/images/clerimia-logo-horizontal.svg') center / contain no-repeat;
 }
-.site-brand__mark {
-  color: var(--color-brand);
-  font-size: 24px;
-  font-weight: 800;
-}
-.site-brand__tagline {
-  display: none;
-  margin-left: 14px;
-  padding-left: 12px;
-  border-left: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-@media (min-width: 1100px) {
-  .site-brand__tagline {
-    display: inline;
-  }
-}
+.site-brand:hover, .site-brand:active { color: var(--color-brand); }
 
 .site-nav {
   margin-left: auto;
@@ -110,6 +91,8 @@
 
 /* 命中区域 44px，36px 的细边框只表达工具按钮的分组。 */
 .site-square-button {
+  --icon-button-inset: 4px;
+  --icon-button-radius: 8px;
   position: relative;
   display: inline-grid;
   flex-shrink: 0;
@@ -123,15 +106,6 @@
   color: var(--color-text);
   text-decoration: none;
   cursor: pointer;
-  transition: color var(--motion-feedback) var(--motion-feedback-easing);
-}
-.site-square-button::before {
-  position: absolute;
-  inset: 4px;
-  content: '';
-  border: 1px solid var(--panel-edge);
-  border-radius: 8px;
-  pointer-events: none;
 }
 .site-square-button:hover {
   color: var(--color-action);
@@ -189,8 +163,8 @@
     height: 64px;
     gap: 12px;
   }
-  .site-brand {
-    font-size: 18px;
+  .site-brand__logo {
+    width: 132px;
   }
   .site-header__actions {
     margin-left: auto;

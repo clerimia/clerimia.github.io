@@ -1,0 +1,44 @@
+---
+interface Props {
+  href: string
+  class?: string
+  ariaLabel?: string
+}
+
+const { href, class: className, ariaLabel } = Astro.props
+---
+
+<a class:list={['text-arrow-link', className]} {href} aria-label={ariaLabel} data-astro-prefetch>
+  <span class='text-arrow-link__label'><slot /></span><span class='text-arrow-link__arrow' aria-hidden='true'>→</span>
+</a>
+
+<style>
+  .text-arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--color-text-muted);
+    font-size: var(--font-ui);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+  .text-arrow-link__label, .text-arrow-link__arrow {
+    transition: transform 200ms ease;
+  }
+  .text-arrow-link__arrow { flex: none; }
+  .text-arrow-link:hover, .text-arrow-link:focus-visible { color: var(--color-action); }
+  .text-arrow-link:active { color: var(--color-action-active); }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .text-arrow-link:hover .text-arrow-link__label { transform: translateX(-3px); }
+    .text-arrow-link:hover .text-arrow-link__arrow { transform: translateX(3px); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .text-arrow-link:focus-visible .text-arrow-link__label { transform: translateX(-3px); }
+    .text-arrow-link:focus-visible .text-arrow-link__arrow { transform: translateX(3px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .text-arrow-link, .text-arrow-link__label, .text-arrow-link__arrow { transition: none; }
+  }
+</style>

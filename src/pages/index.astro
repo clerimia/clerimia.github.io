@@ -4,6 +4,7 @@ import { Image } from 'astro:assets'
 import { Icon } from 'astro-pure/user'
 import DailyQuote from '@/components/home/DailyQuote.astro'
 import DirectionalArrow from '@/components/DirectionalArrow.astro'
+import TextArrowLink from '@/components/TextArrowLink.astro'
 import darkAvatar from '@/assets/avatar-dark.png'
 import avatar from '@/assets/avatar.png'
 
@@ -20,10 +21,11 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
     <section class='home-hero' aria-labelledby='home-hero-heading'>
       <div class='home-hero__main'>
         <div class='home-intro'>
-          <h1 id='home-hero-heading'>
+          <p class='home-hello'>
             <span class='home-greeting'>你好，我是</span>
             <span class='home-name'>clerimia</span>
-          </h1>
+          </p>
+          <h1 id='home-hero-heading'><span class='home-title-line home-title-line--first'><span class='home-title-accent'>一边</span>创作<span class='home-title-punctuation'>，</span></span><span class='home-title-line home-title-line--second'><span class='home-title-accent'>一边</span>成为自己<span class='home-title-punctuation home-title-seed'>。</span></span></h1>
           <p class='home-description'>
             合肥工业大学在读，关注 <strong>AI Agent</strong> 与 <strong>全栈开发</strong>。
           </p>
@@ -55,8 +57,8 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
                 class='home-avatar--light'
                 src={avatar}
                 alt='clerimia 的头像'
-                width={152}
-                height={152}
+                width={240}
+                height={240}
                 loading='eager'
               />
               <Image
@@ -72,24 +74,30 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
           <div class='home-location'><Icon name='location' /><span>安徽 · 宣城</span></div>
           <div class='home-social-links'>
             <a
-              class='home-social-button'
+              class='home-social-button site-icon-button'
               href='https://github.com/clerimia'
               target='_blank'
               rel='noopener noreferrer'
               aria-label='GitHub'><Icon name='github' /></a
             >
-            <a class='home-social-button' href='mailto:1525258693@qq.com' aria-label='发送邮件'
+            <a class='home-social-button site-icon-button' href='mailto:1525258693@qq.com' aria-label='发送邮件'
               ><Icon name='email' /></a
             >
-            <a class='home-social-button' href='/rss.xml' aria-label='订阅 RSS'
+            <a class='home-social-button site-icon-button' href='/rss.xml' aria-label='订阅 RSS'
               ><Icon name='rss' /></a
             >
-            <a class='home-text-link home-about-link' href='/about' data-astro-prefetch>
-              <span class='home-text-link__label'>更多关于我</span><span aria-hidden='true'>→</span>
-            </a>
+            <TextArrowLink class='home-about-link' href='/about'>更多关于我</TextArrowLink>
           </div>
         </aside>
       </div>
+      <svg class='home-sprout' viewBox='0 70 350 250' fill='none' aria-hidden='true'>
+        <path class='home-sprout__stem' d='M0 306 C96 288 176 256 236 200 C268 170 282 142 276 108' pathLength='1' />
+        <g transform='translate(142 258) rotate(-18)'><path class='home-sprout__leaf home-sprout__leaf--one' d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z' /></g>
+        <g transform='translate(212 222) rotate(-74)'><path class='home-sprout__leaf home-sprout__leaf--outline' d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z' /></g>
+        <g transform='translate(250 188) rotate(-12)'><path class='home-sprout__leaf home-sprout__leaf--three' d='M0 0 C14 -22 40 -28 60 -20 C52 6 24 16 0 0Z' /></g>
+        <g transform='translate(276 108) rotate(-98)'><path class='home-sprout__leaf home-sprout__leaf--four' d='M0 0 C12 -20 34 -24 52 -16 C44 6 20 14 0 0Z' /></g>
+        <g transform='translate(315 90)'><path class='home-sprout__fall' d='M0 0 C8 -14 26 -17 38 -11 C32 4 14 10 0 0Z' /></g>
+      </svg>
     </section>
 
     <section class='home-latest' aria-labelledby='home-latest-heading'>
@@ -97,9 +105,7 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
         <div>
           <h2 id='home-latest-heading'>最近写下的</h2>
         </div>
-        <a class='home-text-link' href='/blog' data-astro-prefetch>
-          <span class='home-text-link__label'>全部文章</span><span aria-hidden='true'>→</span>
-        </a>
+        <TextArrowLink href='/blog'>全部文章</TextArrowLink>
       </div>
       <div class='home-post-list'>
         {

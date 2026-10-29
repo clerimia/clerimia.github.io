@@ -1,72 +1,88 @@
 ---
 import links from '@/public/links.json'
-import config from 'virtual:config'
+import config from '@/site-config'
 
 import { Timeline } from 'astro-pure/user'
-import PageLayout from '@/layouts/CommonPage.astro'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { Comment } from '@/components/comments'
 import FriendList from '@/components/links/FriendList.astro'
+import GardenSprout from '@/components/links/GardenSprout.astro'
+import GardenVine from '@/components/links/GardenVine.astro'
 import LinkDisclosure from '@/components/links/LinkDisclosure.astro'
 
-const headings = [
-  { depth: 2, slug: 'common-links', text: '友链' },
-  { depth: 2, slug: 'special-links', text: '推荐链接' },
-  { depth: 2, slug: 'apply-links', text: '申请友链' }
-]
+import '@/assets/styles/links.css'
 
 const { friends } = links
-const linksConf = config.integ.links
+const linksConf = config.integ.links!
+const friendInfoText = linksConf.applyTip.map(({ name, val }) => `${name}: ${val}`).join('\n')
 const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/public/links.json'
 ---
 
-<PageLayout title='Links' {headings} comment>
-  <p>顺序随机。</p>
-  <h2 id='common-links'>友链</h2>
-  <FriendList list={friends[0]} />
-  <LinkDisclosure title='暂时失联的站点'>
-    <FriendList list={friends[1]} />
-  </LinkDisclosure>
-  <LinkDisclosure title='友链变动记录'>
-    <Timeline events={linksConf.logbook} />
-  </LinkDisclosure>
+<PageLayout meta={{ title: 'Links' }} back='/'>
+  <main class='site-page-main garden-page' data-pagefind-body>
+    <header class='garden-header' id='content-header'>
+      <h1>友链<GardenSprout /></h1>
+      <p>一些我喜欢的小天地。</p>
+      <GardenVine />
+    </header>
+    <section class='garden-friends' aria-label='朋友的博客'>
+      <FriendList list={friends[0]} />
+      <p class='garden-caption'><GardenSprout />让喜欢的站点，在这里拥有一小块地方。</p>
+    </section>
+    <div class='reading-column'>
+      <LinkDisclosure title='暂时失联的站点'>
+        <FriendList list={friends[1]} />
+      </LinkDisclosure>
+      <LinkDisclosure title='友链变动记录'>
+        <Timeline events={linksConf.logbook} />
+      </LinkDisclosure>
+    </div>
+    <section class='garden-section' aria-labelledby='special-links'>
+      <h2 id='special-links'>推荐链接</h2>
+      <FriendList list={friends[2]} />
+    </section>
+    <section class='garden-section reading-column' aria-labelledby='apply-links'>
+      <h2 id='apply-links'>申请友链</h2>
+      <div class='friend-info-heading'>
+        <p>本站信息</p>
+        <button
+          class='friend-info-copy'
+          type='button'
+          data-copy-value={friendInfoText}
+          data-copy-label='全部站点信息'
+          aria-label='一键复制站点信息'
+          aria-describedby='friend-copy-status'>一键复制</button
+        >
+      </div>
+      <dl class='friend-info not-prose'>
+        {
+          linksConf.applyTip.map(({ name, val }) => (
+            <>
+              <dt>{name}:</dt>
+              <dd>
+                <samp>{val}</samp>
+              </dd>
+            </>
+          ))
+        }
+      </dl>
+      <p class='friend-copy-status' id='friend-copy-status' role='status' aria-atomic='true'>
+        Name、Desc、Link、Avatar 将一起复制。
+      </p>
 
-  <h2 id='special-links'>推荐链接</h2>
-  <FriendList list={friends[2]} />
-
-  <h2 id='apply-links'>申请友链</h2>
-  <p>本站信息：</p>
-  <dl class='friend-info not-prose'>
-    {
-      linksConf.applyTip.map(({ name, val }) => (
-        <>
-          <dt>{name}:</dt>
-          <dd>
-            <button
-              class='friend-info__copy'
-              type='button'
-              data-copy-value={val}
-              data-copy-label={name}
-              aria-label={`复制 ${name}：${val}`}
-              aria-describedby='friend-copy-status'
-            >
-              <samp>{val}</samp>
-            </button>
-          </dd>
-        </>
-      ))
-    }
-  </dl>
-  <p class='friend-copy-status' id='friend-copy-status' role='status' aria-atomic='true'>
-    点击或用键盘 Enter / Space 复制以上信息。
-  </p>
-
-  <p>
-    可以通过下方留言，或到 <a href={linkEditPage} target='_blank'>仓库</a> 提交 PR 申请友链。要求：
-  </p>
-  <ul>
-    <li>站点能正常访问，且有正式域名</li>
-    <li>有一定数量的原创内容，且近期更新过</li>
-    <li>内容合规</li>
-  </ul>
+      <p>
+        可以通过下方留言，或到 <a href={linkEditPage} target='_blank' rel='noopener noreferrer'
+          >仓库</a
+        > 提交 PR 申请友链。要求：
+      </p>
+      <ul>
+        <li>站点能正常访问，且有正式域名</li>
+        <li>有一定数量的原创内容，且近期更新过</li>
+        <li>内容合规</li>
+      </ul>
+    </section>
+    <div class='garden-section reading-column' data-pagefind-ignore><Comment /></div>
+  </main>
 </PageLayout>
 
 <script>
@@ -91,6 +107,37 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
 </script>
 
 <style>
+  .friend-info-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .friend-info-heading p {
+    margin: 0;
+  }
+  .friend-info-copy {
+    min-height: 44px;
+    padding: 6px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-ui);
+    cursor: pointer;
+    transition:
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+  .friend-info-copy:hover,
+  .friend-info-copy:focus-visible {
+    color: var(--color-action);
+    border-color: var(--color-action);
+  }
+  .friend-info-copy:active {
+    color: var(--color-action-active);
+    border-color: var(--color-action-active);
+  }
   .friend-info {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
@@ -113,33 +160,17 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     margin: 0;
   }
 
-  .friend-info__copy {
+  .friend-info samp {
     display: block;
     width: 100%;
     min-width: 0;
     padding: 6px 8px;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    background: transparent;
     color: inherit;
     font: inherit;
     text-align: start;
     overflow-wrap: anywhere;
-    cursor: pointer;
-  }
-
-  .friend-info__copy samp {
     font-family: ui-monospace, Consolas, monospace;
     user-select: text;
-  }
-
-  .friend-info__copy:hover {
-    border-color: var(--card-edge-hover);
-    background: var(--chip-tint);
-  }
-
-  .friend-info__copy:focus-visible {
-    outline-offset: -2px;
   }
 
   .friend-copy-status {
