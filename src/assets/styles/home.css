@@ -1,3 +1,12 @@
+/* The prototype uses Noto Sans SC 900; this subset covers the tagline, including punctuation. */
+@font-face {
+  font-family: 'Noto Sans SC Hero';
+  src: url('/fonts/NotoSansSC-Hero-900.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
 /* The hero is not a card: it is the top of the page. */
 .home-hero {
   --home-avatar-size: clamp(150px, 17vw, 208px);
@@ -46,13 +55,21 @@
   margin: 0 0 28px;
   color: var(--ink);
   font-size: clamp(48px, 6vw, 80px);
-  font-weight: 700;
+  font-family: 'Noto Sans SC Hero', 'Microsoft YaHei', sans-serif;
+  font-weight: 900;
   line-height: 1.16;
-  letter-spacing: normal;
+  letter-spacing: 0.01em;
 }
 
-.home-title-accent { color: var(--color-brand); }
-.home-title-punctuation { color: var(--color-brand); }
+.home-title-accent {
+  background: linear-gradient(100deg, var(--color-brand) 30%, var(--ink) 130%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.home-title-punctuation {
+  color: color-mix(in srgb, var(--color-brand) 55%, var(--color-canvas));
+}
 .home-title-line { display: block; }
 .home-title-seed {
   display: inline-block;
