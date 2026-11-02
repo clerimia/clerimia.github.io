@@ -1,5 +1,5 @@
 ---
-import { Button } from 'astro-pure/user'
+import TagLink from '@/components/tags/TagLink.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { getSectionTags, getTagUrl, sectionTitles, type ContentSection } from '@/utils/tags'
 
@@ -16,12 +16,12 @@ const title = `${sectionTitles[section]} · Tags`
   <main class='site-page-main'>
     <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
     {tags.length > 0 ? (
-      <ul class='tag-index flex flex-wrap gap-4'>
+      <ul class='tag-index flex flex-wrap'>
         {tags.map(([tag, count]) => (
           <li>
-            <Button href={getTagUrl(section, tag)} variant='pill'>
-              {tag} <span class='ms-1 text-xs'>{count}</span>
-            </Button>
+            <TagLink href={getTagUrl(section, tag)}>
+              {tag} <span class='tag-index__count'>{count}</span>
+            </TagLink>
           </li>
         ))}
       </ul>
@@ -30,11 +30,9 @@ const title = `${sectionTitles[section]} · Tags`
 </PageLayout>
 
 <style>
-  .tag-index :global(a) {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
+  .tag-index__count {
+    margin-inline-start: 4px;
+    color: var(--color-text-muted);
+    font-size: var(--font-meta);
   }
 </style>

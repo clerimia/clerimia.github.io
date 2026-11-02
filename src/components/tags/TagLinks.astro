@@ -1,5 +1,5 @@
 ---
-import { Button } from 'astro-pure/user'
+import TagLink from '@/components/tags/TagLink.astro'
 import { getEntrySection, getTagUrl, type TaggedEntry } from '@/utils/tags'
 
 interface Props {
@@ -11,21 +11,14 @@ const { post, class: className } = Astro.props
 ---
 
 {post.data.tags.length > 0 && (
-  <ul class:list={['tag-links not-prose flex flex-wrap gap-2', className]} aria-label='标签' data-pagefind-ignore>
+  <ul class:list={['tag-links not-prose flex flex-wrap', className]} aria-label='标签' data-pagefind-ignore>
     {post.data.tags.map((tag) => (
       <li>
-        <Button title={tag} href={getTagUrl(getEntrySection(post), tag)} variant='pill' data-pagefind-filter={`标签:${tag}`} />
+        <TagLink
+          href={getTagUrl(getEntrySection(post), tag)}
+          data-pagefind-filter={`标签:${tag}`}
+        >{tag}</TagLink>
       </li>
     ))}
   </ul>
 )}
-
-<style>
-  .tag-links :global(a) {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
-  }
-</style>

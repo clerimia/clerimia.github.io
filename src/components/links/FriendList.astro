@@ -7,13 +7,14 @@ interface Friend {
   name: string
   intro: string
   link: string
+  note?: string
 }
 interface Props {
   title?: string
   list: { id_name: string; desc: string; link_list: Friend[] }
 }
 const { title, list } = Astro.props
-const friends = [...list.link_list].sort(() => Math.random() - 0.5)
+const friends = list.link_list
 const avatarSrc = (friend: Friend) =>
   config.integ?.links?.cacheAvatar ? (friend.avatar_cache?.path ?? friend.avatar) : friend.avatar
 ---
@@ -43,6 +44,7 @@ const avatarSrc = (friend: Friend) =>
               </span>
             </span>
             <span class='friend-plot__description'>{friend.intro}</span>
+            {friend.note && <span class='friend-plot__note'>{friend.note}</span>}
             <span class='friend-plot__visit' aria-hidden='true'>
               <span>去串门</span>
               <span>→</span>

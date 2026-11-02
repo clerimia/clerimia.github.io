@@ -65,10 +65,11 @@ const paginationProps = {
               <span class='text-muted-foreground'>
                 第 {page.currentPage} 页 · 本页 {page.data.length} 篇，共 {collectionsCount} 篇
               </span>
-              <TextArrowLink href='/archives'>按年份查看全部文章</TextArrowLink>
+              {/* 并列时让 44px 命中区延伸到行外，文字与统计保持同一条基线。 */}
+              <TextArrowLink class='blog-archive-link sm:-my-3' href='/archives'>按年份查看全部文章</TextArrowLink>
             </div>
             {/* posts */}
-            <ul class='flex flex-col gap-y-4 text-start'>
+            <ul class='flex flex-col gap-y-3 text-start'>
               {page.data.map((post) => (
                 <PostPreview {post} detailed />
               ))}

@@ -24,7 +24,7 @@ const paginationProps = {
   <main class='site-page-main'>
     <h1 class='mb-6 text-3xl font-medium'>{title}</h1>
     <section id='content' aria-label={`${sectionTitles[section]} 标签结果`}>
-      <ul class='flex flex-col gap-4'>
+      <ul class='flex flex-col gap-3'>
         {page.data.map((post) => post.collection === 'notes' ? (
           <li class='note-result'>
             <a href={`/notes/${post.id}`} class='block hover:text-primary' data-astro-prefetch>

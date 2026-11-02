@@ -1,19 +1,38 @@
 ---
 interface Props {
   title: string
+  class?: string
 }
-const { title } = Astro.props
+const { title, class: className } = Astro.props
 ---
 
-<details class='link-disclosure not-prose'>
-  <summary>{title}<span aria-hidden='true'>⌄</span></summary>
+<details class:list={['link-disclosure not-prose', className]}>
+  <summary>
+    <span class='link-disclosure__title'>{title}</span>
+    <svg
+      class='link-disclosure__chevron'
+      xmlns='http://www.w3.org/2000/svg'
+      width='16'
+      height='16'
+      viewBox='0 0 24 24'
+      fill='none'
+      stroke='currentColor'
+      stroke-width='2'
+      stroke-linecap='round'
+      stroke-linejoin='round'
+      aria-hidden='true'
+    >
+      <polyline points='6 9 12 15 18 9'></polyline>
+    </svg>
+  </summary>
   <div class='link-disclosure__content'><slot /></div>
 </details>
 
 <style>
   .link-disclosure {
     margin-block: var(--space-4);
-    border-block-end: 1px solid var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
   }
   summary {
     display: flex;
@@ -21,25 +40,38 @@ const { title } = Astro.props
     justify-content: space-between;
     min-height: 44px;
     gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
     list-style: none;
     color: var(--color-text-muted);
     font-size: var(--font-ui);
     cursor: pointer;
+    transition: color var(--motion-feedback) var(--motion-feedback-easing);
   }
   summary::-webkit-details-marker {
     display: none;
   }
-  summary:hover,
-  summary:focus-visible {
+  summary:hover {
     color: var(--color-action);
   }
-  summary span {
-    font-size: 20px;
+  summary:focus-visible {
+    border-radius: var(--radius-panel);
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
-  details[open] summary span {
+  .link-disclosure__chevron {
+    flex: none;
+    transition: transform var(--motion-overlay) var(--motion-overlay-easing);
+  }
+  details[open] .link-disclosure__chevron {
     transform: rotate(180deg);
   }
   .link-disclosure__content {
-    padding-block: var(--space-3);
+    padding: 0 var(--space-4) var(--space-3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    summary,
+    .link-disclosure__chevron {
+      transition: none;
+    }
   }
 </style>

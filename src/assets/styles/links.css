@@ -87,37 +87,34 @@
   padding: 0;
 }
 .friend-plot {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 16px;
-  padding: 24px;
+  gap: 8px;
+  padding: 18px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   background: var(--color-surface);
   color: var(--color-text);
   text-decoration: none;
-  transition:
-    border-color 200ms ease,
-    transform 200ms ease;
 }
 .friend-plot:hover,
 .friend-plot:focus-visible {
-  border-color: var(--color-action);
   color: var(--color-text);
 }
 .friend-plot__top {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 .friend-plot__avatar {
   position: relative;
   display: grid;
   place-items: center;
   flex: none;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
@@ -140,27 +137,28 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 4px;
+  gap: 2px;
 }
 .friend-plot__identity strong {
-  font-size: var(--font-item-title);
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.45;
 }
 .friend-plot__host {
-  font-size: var(--font-ui);
+  font-size: var(--font-meta);
   color: var(--color-text-muted);
   overflow-wrap: anywhere;
 }
 .friend-plot__description {
-  font-size: var(--font-reading);
-  line-height: 1.7;
+  color: var(--color-text-muted);
+  font-size: var(--font-ui);
+  line-height: 1.6;
 }
 .friend-plot__visit {
   display: inline-flex;
   align-self: flex-start;
   gap: 6px;
-  margin-top: auto;
+  margin-top: 4px;
   min-height: 28px;
   align-items: center;
   color: var(--color-text-muted);
@@ -174,13 +172,8 @@
 .friend-plot:focus-visible .friend-plot__visit {
   color: var(--color-action);
 }
-.friend-plot:active {
-  border-color: var(--color-action-active);
-}
+.friend-plot:active::after { background: var(--color-action-active); }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .friend-plot:hover {
-    transform: translateY(-2px);
-  }
   .friend-plot:hover .friend-plot__visit span:first-child {
     transform: translateX(-3px);
   }
@@ -212,9 +205,6 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  .friend-plot {
-    padding: 20px;
-  }
   .garden-friends {
     margin-top: 32px;
   }
@@ -228,4 +218,49 @@
   .friend-plot__visit span {
     transition: none;
   }
+}
+
+/* 菜园的互动集中在底线与访问提示，卡片本身保持稳定。 */
+.friend-plot::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--color-action);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-overlay) var(--motion-overlay-easing);
+}
+.friend-plot:hover::after,
+.friend-plot:focus-visible::after { transform: scaleX(1); }
+.friend-plot__note {
+  padding-left: 10px;
+  border-left: 2px solid var(--color-brand);
+  font-size: var(--font-ui);
+  line-height: 1.6;
+}
+.garden-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
+.garden-actions > span { color: var(--color-text-muted); font-size: var(--font-meta); }
+.garden-random {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-action);
+  color: var(--color-action-ink);
+  font-size: var(--font-ui);
+  cursor: pointer;
+}
+.garden-random:hover { background: var(--color-action-hover); }
+.garden-random:active { background: var(--color-action-active); }
+.garden-recommendations { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 20px; margin-top: 24px; }
+.garden-recommendations h2 { margin: 0; color: var(--color-text-muted); font-size: var(--font-ui); font-weight: 400; }
+.garden-recommendations ul { display: flex; flex-wrap: wrap; gap: 0 16px; padding: 0; margin: 0; list-style: none; }
+.garden-recommendations a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: var(--font-ui); }
+.garden-recommendations a:hover { color: var(--color-action); }
+@media (prefers-reduced-motion: reduce) {
+  .friend-plot::after { transition: none; }
 }

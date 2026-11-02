@@ -1,5 +1,6 @@
 ---
-import { Button, Icon } from 'astro-pure/user'
+import { Icon } from 'astro-pure/user'
+import TagLink from '@/components/tags/TagLink.astro'
 import TextArrowLink from '@/components/TextArrowLink.astro'
 import { getSectionTags, getTagUrl, sectionTitles, type ContentSection } from '@/utils/tags'
 
@@ -17,9 +18,9 @@ const tags = await getSectionTags(section)
       <Icon name='tag-2' class='me-2' />
       Tags
     </h2>
-    <ul class='tag-entries text-bgColor flex flex-wrap gap-2'>
+    <ul class='tag-entries text-bgColor flex flex-wrap'>
       {tags.slice(0, 50).map(([tag]) => (
-        <li><Button title={tag} href={getTagUrl(section, tag)} variant='pill' /></li>
+        <li><TagLink href={getTagUrl(section, tag)}>{tag}</TagLink></li>
       ))}
     </ul>
     <span class='mt-4 block sm:text-end'>
@@ -29,13 +30,3 @@ const tags = await getSectionTags(section)
     </span>
   </aside>
 )}
-
-<style>
-  .tag-entries :global(a) {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
-  }
-</style>

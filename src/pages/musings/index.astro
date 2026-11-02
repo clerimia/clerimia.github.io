@@ -41,11 +41,11 @@ for (const entry of entries) {
         {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
         {Array.from(byYear).map(([year, musings]) => (
           <div class='mt-8 first:mt-0'>
-            <div class='mb-4 flex items-baseline gap-3'>
-              <h2 class='text-xl font-medium'>{year}</h2>
-              <span class='text-xs text-muted-foreground'>{musings.length} 篇随笔</span>
+            <div class='musing-year'>
+              <h2>{year}</h2>
+              <span>{musings.length} 篇随笔</span>
             </div>
-            <ul class='flex flex-col gap-4'>
+            <ul class='flex flex-col gap-3'>
               {musings.map((post) => (
                 <PostPreview
                   {post}
@@ -61,3 +61,15 @@ for (const entry of entries) {
     </div>
   </main>
 </PageLayout>
+
+<style>
+  .musing-year {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .musing-year h2 { margin: 0; font-size: var(--font-item-title); font-weight: 600; }
+  .musing-year span { color: var(--color-text-muted); font-size: var(--font-meta); }
+  .musing-year::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
+</style>

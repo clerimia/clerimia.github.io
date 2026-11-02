@@ -13,6 +13,7 @@ const routes = {
 <dialog
   id='terminal-dialog'
   class='terminal-dialog'
+  tabindex='-1'
   aria-labelledby='terminal-heading'
   aria-describedby='terminal-description'
 >
@@ -74,16 +75,26 @@ const routes = {
     terminalTriggers.forEach((trigger) => trigger.setAttribute('aria-expanded', String(open)))
   }
 
+  function focusInitialControl() {
+    if (!terminalDialog?.open) return
+    // 窄屏/粗指针先落在对话框本身，避免打开时软键盘立即盖住帮助内容；
+    // 桌面键盘用户仍可直接输入。两帧等待确保 showModal 的打开动画与布局稳定。
+    if (window.matchMedia('(max-width: 680px), (pointer: coarse)').matches) {
+      terminalDialog.focus({ preventScroll: true })
+    } else {
+      terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus({
+        preventScroll: true
+      })
+    }
+  }
+
   function openTerminal(trigger: Element | null = document.activeElement) {
     if (!terminalDialog || terminalDialog.open) return
     terminalReturnFocus = trigger instanceof HTMLElement ? trigger : null
     terminalDialog.showModal()
     document.documentElement.classList.add('terminal-modal-open')
     setTriggerState(true)
-    // 触屏先聚焦关闭按钮，避免打开时软键盘立即盖住帮助内容。
-    // 键盘/宽屏仍可直接输入；焦点不延迟到可能已关闭的下一帧。
-    if (window.matchMedia('(max-width: 680px), (pointer: coarse)').matches) terminalClose?.focus()
-    else terminalDialog.querySelector<HTMLInputElement>('[data-wt="input"]')?.focus()
+    requestAnimationFrame(() => requestAnimationFrame(focusInitialControl))
   }
 
   terminalTriggers.forEach((button) => {
@@ -117,7 +128,10 @@ const routes = {
     if (!controls.length) return
     const first = controls[0]
     const last = controls[controls.length - 1]
-    if (event.shiftKey && document.activeElement === first) {
+    if (document.activeElement === terminalDialog) {
+      event.preventDefault()
+      ;(event.shiftKey ? last : first).focus()
+    } else if (event.shiftKey && document.activeElement === first) {
       event.preventDefault()
       last.focus()
     } else if (!event.shiftKey && document.activeElement === last) {

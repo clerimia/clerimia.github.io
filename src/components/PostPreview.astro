@@ -3,6 +3,7 @@ import { Image } from 'astro:assets'
 import { type CollectionEntry, render } from 'astro:content'
 import { FormattedDate, Icon } from 'astro-pure/user'
 import DirectionalArrow from '@/components/DirectionalArrow.astro'
+import TagLink from '@/components/tags/TagLink.astro'
 import { getMusingUrl } from '@/utils/posts'
 import { getEntrySection, getTagUrl } from '@/utils/tags'
 
@@ -21,13 +22,16 @@ const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
 ---
 
-<li class:list={['post-preview', { 'post-preview--plain': plain }, className]}>
+<li class:list={['post-preview', { 'post-preview--plain': plain, 'post-preview--card': detailed }, className]}>
   <a class='post-preview__link direction-arrow-trigger' href={getMusingUrl(post)} data-astro-prefetch>
     <div class='post-preview__content'>
       <FormattedDate class='post-preview__date' date={postDate} />
       {data.title && (
-        <div class='post-preview__title'>
-          {data.draft && <span>(草稿) </span>}{data.title}
+        <div class='post-preview__heading'>
+          <div class='post-preview__title'>
+            {data.draft && <span>(草稿) </span>}{data.title}
+          </div>
+          <DirectionalArrow />
         </div>
       )}
       {detailed && description && <p class='post-preview__summary'>{description}</p>}
@@ -46,13 +50,12 @@ const postDate = data.updatedDate ?? data.publishDate
         {...data.heroImage}
       />
     )}
-    <DirectionalArrow />
   </a>
 
   {detailed && data.tags.length > 0 && (
     <ul class='post-preview__tags' aria-label='文章标签'>
       {data.tags.map((tag: string) => (
-        <li><a href={getTagUrl(getEntrySection(post), tag)}>{tag}</a></li>
+        <li><TagLink href={getTagUrl(getEntrySection(post), tag)}>{tag}</TagLink></li>
       ))}
     </ul>
   )}
@@ -85,11 +88,23 @@ const postDate = data.updatedDate ?? data.publishDate
       line-height: 1.5;
     }
 
+    .post-preview__heading {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+
     .post-preview__title {
+      flex: 1;
+      min-width: 0;
       color: var(--color-text);
       font-size: var(--font-item-title);
       font-weight: 600;
       line-height: 1.45;
+    }
+
+    .post-preview__heading :global(.direction-arrow) {
+      margin-top: 3px;
     }
 
     .post-preview__summary {
@@ -131,32 +146,63 @@ const postDate = data.updatedDate ?? data.publishDate
     .post-preview__link:focus-visible .post-preview__title {
       color: var(--color-action);
     }
+    .post-preview--card .post-preview__link:hover .post-preview__title,
+    .post-preview--card .post-preview__link:focus-visible .post-preview__title {
+      color: var(--color-text);
+    }
+
+    .post-preview--card {
+      position: relative;
+      padding: var(--space-5) var(--space-6);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-panel);
+      background: transparent;
+      transition: background-color var(--motion-feedback) var(--motion-feedback-easing);
+    }
+
+    @media (hover: hover) {
+      .post-preview--card:has(.post-preview__link:hover) {
+        background: var(--color-action-surface);
+      }
+    }
+    .post-preview--card:has(.post-preview__link:focus-visible) {
+      background: var(--color-action-surface);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .post-preview--card { transition: none; }
+    }
+
+    .post-preview--card .post-preview__link { padding: 0; }
+    .post-preview--card .post-preview__date { font-variant-numeric: tabular-nums; }
+
+    /* 整卡链接与标签互为同级，标签自己的命中区位于覆盖层之上。 */
+    .post-preview--card .post-preview__link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+    .post-preview--card:has(.post-preview__link:focus-visible) {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 4px;
+    }
+    .post-preview--card .post-preview__link:focus-visible { outline: none; }
+    .post-preview--card .post-preview__title,
+    .post-preview--card .post-preview__summary { overflow-wrap: anywhere; }
 
     .post-preview__tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0 var(--space-3);
-      margin: 0;
+      gap: 0;
+      margin: var(--space-2) -7px -7px;
       padding: 0;
       list-style: none;
     }
 
-    .post-preview__tags a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      min-width: 44px;
-      justify-content: center;
-      color: var(--color-text-muted);
-      font-size: var(--font-meta);
-      text-decoration: underline;
-      text-decoration-color: var(--color-border);
-      text-underline-offset: 0.25em;
-    }
-
-    .post-preview__tags a:hover {
-      color: var(--color-action);
-      text-decoration-color: currentColor;
+    /* 标签覆盖层位于整卡链接之上，保持独立命中区。 */
+    .post-preview__tags :global(.tag-pill) {
+      position: relative;
+      z-index: 1;
     }
 
     .post-preview--plain {
@@ -164,6 +210,7 @@ const postDate = data.updatedDate ?? data.publishDate
     }
 
     @media (max-width: 680px) {
+      .post-preview--card { padding: 18px; }
       .post-preview__image {
         width: 72px;
         height: 72px;

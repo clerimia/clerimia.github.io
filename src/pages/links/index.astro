@@ -23,6 +23,12 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     <header class='garden-header' id='content-header'>
       <h1>友链<GardenSprout /></h1>
       <p>一些我喜欢的小天地。</p>
+      {friends[0].link_list.length > 0 && (
+        <div class='garden-actions'>
+          <span>{friends[0].link_list.length} 位朋友</span>
+          <button type='button' class='garden-random' data-random-friend>随便逛逛 <span aria-hidden='true'>→</span></button>
+        </div>
+      )}
       <GardenVine />
     </header>
     <section class='garden-friends' aria-label='朋友的博客'>
@@ -37,9 +43,13 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
         <Timeline events={linksConf.logbook} />
       </LinkDisclosure>
     </div>
-    <section class='garden-section' aria-labelledby='special-links'>
+    <section class='garden-recommendations' aria-labelledby='special-links'>
       <h2 id='special-links'>推荐链接</h2>
-      <FriendList list={friends[2]} />
+      <ul>
+        {friends[2].link_list.map((friend) => (
+          <li><a href={friend.link} target='_blank' rel='noopener noreferrer'>{friend.name}<span aria-hidden='true'>↗</span></a></li>
+        ))}
+      </ul>
     </section>
     <section class='garden-section reading-column' aria-labelledby='apply-links'>
       <h2 id='apply-links'>申请友链</h2>
@@ -84,6 +94,20 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     <div class='garden-section reading-column' data-pagefind-ignore><Comment /></div>
   </main>
 </PageLayout>
+
+<script is:inline>
+  ;(() => {
+    const button = document.querySelector('[data-random-friend]')
+    const links = Array.from(document.querySelectorAll('.garden-friends .friend-plot'))
+    let previous = -1
+    button?.addEventListener('click', () => {
+      if (!links.length) return
+      const candidates = links.map((_, index) => index).filter((index) => links.length === 1 || index !== previous)
+      previous = candidates[Math.floor(Math.random() * candidates.length)]
+      links[previous].click()
+    })
+  })()
+</script>
 
 <script>
   const status = document.getElementById('friend-copy-status')

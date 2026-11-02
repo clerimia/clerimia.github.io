@@ -42,7 +42,13 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
       )
     }
 
-    <article class='reading-column min-w-0 grow' data-pagefind-body={searchIndex ? '' : undefined}>
+    <article
+      class='reading-column min-w-0 grow'
+      data-pagefind-body={searchIndex ? '' : undefined}
+      data-pagefind-meta={searchIndex && meta.description
+        ? `description:${meta.description}`
+        : undefined}
+    >
       {/* Content header */}
       <div id='content-header' class='animate'>
         <slot name='header' />

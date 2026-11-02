@@ -6,6 +6,7 @@ export async function checkTerminalDialog(page) {
   const opened = await page.evaluate(() => ({
     open: document.getElementById('terminal-dialog').open,
     mobile: matchMedia('(max-width: 680px), (pointer: coarse)').matches,
+    dialogFocused: document.activeElement.id === 'terminal-dialog',
     closeFocused: document.activeElement.id === 'terminal-close',
     inputFocused: document.activeElement.matches('[data-wt="input"]'),
     hiddenFocus: !!document.activeElement.closest('[aria-hidden="true"]'),
@@ -14,12 +15,12 @@ export async function checkTerminalDialog(page) {
   assert.equal(opened.open, true)
   assert.equal(opened.hiddenFocus, false)
   assert.ok(opened.closeWidth >= 44)
-  assert.equal(opened.mobile ? opened.closeFocused : opened.inputFocused, true)
+  assert.equal(opened.mobile ? opened.dialogFocused : opened.inputFocused, true)
   if (opened.mobile) {
-    await page.keyboard.press('Shift+Tab')
-    assert.equal(await page.evaluate(() => document.activeElement.matches('[data-wt="input"]')), true)
     await page.keyboard.press('Tab')
     assert.equal(await page.evaluate(() => document.activeElement.id), 'terminal-close')
+    await page.keyboard.press('Shift+Tab')
+    assert.equal(await page.evaluate(() => document.activeElement.matches('[data-wt="input"]')), true)
   }
   await page.click('[data-wt-command="help"]')
   await page.waitForSelector('.wt-help-list')
