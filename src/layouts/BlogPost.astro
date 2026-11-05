@@ -5,13 +5,14 @@ import type { CollectionEntry } from 'astro:content'
 // Plugin styles
 import 'katex/dist/katex.min.css'
 
+import config from 'virtual:config'
+
 import { MediumZoom } from 'astro-pure/advanced'
 import { ArticleBottom } from 'astro-pure/components/pages'
-import Hero from '@/components/blog/Hero.astro'
-import Copyright from '@/components/blog/Copyright.astro'
-import PostTOC from '@/components/blog/PostTOC.astro'
-import config from 'virtual:config'
 import PageLayout from '@/layouts/ContentLayout.astro'
+import Copyright from '@/components/blog/Copyright.astro'
+import Hero from '@/components/blog/Hero.astro'
+import PostTOC from '@/components/blog/PostTOC.astro'
 import { Comment, PageInfo } from '@/components/comments'
 import { getPostSectionUrl } from '@/utils/posts'
 import { getEntrySection } from '@/utils/tags'
@@ -52,7 +53,15 @@ const hasSidebar = headings.some((heading) => heading.depth <= 3)
 ---
 
 <PageLayout
-  meta={{ articleDate, description, ogImage: socialImage, title }}
+  meta={{
+    articleDate,
+    description,
+    ogImage: socialImage,
+    title,
+    publishedDate: publishDate.toISOString(),
+    updatedDate: updatedDate?.toISOString(),
+    tags: data.tags
+  }}
   back={sectionPath}
   {hasSidebar}
 >
@@ -72,14 +81,14 @@ const hasSidebar = headings.some((heading) => heading.depth <= 3)
       /* 评论区：与页头的「参与讨论」共用 enableComment，
          保证不会出现「有入口没评论区」的死锚点。 */
     }
-    {!isDraft && enableComment && (
-      <Comment
-        class='mt-3 sm:mt-6'
-        discussionTerm={
-          data.section === 'essays' ? `essays/${id}` : undefined
-        }
-      />
-    )}
+    {
+      !isDraft && enableComment && (
+        <Comment
+          class='mt-3 sm:mt-6'
+          discussionTerm={data.section === 'essays' ? `essays/${id}` : undefined}
+        />
+      )
+    }
   </Fragment>
 
   <slot name='bottom-sidebar' slot='bottom-sidebar' />

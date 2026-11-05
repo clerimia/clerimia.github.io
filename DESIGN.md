@@ -1,85 +1,353 @@
-# 个人博客设计思想与方向
+---
+version: alpha
+name: clerimia
+description: '安静，但有自己的声音。整体安静，局部鲜活。'
+colors:
+  # shadcn/ui theme tokens
+  background: '#f9fcf9'
+  foreground: '#263b2e'
+  card: '#ffffff'
+  card-foreground: '#263b2e'
+  popover: '#ffffff'
+  popover-foreground: '#263b2e'
+  primary: '#3f7050'
+  primary-foreground: '#ffffff'
+  secondary: '#e8f2ea'
+  secondary-foreground: '#263b2e'
+  muted: '#e8f2ea'
+  muted-foreground: '#536a5b'
+  accent: '#e8f2ea'
+  accent-foreground: '#263b2e'
+  destructive: '#ab2e2e'
+  destructive-foreground: '#ffffff'
+  border: '#d0ded2'
+  input: '#d0ded2'
+  ring: '#315a40'
+  chart-1: '#3f7050'
+  chart-2: '#285e86'
+  chart-3: '#704e86'
+  chart-4: '#805417'
+  chart-5: '#8a4f66'
+  sidebar: '#ffffff'
+  sidebar-foreground: '#263b2e'
+  sidebar-primary: '#3f7050'
+  sidebar-primary-foreground: '#ffffff'
+  sidebar-accent: '#e8f2ea'
+  sidebar-accent-foreground: '#263b2e'
+  sidebar-border: '#d0ded2'
+  sidebar-ring: '#315a40'
+  # site extensions
+  brand: '#3f7050'
+  primary-hover: '#315a40'
+  primary-active: '#2b4e38'
+  status-info: '#285e86'
+  status-info-surface: '#eef5fa'
+  status-success: '#3f7050'
+  status-success-surface: '#edf6ef'
+  status-warning: '#805417'
+  status-warning-surface: '#fbf2e4'
+  status-error: '#ab2e2e'
+  status-error-surface: '#fbefee'
+  term-canvas: '#ffffff'
+  term-edge: '#d0ded2'
+  term-muted: '#536a5b'
+  term-chrome: '#ffffff'
+  term-chrome-edge: '#d0ded2'
+  term-foreground: '#263b2e'
+colorsDark:
+  # shadcn/ui theme tokens
+  background: '#191d1c'
+  foreground: '#eaf1eb'
+  card: '#262d29'
+  card-foreground: '#eaf1eb'
+  popover: '#262d29'
+  popover-foreground: '#eaf1eb'
+  primary: '#df9aae'
+  primary-foreground: '#2b1920'
+  secondary: '#334638'
+  secondary-foreground: '#eaf1eb'
+  muted: '#262d29'
+  muted-foreground: '#aebeb2'
+  accent: '#38232a'
+  accent-foreground: '#eaf1eb'
+  destructive: '#ffaaa4'
+  destructive-foreground: '#2b1920'
+  border: '#43544a'
+  input: '#43544a'
+  ring: '#a9d8b4'
+  chart-1: '#a9d8b4'
+  chart-2: '#9fcbed'
+  chart-3: '#d4b6e7'
+  chart-4: '#e4c18a'
+  chart-5: '#e2b3c6'
+  sidebar: '#262d29'
+  sidebar-foreground: '#eaf1eb'
+  sidebar-primary: '#df9aae'
+  sidebar-primary-foreground: '#2b1920'
+  sidebar-accent: '#334638'
+  sidebar-accent-foreground: '#eaf1eb'
+  sidebar-border: '#43544a'
+  sidebar-ring: '#a9d8b4'
+  # site extensions
+  brand: '#a9d8b4'
+  primary-hover: '#f5c4d0'
+  primary-active: '#e3a7b8'
+  status-info: '#9fcbed'
+  status-info-surface: '#1e3342'
+  status-success: '#a9d8b4'
+  status-success-surface: '#22382b'
+  status-warning: '#e4c18a'
+  status-warning-surface: '#382e20'
+  status-error: '#ffaaa4'
+  status-error-surface: '#3d2929'
+  term-canvas: '#1e2721'
+  term-edge: '#3a463d'
+  term-muted: '#93a89a'
+  term-chrome: '#25342a'
+  term-chrome-edge: '#435d49'
+  term-foreground: '#a9d8b4'
+typography:
+  display:
+    fontFamily: Satoshi
+    fontSize: 'clamp(34px, calc(26.6px + 2vw), 48px)'
+    fontWeight: 600
+    lineHeight: 1.2
+  page-title:
+    fontFamily: Satoshi
+    fontSize: 'clamp(28px, calc(23.6px + 1.2vw), 36px)'
+    fontWeight: 600
+    lineHeight: 1.25
+  section:
+    fontFamily: Satoshi
+    fontSize: 'clamp(22px, calc(20.8px + 0.3vw), 24px)'
+    fontWeight: 600
+    lineHeight: 1.35
+  item-title:
+    fontFamily: Satoshi
+    fontSize: 18px
+    fontWeight: 600
+    lineHeight: 1.45
+  lead:
+    fontFamily: Satoshi
+    fontSize: 'clamp(17px, calc(16.5px + 0.15vw), 18px)'
+    fontWeight: 400
+    lineHeight: 1.75
+  reading:
+    fontFamily: Satoshi
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.8
+  ui:
+    fontFamily: Satoshi
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.6
+  meta:
+    fontFamily: Satoshi
+    fontSize: 12px
+    fontWeight: 400
+    lineHeight: 1.5
+rounded:
+  base: 10px
+  code: 6px
+  control: 10px
+  panel: 16px
+  dialog: 24px
+  pill: 999px
+spacing:
+  space-1: 4px
+  space-2: 8px
+  space-3: 12px
+  space-4: 16px
+  space-5: 20px
+  space-6: 24px
+  space-8: 32px
+  space-12: 48px
+  space-18: 72px
+layout:
+  wide: 1080px
+  reading: 760px
+  aside: 224px
+---
 
-本文记录设计的灵感、核心意图和长期判断标准，帮助理解「为什么这样设计」。具体色彩、排版、间距与组件规范见 [设计系统文字规范](docs/design-language.md) 和 [可视化规范](docs/design-language.html)；仓库工作入口与阅读顺序见 [AGENTS.md](AGENTS.md)。
+# Design System: clerimia
 
-> **设计主张：安静，但有自己的声音。**
-> **设计气质：整体安静，局部鲜活。**
+> **安静，但有自己的声音。整体安静，局部鲜活。**
 
-博客的创作理念与 tagline 是「一边创作，一边成为自己」：创作和自我探索同时发生，这里也记录尝试、反馈与变化。它回答为什么创作；视觉设计主张则指导如何表达。
+这里是一个承载文章、项目与持续变化的思考的个人博客。「一边创作，一边成为自己」既是创作理念，也是设计的起点：界面让内容被看见，也在合适的细节里留下个人的声音。
 
-来源：[Notion「个人博客网站前端UI/UX设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。本文保留设计方向、取舍原则与判断标准。
+本文借鉴 [Vercel 设计文档](https://fchangjun.github.io/awesome-design-md-cn/design-md/vercel/DESIGN.md) 的组织方式，描述本站的设计意图和日常判断。具体规则、完整令牌和实施与验证状态以[设计系统文字规范](docs/design-language.md)及[可视化规范](docs/design-language.html)为准；[AGENTS.md](AGENTS.md) 是项目工作入口。设计灵感来源于 [Notion「个人博客网站前端 UI/UX 设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。
 
-## 一、内容是个人表达的中心
+## 1. 视觉主题与氛围
 
-网站承载我的文章、项目、观点和持续变化的思考。访客应当能够认识我、发现内容，并舒适地阅读与探索。
+文章和创作是视觉中心。安静的背景、舒展的排版与稳定的层级为阅读留出空间；身份、行动和有意义的互动可以更鲜活。每一种视觉元素都应帮助理解、使用或感受内容。
 
-灵感来自若叶睦与 Mortis：外在的安静、内在的表达欲，以及不同自我能够共存的可能。绿色、双头像和细节提供个人身份线索；文章与创造承载真正属于我的表达。
+若叶睦与 Mortis 启发了两套主题：外在的安静、内在的表达欲，以及不同自我能够共存的可能。两种角色是同一个人的不同面向，共用信息结构与交互方式。
 
-设计应兼顾内容优先、独特但不喧闹、可持续使用。内容增长后，网站仍应保持清晰的秩序和个人气质。
+- **若叶睦 · 日间**：安静、轻盈、柔和。近白画布、深灰绿文字和低饱和绿色营造清透的阅读环境。
+- **墨提斯 · 夜间**：开放、活力、戏剧性。炭灰画布让正文保持安静，绿色延续身份，酒红在行动和适合的交互反馈中出现。
+- **共同身份**：绿色、双头像和少量角色细节让日夜主题仍属于同一个人。角色元素提供情绪，内容负责表达。
+- **内容优先**：通过对齐、留白与排版组织主次；装饰应让信息更易理解，或带来明确的情感价值。
 
-友链页以若叶睦的菜园为灵感：给喜欢的站点留一小块地方，以黄瓜藤、嫩芽与月亮建立温柔的场景，链接中的人和他们的创作仍是主体。
+<!-- color-tokens:start -->
+## 2. 色彩与信息职责
 
-## 二、安静是默认状态，表达发生在必要之处
+色彩的首要任务是传递信息。`src/assets/styles/color-tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 UnoCSS 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
 
-清晰的背景、充足的留白、稳定的文字层级和有限的视觉强调，共同构成安静、内敛、干净的阅读环境。
+| 类别 | 职责 |
+| --- | --- |
+| 品牌色 | 绿色贯穿双主题，表达共同身份 |
+| 中性色 | 建立画布、文字、表面与边界层级 |
+| 语义色 | 信息、成功、警告、错误各有前景与弱表面，并配文字或图标 |
+| 交互状态色 | 行动、悬停、按下、焦点职责独立；酒红行动色不等同错误 |
+| 数据可视化色 | 固定映射无序系列，并配标签、线型或纹理 |
 
-变化与惊喜集中于有意义的交互和少量细节。动效表达状态变化、回应操作，静态阅读区域保持稳定，让读者能够专注。
+### 双主题速查
 
-## 三、视觉元素各有职责
+| 语义令牌 | 日间 | 夜间 | 用途 |
+| --- | --- | --- | --- |
+| `--background` | `#f9fcf9` | `#191d1c` | 页面画布 |
+| `--foreground` | `#263b2e` | `#eaf1eb` | 正文与标题 |
+| `--card` | `#ffffff` | `#262d29` | 面板与浮层表面 |
+| `--primary` | `#3f7050` | `#df9aae` | 主要行动与链接 |
+| `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
+| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
+| `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 
-- **背景**提供安静的画布。
-- **文字层级**组织信息，传达主次。
-- **强调色**指示重点、状态和可操作性。
-- **边框、分隔线与容器**表达分组或交互边界。
-- **角色元素**提供身份线索与情绪。
+文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、必要控件边界与状态以 3:1 为目标。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。
+<!-- color-tokens:end -->
 
-保留能够增加识别性、可读性或情感价值的元素。装饰的存在应有理由，删减也应以是否有助于理解为依据。
+## 3. 排版规则
 
-## 四、信息层级服务于阅读与探索
+排版首先服务于中文、英文、代码和长文的舒适阅读。正文使用 Satoshi，中文回退 Microsoft YaHei 和 system-ui；代码与终端使用 ui-monospace、Consolas、monospace。中文标题从正常字距开始，英文品牌字标可以独立微调。
 
-首页先帮助访客认识我，再引导进入文章与作品。主标题、简介、主要行动和内容预览形成清晰的阅读路径；头像、标签与装饰保持适当的视觉权重。
+| 层级 | 宽屏 / 窄屏起点 | 行高 | 职责 |
+| --- | --- | --- | --- |
+| Display | 48 / 34px | 1.2 | 展示性标题 |
+| Page title | 36 / 28px | 1.25 / 1.3 | 页面与文章标题 |
+| Section | 24 / 22px | 1.35 | 区块标题 |
+| Item title | 18px | 1.45 | 文章条目标题 |
+| Lead | 18 / 17px | 1.75 | 简介与引言 |
+| Reading | 16px | 1.8 | 长文正文 |
+| UI | 14px | 1.6 | 导航、按钮与短摘要 |
+| Meta | 12px | 1.5 | 日期与少量辅助信息 |
 
-文章页以阅读体验为重。标题、正文、引用、代码与图片说明层级明确，导航和辅助信息支持阅读主线。
+正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值与验证状态见[排版规范](docs/design-language.md#02-字体与字号)。不要通过降低正文对比度来制造安静感。
 
-优先通过对齐、留白和排版建立内容关系。主要行动应清楚，标题应突出，日期、分类和标签承担辅助理解的职责。视觉权重反映内容与任务的优先级。
+## 4. 组件语言
 
-## 五、共同身份与各自的行动，色彩服务于清晰度
+### 链接、按钮与导航
 
-若叶睦与 Mortis 是同一个人的不同表达，彼此共存并走向融合。绿色因此是跨越日夜的共同身份底色：品牌、头像附近和身份细节在切换主题后仍能被认出。
+链接负责前往目的地，按钮负责执行操作或打开浮层，开关表达状态。正文链接保留下划线；次级跳转复用 `TextArrowLink`，默认使用辅助文字色，交互时转为行动色。导航当前项通过 `aria-current` 和可辨识的视觉状态表达。
 
-行动可以有不同的声音：日间以沉稳绿色引导，夜间以酒红回应操作，让含蓄但终于行动的表达带有生命力和戏剧性。酒红用于主要行动和适合的交互反馈，不因「表达」或「情绪」而给非行动内容长期着色，也不等同错误。焦点与成功、警告、错误保留各自职责。
+主要行动应清楚，次要行动降低权重。同一页面中同一层级的相同动作采用一致表达。触屏不依赖悬停，键盘焦点立即可见，目标优先至少 `44 × 44px`。
 
-日间主题以接近白色的画布保持清透轻盈；夜间以深灰绿或炭灰承托身份绿和行动酒红。正文、背景和常规边界保持克制，让声音出现在行动发生的地方，而不是让夜间处处变红。
+### 文章列表与内容
 
-色彩应保证文字清晰、层级明确。氛围装饰服从阅读，状态与可操作性还应有颜色以外的辨识线索。
+详细文章列表使用单列卡片：默认透出画布，以细边线和圆角建立边界；文章链接悬停或键盘聚焦时使用行动弱表面，标签保持独立操作。归档使用紧凑行，不将每一项都做成卡片。正文的标题、引用、代码、图片说明与目录应支持阅读主线。
 
-## 六、排版舒展，结构一致
+### 终端与身份细节
 
-中文排版重视识读性和自然节奏；中英文、代码与长文都应有舒适的阅读体验。通过大小、字重与留白建立层级，让文字本身承担信息组织的职责。
+终端是可操作的站点入口，也承载个人身份。标题栏使用身份牌，用户名使用身份绿，提示符使用行动色；成功和错误结果配合文字说明。终端输入焦点是常驻状态，以光标和局部边线表达；按钮与链接保留独立焦点环。窗口红黄绿圆点借用 macOS 窗口语言，不承担本站状态语义。
 
-内容宽度、间距、圆角和组件形态应形成稳定的视觉语言。同类元素保持一致，不同职责保留必要差异。
+### 友链菜园
 
-桌面端有呼吸感，移动端也应紧凑而舒适。不同屏幕下保持内容完整、正文易读、入口可达。
+友链页以菜园为灵感，藤蔓、嫩芽与月亮建立温柔的场景；朋友和他们的创作仍是主体。整张友链卡片作为单一外链，描述应完整可读。装饰服务于场景与识别，不遮盖内容或操作。实现见 [links/index.astro](src/pages/links/index.astro) 与 [links/](src/components/links/)。
 
-## 七、两种主题表达同一个自我
+### 终端子主题
 
-日间的若叶睦安静、轻盈、柔和；夜间的 Mortis 在共同结构中表达开放、活力与戏剧性。两者是一个完整自我的不同面向，绿色身份贯穿并连接它们，行动色的变化则让各自的表达被听见。
+终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/assets/styles/terminal.css)。
 
-两种主题共享信息结构、布局逻辑、排版和交互习惯，差异集中于头像、色彩氛围与少量反馈。切换应自然、细腻，尊重使用者的选择，保持体验连续。
+### 实现锚点
 
-## 八、交互明确，使用方式平等
+| 约定 | 实现位置 |
+| --- | --- |
+| 次级跳转 | [TextArrowLink.astro](src/components/TextArrowLink.astro) |
+| 文章列表卡片 | [PostPreview.astro](src/components/PostPreview.astro) |
+| 页头与移动菜单 | [SiteHeader.astro](src/components/SiteHeader.astro) |
+| 色彩契约 | [color-tokens.css](src/assets/styles/color-tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
+| UnoCSS 语义映射 | [uno.config.ts](uno.config.ts) |
+| 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |
 
-导航、链接、按钮和主题开关应让人容易理解其用途、当前状态与操作结果。品牌细节也需要清楚的功能提示。
+## 5. 布局与空间
 
-鼠标、键盘和触屏使用者都应获得明确反馈与可达的操作入口。尊重减少动态效果的偏好，让可访问性成为整体体验的一部分。
+页面以阅读路径而非填满屏幕为目标。首页先介绍作者，再引导探索文章与作品；文章页优先保证正文行长。页头、返回入口和内容共享左基线，阅读列限宽后仍靠左。
 
-## 九、设计判断标准
+| 尺度 | 设计值 | 作用 |
+| --- | --- | --- |
+| 站点页框 | 最大 `1080px` | 容纳导航与页面内容 |
+| 阅读列 | 最大 `760px` | 长文与长段文字 |
+| 文章目录 | `224px`，与正文间距 `32px` | 空间充足时并列 |
+| 页面边距 | `20 / 24 / 32px` | 随视口宽度变化 |
+| 返回入口到内容 | `24px` | 保持内页节奏一致 |
 
-所有设计取舍共同服务于四项标准：
+基础间距采用 `4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 72px`。圆角按职责选择：代码 `6px`、控件 `10px`、面板 `16px`、对话框 `24px`，胶囊用于合适的标签或状态。宽度、间距和断点的完整规则见[页面框架](docs/design-language.md#04-页面框架与断点)。
 
-- **清晰**：访客能够迅速理解页面主次，找到主要行动与内容入口。
-- **舒适**：中文、英文、代码与长文在日夜主题和不同设备下均易读、易用。
-- **一致**：视觉规则与状态反馈稳定，主题切换保持结构和使用习惯连续。
-- **有我自己的声音**：绿色、双头像和克制的细节形成个人特色，文章与作品始终处于中心。
+## 6. 表面、边界与层次
 
-设计的任务，是让本来就存在的个性被清晰地看见。
+| 层次 | 表达 | 适用场景 |
+| --- | --- | --- |
+| 画布 | 平面背景与留白 | 页面、普通阅读内容 |
+| 分组 | 细边线或必要的局部表面 | 文章卡片、独立内容区域 |
+| 浮层 | 独立表面，必要时使用阴影与遮罩 | 对话框、终端、移动目录 |
+| 焦点 | 清晰且立即出现的焦点环 | 键盘进入链接、按钮和其他控件 |
+
+优先使用位置、间距和排版表达关系。边线用于分组或交互边界；阴影主要服务于浮层。不要叠加多种强调方式来表达同一个状态，也不要为了装饰而普遍增加渐变、阴影或新配色。首页标语和局部身份细节有已记录的视觉例外。
+
+## 7. 动效与交互
+
+动效用于回应操作或说明浮层的出现和消失；普通阅读内容保持稳定。指针反馈以短暂的颜色或边框变化为主，焦点不延迟。主题切换时正文与画布同步更新，避免过渡中出现低对比度。
+
+首页首屏可以保留有节制的入场、枝叶和身份轨道动效，表达博客的个性。启用减少动态效果时，内容立即呈现，非必要位移和持续动画停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见[动效与交互规范](docs/design-language.md#05-动效与交互)。
+
+## 8. 响应式行为
+
+从手机单列阅读和触屏操作出发，随可用空间增加再安排目录或并列内容。日夜主题共享相同的布局、阅读顺序和操作方式。
+
+| 视口宽度 | 布局变化 |
+| --- | --- |
+| `≤ 680px` | 两侧 `20px`；单列，首页简介与头像上下排列 |
+| `> 680px` 且 `< 1000px` | 两侧 `24px`；正文单列，目录收进入口 |
+| `≥ 1000px` | 两侧 `32px`；内容容器足够宽时，正文与目录并列 |
+
+页头在 `760px` 以下将栏目与搜索收入菜单；文章目录并列还要求内容容器至少 `936px`。长标题和链接允许换行，代码与表格在各自区域滚动，页面本身避免横向溢出。验证应覆盖宽屏、手机宽度、两套主题、键盘与减少动态效果；浏览器模拟不能替代真实设备。
+
+<a id="九设计判断标准"></a>
+
+## 9. 设计判断：应该与避免
+
+### 应该
+
+- 先问访客在这屏需要理解什么、下一步能做什么，再决定视觉强调。
+- 用绿色连接身份，用主题行动色回应操作，让状态和焦点各司其职。
+- 优先复用现有令牌、组件与交互语言；为新规则说明场景和验证方式。
+- 使用语义工具类（如 `bg-muted`、`text-primary-foreground`、`text-status-error`），不要写十六进制色值。
+- 修改颜色时先改 [color-tokens.css](src/assets/styles/color-tokens.css)，再运行 `node scripts/sync-color-docs.mjs` 更新文档。
+- 在两套主题、真实内容与不同宽度下检查阅读、焦点和状态。
+- 保留能增加识别性、可读性或情感价值的个人细节。
+
+### 避免
+
+- 让酒红长期装饰非行动内容，或把它直接当成错误色。
+- 用颜色单独表达状态、数据类别或可操作性。
+- 将同一个意思用颜色、下划线和背景反复强调。
+- 为了统一外观而把所有内容包进卡片，或让装饰盖过文章。
+- 在手机上通过缩小文字、裁掉内容或依赖悬停来容纳桌面布局。
+- 直接编辑生成的颜色章节，或引入 `presetWind3` 的原始色板绕过语义令牌。
+- 把终端、身份牌或代码块改造成普通的 `card`；它们有各自的表面职责。
+
+最终以四项标准评估设计：**清晰、舒适、一致、有我自己的声音**。访客应能理解主次、舒适阅读、预测同类操作，并从绿色、双头像与克制的细节中认出这里属于谁。
+
+## 10. 给设计与编码代理的使用指南
+
+开始修改界面前，先读本文和[设计系统文字规范](docs/design-language.md)，涉及视觉选择时对照[可视化规范](docs/design-language.html)。先查找现有 token、组件和同类交互；如需调整具体色值、尺度或组件规则，同步更新文字与可视化规范，并标明提案、实现和验证状态。
+
+可以这样描述任务：
+
+- **新增内容入口**：「使用现有次级跳转语言，让入口在日夜主题和键盘操作下清楚可辨；内容仍是视觉中心。」
+- **设计反馈**：「明确这是信息、成功、警告还是错误；使用相应状态令牌，并提供文字或图标，验证实际表面上的对比度。」
+- **新增图表**：「先确定数据关系与类别映射，再选择语义数据色；直接标注数值，并提供颜色以外的区分方式和等价文本。」
+- **调整页面**：「沿用页框和返回入口的共同基线，检查宽屏与手机阅读列、焦点、溢出及两套主题。」
+
+这些示例用于传达设计意图；具体数值、现有实现和待验证事项仍以设计系统文字规范及代码为准。

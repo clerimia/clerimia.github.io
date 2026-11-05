@@ -41,6 +41,12 @@ jobs:
       - name: Verify page frames and return destinations
         run: node --test tests/page-frame.test.mjs
 
+      - name: Verify color tokens and generated documentation
+        run: node --test tests/color-tokens.test.mjs
+
+      - name: Verify infrastructure and agent endpoints
+        run: node --test tests/infrastructure.test.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

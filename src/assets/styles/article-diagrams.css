@@ -4,11 +4,11 @@
   --diagram-ink: hsl(var(--foreground));
   --diagram-muted: hsl(var(--muted-foreground));
   --diagram-line: hsl(var(--border) / 0.65);
-  --diagram-surface: var(--card-tint);
-  --diagram-card: var(--card-tint-hover);
+  --diagram-surface: hsl(var(--card));
+  --diagram-card: hsl(var(--secondary));
   /* 图表分类色不是操作状态，继续使用绿色以免随 action 变红。 */
-  --diagram-blue: var(--color-brand);
-  --diagram-blue-soft: color-mix(in srgb, var(--color-brand) 6%, transparent);
+  --diagram-blue: hsl(var(--brand));
+  --diagram-blue-soft: color-mix(in srgb, hsl(var(--brand)) 6%, transparent);
   --diagram-teal: #23786a;
   --diagram-teal-soft: rgb(35 120 106 / 0.06);
   --diagram-red: #a84b38;

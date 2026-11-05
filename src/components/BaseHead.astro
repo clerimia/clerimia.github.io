@@ -1,19 +1,40 @@
 ---
-import type { SiteMeta } from 'astro-pure/types'
+import { buildJsonLd, serializeJsonLd } from '@/lib/seo'
 import config from 'virtual:config'
 
-type Props = SiteMeta
+import type { SiteMeta } from 'astro-pure/types'
 
-const { articleDate, description, ogImage, title } = Astro.props
+type Props = SiteMeta & {
+  publishedDate?: string
+  updatedDate?: string
+  tags?: string[]
+}
+
+const { articleDate, description, ogImage, publishedDate, title, updatedDate, tags } = Astro.props
 
 const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url).href
 const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
+const noindex = Astro.url.pathname === '/search' || Astro.url.pathname === '/404'
+const isArticle = Boolean(articleDate || publishedDate)
+const jsonLd = buildJsonLd({
+  site: Astro.site,
+  pathname: Astro.url.pathname,
+  title,
+  description,
+  image: socialImageURL,
+  publishedDate: publishedDate ?? articleDate,
+  updatedDate,
+  tags
+})
 ---
 
 <meta charset='utf-8' />
-<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover' name='viewport' />
+<meta
+  content='width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover'
+  name='viewport'
+/>
 <meta content='IE=edge' http-equiv='X-UA-Compatible' />
 <title>{siteTitle}</title>
 
@@ -42,6 +63,7 @@ const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
 
 {/* Canonical URL */}
 <link rel='canonical' href={canonicalURL} />
+{noindex && <meta name='robots' content='noindex, follow' />}
 
 {/* Primary Meta Tags */}
 <meta content={siteTitle} name='title' />
@@ -53,20 +75,28 @@ const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
 <meta name='color-scheme' content='light dark' />
 
 {/* Open Graph / Facebook */}
-<meta content={articleDate ? 'article' : 'website'} property='og:type' />
+<meta content={isArticle ? 'article' : 'website'} property='og:type' />
 <meta content={title} property='og:title' />
 <meta content={description} property='og:description' />
 <meta content={canonicalURL} property='og:url' />
 <meta content={config.title} property='og:site_name' />
 <meta content={config.locale.attrs} property='og:locale' />
 <meta content={socialImageURL} property='og:image' />
+<meta content={`${title} ${config.titleDelimiter} ${config.title}`} property='og:image:alt' />
 <meta content='1200' property='og:image:width' />
 <meta content='630' property='og:image:height' />
 {
-  articleDate && (
+  isArticle && (
     <>
       <meta content={config.author} property='article:author' />
-      <meta content={articleDate} property='article:published_time' />
+      <meta content={publishedDate ?? articleDate} property='article:published_time' />
+      <meta
+        content={updatedDate ?? publishedDate ?? articleDate}
+        property='article:modified_time'
+      />
+      {tags?.map((tag) => (
+        <meta content={tag} property='article:tag' />
+      ))}
     </>
   )
 }
@@ -77,6 +107,7 @@ const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
 <meta content={title} property='twitter:title' />
 <meta content={description} property='twitter:description' />
 <meta content={socialImageURL} property='twitter:image' />
+<meta content={`${title} ${config.titleDelimiter} ${config.title}`} property='twitter:image:alt' />
 
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />
@@ -88,5 +119,8 @@ const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
   title={config.title}
   href={`${Astro.site}rss.xml`}
 />
+
+{/* Structured data: site identity plus article metadata when present */}
+<script is:inline type='application/ld+json' set:html={serializeJsonLd(jsonLd)} />
 
 <meta content={Astro.generator} name='generator' />

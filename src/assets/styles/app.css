@@ -1,3 +1,5 @@
+@import './color-tokens.css';
+
 @font-face {
   font-family: Satoshi;
   src: url('/fonts/Satoshi-Variable.ttf') format('truetype-variations');
@@ -16,30 +18,6 @@
 
 :root {
   color-scheme: light;
-  /* 若叶睦：安静、轻盈、柔和。语义色是站点与主题组件的共同来源。 */
-  --color-canvas: #f9fcf9;
-  --color-surface: #ffffff;
-  --color-text: #263b2e;
-  --color-text-muted: #536a5b;
-  /* 身份跨主题保持绿色；行动色可随主题变化。 */
-  --color-brand: #3f7050;
-  --color-action: #3f7050;
-  --color-action-hover: #315a40;
-  --color-action-active: #2b4e38;
-  --color-action-ink: #ffffff;
-  --color-action-surface: #e8f2ea;
-  --color-selection: #e8f2ea;
-  --color-border: #d0ded2;
-  --color-focus: #315a40;
-  --color-identity: var(--color-brand);
-  --color-identity-surface: var(--color-surface);
-  --color-identity-edge: var(--color-border);
-  --color-identity-ink: var(--color-text);
-  --color-status-success: #3f7050;
-  --color-status-warning: #805417;
-  --color-status-error: #ab2e2e;
-  --color-action-foreground: var(--color-action-ink);
-
   /* 同一套尺度由日夜主题共用。 */
   --space-1: 4px;
   --space-2: 8px;
@@ -71,108 +49,12 @@
   --font-ui: 14px;
   --font-meta: 12px;
 
-  /* 旧组件别名：逐步迁移时仍指向相同语义，而不是维护第二套色板。 */
-  --radius-sm: var(--radius-control);
-  --radius-md: var(--radius-panel);
-  --radius-lg: var(--radius-panel);
-  --text-micro: var(--font-meta);
-  --text-small: var(--font-ui);
-  --text-body: var(--font-ui);
-  --text-lead: var(--font-item-title);
-  --text-title: var(--font-section);
-  --text-display: var(--font-display);
-  --paper: var(--color-canvas);
-  --surface: var(--color-surface);
-  --ink: var(--color-text);
-  --quiet: var(--color-text-muted);
-  --reading-size: var(--font-reading);
-  --reading-leading: 1.8;
-  --rule: var(--color-border);
-  --wash: var(--color-selection);
-  --leaf: var(--color-action);
-  --leaf-soft: var(--color-selection);
-
-  /* astro-pure / UnoCSS 的 HSL 通道，与上述语义色色值对应。 */
-  --background: 120 33.33% 98.24%;
-  --foreground: 142.86 21.65% 19.02%;
-  --card: 0 0% 100%;
-  --card-foreground: 142.86 21.65% 19.02%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 142.86 21.65% 19.02%;
-  --primary: 140.82 28% 34.31%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 132 27.78% 92.94%;
-  --secondary-foreground: 142.86 21.65% 19.02%;
-  --muted: 132 27.78% 92.94%;
-  --muted-foreground: 140.87 12.17% 37.06%;
-  --accent: 132 27.78% 92.94%;
-  --accent-foreground: 142.86 21.65% 19.02%;
-  --border: 128.57 17.5% 84.31%;
-  --input: 128.57 17.5% 84.31%;
-  --ring: 141.95 29.5% 27.25%;
   --radius: var(--radius-control);
-  /* 终端画布与边线：日间沿用纸面，夜间换成墨提斯的暗绿 */
-  --term-canvas: var(--color-surface);
-  --term-edge: var(--color-border);
-  --term-muted: var(--color-text-muted);
-  --code-bg: var(--muted);
-  --code-fg: var(--foreground);
   --un-default-border-color: hsl(var(--border) / 1);
-
-  --panel-wash: 0;
-  --panel-edge: var(--color-border);
-  --card-tint: var(--color-surface);
-  --card-tint-hover: var(--color-selection);
-  --card-edge: var(--color-border);
-  --card-edge-hover: var(--color-action);
-  --chip-tint: var(--color-selection);
-  --active-tint: var(--color-action-surface);
 }
 
 .dark {
   color-scheme: dark;
-  /* 墨提斯：绿色延续身份，酒红回应行动；状态另有语义。 */
-  --color-canvas: #191d1c;
-  --color-surface: #262d29;
-  --color-text: #eaf1eb;
-  --color-text-muted: #aebeb2;
-  --color-brand: #a9d8b4;
-  --color-action: #df9aae;
-  --color-action-hover: #f5c4d0;
-  --color-action-active: #e3a7b8;
-  --color-action-ink: #2b1920;
-  --color-action-surface: #38232a;
-  --color-selection: #334638;
-  --color-border: #43544a;
-  --color-focus: #a9d8b4;
-  --color-identity: var(--color-brand);
-  --color-identity-surface: #25342a;
-  --color-identity-edge: #435d49;
-  --color-identity-ink: var(--color-brand);
-  --color-status-success: #a9d8b4;
-  --color-status-warning: #e4c18a;
-  --color-status-error: #ffaaa4;
-  --background: 165 7.41% 10.59%;
-  --foreground: 128.57 20% 93.14%;
-  --card: 145.71 8.43% 16.27%;
-  --card-foreground: 128.57 20% 93.14%;
-  --popover: 145.71 8.43% 16.27%;
-  --popover-foreground: 128.57 20% 93.14%;
-  /* 墨提斯终端画布：偏绿的深色，但和画布的冷灰错开 */
-  --term-canvas: #1e2721;
-  --term-edge: #3a463d;
-  --term-muted: #93a89a;
-  --primary: 342.61 51.88% 73.92%;
-  --primary-foreground: 336.67 26.47% 13.33%;
-  --secondary: 135.79 15.7% 23.73%;
-  --secondary-foreground: 128.57 20% 93.14%;
-  --muted: 145.71 8.43% 16.27%;
-  --muted-foreground: 135 10.96% 71.37%;
-  --accent: 135.79 15.7% 23.73%;
-  --accent-foreground: 128.57 20% 93.14%;
-  --border: 144.71 11.26% 29.61%;
-  --input: 144.71 11.26% 29.61%;
-  --ring: 134.04 37.6% 75.49%;
 }
 
 *,
@@ -183,7 +65,7 @@
 
 html {
   scrollbar-gutter: stable;
-  background: var(--color-canvas);
+  background: hsl(var(--background));
   font-family: Satoshi, 'Microsoft YaHei', system-ui, sans-serif;
 }
 
@@ -191,8 +73,8 @@ body.site-body {
   position: relative;
   min-height: 100dvh;
   margin: 0;
-  color: var(--ink);
-  background: var(--color-canvas);
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
   font-size: var(--font-ui);
   line-height: 1.65;
 }
@@ -217,11 +99,11 @@ a {
 }
 
 a:hover {
-  color: var(--color-action-hover);
+  color: hsl(var(--primary-hover));
 }
 
 a:active {
-  color: var(--color-action-active);
+  color: hsl(var(--primary-active));
 }
 
 /* 切换主题时让前景与画布同时更新，避免插值经过低对比度。 */
@@ -235,7 +117,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 4px;
 }
 
@@ -267,9 +149,9 @@ input:focus-visible,
   left: 50%;
   z-index: 90;
   padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--leaf);
-  color: var(--color-action-ink);
+  border-radius: var(--radius-control);
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   font-size: 13px;
   text-decoration: none;
   transform: translate(-50%, -160%);
@@ -278,18 +160,18 @@ input:focus-visible,
 
 .skip-link:focus-visible {
   transform: translate(-50%, 0);
-  outline: 2px solid var(--ink);
+  outline: 2px solid hsl(var(--foreground));
   outline-offset: 2px;
 }
 
 .skip-link:hover {
-  background: var(--color-action-hover);
-  color: var(--color-action-ink);
+  background: hsl(var(--primary-hover));
+  color: hsl(var(--primary-foreground));
 }
 
 .skip-link:active {
-  background: var(--color-action-active);
-  color: var(--color-action-ink);
+  background: hsl(var(--primary-active));
+  color: hsl(var(--primary-foreground));
 }
 
 #main-content:focus {
@@ -331,7 +213,7 @@ input:focus-visible,
 
 .site-content--inner #content-header h1,
 .site-content--inner main > h1 {
-  color: var(--ink);
+  color: hsl(var(--foreground));
   font-size: var(--font-page-title);
   font-weight: 600;
   line-height: 1.25;
@@ -340,7 +222,7 @@ input:focus-visible,
 
 .site-content--inner #sidebar {
   scrollbar-width: thin;
-  scrollbar-color: var(--rule) transparent;
+  scrollbar-color: hsl(var(--border)) transparent;
 }
 
 .reading-column {
@@ -362,7 +244,7 @@ input:focus-visible,
 }
 
 .site-content--inner .toc-item.highlight-bg-translucent {
-  background: var(--active-tint);
+  background: hsl(var(--accent));
   border-radius: 8px;
 }
 
@@ -375,13 +257,13 @@ input:focus-visible,
 }
 
 .site-content--inner .prose {
-  color: var(--ink);
-  font-size: var(--reading-size);
-  line-height: var(--reading-leading);
+  color: hsl(var(--foreground));
+  font-size: var(--font-reading);
+  line-height: 1.8;
 }
 
 .site-content--inner .prose :where(h2, h3, h4) {
-  color: var(--ink);
+  color: hsl(var(--foreground));
   letter-spacing: normal;
 }
 
@@ -391,27 +273,27 @@ input:focus-visible,
 }
 
 .site-content--inner .prose :where(a) {
-  color: var(--color-action);
+  color: hsl(var(--primary));
   text-decoration-color: currentColor;
   text-underline-offset: 0.2em;
 }
 
 .site-content--inner .prose :where(a:hover) {
-  color: var(--color-action-hover);
+  color: hsl(var(--primary-hover));
 }
 
 .site-content--inner .prose :where(a:active) {
-  color: var(--color-action-active);
+  color: hsl(var(--primary-active));
 }
 
 .site-content--inner :where(.rounded-2xl, .rounded-xl) {
-  border-color: var(--rule);
+  border-color: hsl(var(--border));
 }
 
 /* 独立分组才使用表面；普通文章列表使用分隔行。 */
 .paper-card {
-  border: 1px solid var(--card-edge);
-  background: var(--card-tint);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
   transition:
     background 180ms ease,
     border-color 180ms ease,
@@ -420,14 +302,14 @@ input:focus-visible,
 
 a.paper-card:hover,
 .paper-card:hover {
-  border-color: var(--card-edge-hover);
-  background: var(--card-tint-hover);
+  border-color: hsl(var(--primary));
+  background: hsl(var(--secondary));
 }
 
 /* Pills, back buttons and other muted buttons use the same faint tint. */
 .site-content--inner :is(a, button)[class~='bg-muted'] {
-  border-color: var(--card-edge);
-  background: var(--chip-tint);
+  border-color: hsl(var(--border));
+  background: hsl(var(--secondary));
   transition:
     background 160ms ease,
     border-color 160ms ease,
@@ -435,7 +317,7 @@ a.paper-card:hover,
 }
 
 .site-content--inner :is(a, button)[class~='bg-muted']:hover {
-  color: var(--color-action-hover);
+  color: hsl(var(--primary-hover));
 }
 
 /* 内容页返回入口沿用主题组件，但需要足够的触控高度。 */
@@ -449,18 +331,18 @@ a.paper-card:hover,
   gap: 15px;
   margin-top: 42px;
   padding: 20px 10px 25px;
-  border-top: 1px solid var(--rule);
-  color: var(--quiet);
+  border-top: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
   font-size: var(--font-meta);
 }
 
 .site-footer a {
-  color: var(--quiet);
+  color: hsl(var(--muted-foreground));
   text-decoration: none;
 }
 
 .site-footer a:hover {
-  color: var(--leaf);
+  color: hsl(var(--primary));
 }
 
 .site-footer__links {
@@ -516,9 +398,9 @@ html.terminal-modal-open {
   flex: 0 0 auto;
   min-height: 38px;
   padding: 0 14px;
-  border-bottom: 1px solid var(--color-identity-edge);
-  background: var(--color-identity-surface);
-  color: var(--color-identity-ink);
+  border-bottom: 1px solid var(--term-chrome-edge);
+  background: var(--term-chrome);
+  color: var(--term-foreground);
   font: 12px/1 ui-monospace, Consolas, monospace;
   user-select: none;
 }
@@ -542,7 +424,7 @@ html.terminal-modal-open {
     filter var(--motion-feedback) var(--motion-feedback-easing);
 }
 /* 圆点沿用 macOS 系统色，属于外来窗口语言，不参与本站语义色板：
-   它不表达成功、错误或身份，所以不映射到 --color-*。 */
+   它不表达成功、错误或身份，所以不映射到主题令牌。 */
 .dialog-light--r {
   display: grid;
   place-items: center;
@@ -579,15 +461,15 @@ html.terminal-modal-open {
 
 .dialog-hint {
   margin-left: auto;
-  color: var(--color-identity-ink);
+  color: var(--term-foreground);
   font-size: 11px;
   opacity: 0.75;
 }
 .dialog-hint kbd {
   padding: 2px 6px;
-  border: 1px solid color-mix(in srgb, var(--color-identity-ink) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--term-foreground) 35%, transparent);
   border-radius: 4px;
-  background: color-mix(in srgb, var(--color-identity-ink) 10%, transparent);
+  background: color-mix(in srgb, var(--term-foreground) 10%, transparent);
   font: inherit;
 }
 
@@ -632,7 +514,7 @@ html.terminal-modal-open {
     margin-top: 15px;
     /* 页面两侧由外层 shell 提供 20px。 */
     padding: 24px 0 30px;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-panel);
   }
 
   .site-content--inner #content-header h1,

@@ -37,6 +37,6 @@
 - **主题**：若叶睦（日间）安静、轻盈、柔和；墨提斯（夜间）开放、活力、戏剧性。绿色是跨主题的共同身份；行动色日间为绿、夜间为酒红，强调发生在合适的操作反馈中，酒红不等同错误。两主题共用信息架构、布局、排版与组件语言；修改相关 UI 时检查两套主题。
 - **内容**：博客 `src/content/blog/`，笔记 `src/content/notes/`，短随笔 `src/content/musings/`；schema 在 `src/content.config.ts`。
 - **依赖与构建**：修改依赖或构建配置前先读 [README.md](README.md)，尤其是必须保留的 Vite 7 override 和不引入 `@astrojs/react`。
-- **验证**：UI 改动跑 `npm run check` 与 `npm run build`，并在桌面宽屏与 390px 宽、日夜两套主题下各走一遍关键页面（首页、列表、文章详情）。记录未完成的检查与待验证假设。
+- **验证**：UI 改动跑 `npm run check` 与 `npm run build`，并在桌面宽屏与 390px 宽、日夜两套主题下各走一遍关键页面（首页、列表、文章详情）。修改 sitemap、SEO、结构化数据或 Agent 接口后，再运行 `npm run verify:infra`。记录未完成的检查与待验证假设。
 
 设计取舍按 [DESIGN.md 的「设计判断标准」](DESIGN.md#九设计判断标准) 评估：清晰、舒适、一致、有我自己的声音。

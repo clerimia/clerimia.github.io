@@ -26,14 +26,14 @@ export async function checkDesignSystemThemes(page) {
         const [a, b] = [luminance(first), luminance(second)].sort((x, y) => x - y)
         return (b + 0.05) / (a + 0.05)
       }
-      const canvas = color('var(--color-canvas)')
-      const text = color('var(--color-text)')
-      const muted = color('var(--color-text-muted)')
-      const action = color('var(--color-action)')
-      const actionInk = color('var(--color-action-ink)')
-      const selection = color('var(--color-selection)')
-      const focus = color('var(--color-focus)')
-      const surface = color('var(--color-surface)')
+      const canvas = color('hsl(var(--background))')
+      const text = color('hsl(var(--foreground))')
+      const muted = color('hsl(var(--muted-foreground))')
+      const action = color('hsl(var(--primary))')
+      const actionInk = color('hsl(var(--primary-foreground))')
+      const selection = color('hsl(var(--secondary))')
+      const focus = color('hsl(var(--ring))')
+      const surface = color('hsl(var(--card))')
       const dark = document.documentElement.classList.contains('dark')
       return {
         dark,
@@ -52,10 +52,18 @@ export async function checkDesignSystemThemes(page) {
           actionInk: contrast(actionInk, action),
           selection: contrast(action, selection),
           focus: contrast(focus, canvas),
-          success: contrast(color('var(--color-status-success)'), surface),
-          warning: contrast(color('var(--color-status-warning)'), surface),
-          error: contrast(color('var(--color-status-error)'), surface),
-          ...(dark && { expression: contrast(color('var(--color-expression-ink)'), color('var(--color-expression-surface)')) })
+          success: contrast(color('hsl(var(--status-success))'), surface),
+          warning: contrast(color('hsl(var(--status-warning))'), surface),
+          error: contrast(color('hsl(var(--status-error))'), surface),
+          ...Object.fromEntries(
+            ['info', 'success', 'warning', 'error'].map((status) => [
+              `${status}Pair`,
+              contrast(
+                color(`hsl(var(--status-${status}))`),
+                color(`hsl(var(--status-${status}-surface))`)
+              )
+            ])
+          )
         }
       }
     })

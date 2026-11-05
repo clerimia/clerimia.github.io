@@ -31,7 +31,7 @@ const { title, class: className } = Astro.props
 <style>
   .link-disclosure {
     margin-block: var(--space-4);
-    border: 1px solid var(--color-border);
+    border: 1px solid hsl(var(--border));
     border-radius: var(--radius-panel);
   }
   summary {
@@ -42,7 +42,7 @@ const { title, class: className } = Astro.props
     gap: var(--space-3);
     padding: var(--space-2) var(--space-4);
     list-style: none;
-    color: var(--color-text-muted);
+    color: hsl(var(--muted-foreground));
     font-size: var(--font-ui);
     cursor: pointer;
     transition: color var(--motion-feedback) var(--motion-feedback-easing);
@@ -51,11 +51,11 @@ const { title, class: className } = Astro.props
     display: none;
   }
   summary:hover {
-    color: var(--color-action);
+    color: hsl(var(--primary));
   }
   summary:focus-visible {
     border-radius: var(--radius-panel);
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
   .link-disclosure__chevron {

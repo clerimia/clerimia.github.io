@@ -77,13 +77,13 @@ const fallback = {
     align-items: baseline;
     gap: 2px;
     margin-bottom: 8px;
-    color: var(--quiet);
-    font-size: var(--text-micro);
+    color: hsl(var(--muted-foreground));
+    font-size: var(--font-meta);
     letter-spacing: 0.14em;
   }
 
   .daily-quote__mark {
-    color: var(--color-brand);
+    color: hsl(var(--brand));
     font: 20px/0.7 Georgia, serif;
     opacity: 0.6;
     transform: translateY(2px);
@@ -99,7 +99,7 @@ const fallback = {
   .daily-quote__text {
     margin: 0;
     max-width: 34em;
-    color: var(--ink);
+    color: hsl(var(--foreground));
     font-family: Georgia, 'Songti SC', 'Noto Serif SC', 'Source Han Serif SC', serif;
     font-size: 18px;
     line-height: 1.75;
@@ -111,8 +111,8 @@ const fallback = {
   .daily-quote__source {
     display: block;
     margin-top: 6px;
-    color: var(--quiet);
-    font-size: var(--text-small);
+    color: hsl(var(--muted-foreground));
+    font-size: var(--font-ui);
     font-style: normal;
     letter-spacing: 0.02em;
   }
