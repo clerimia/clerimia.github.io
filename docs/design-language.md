@@ -4,6 +4,8 @@
 
 本规范描述当前设计规则；实施覆盖范围和验证结果应另行记录。色彩以 `src/assets/styles/color-tokens.css` 为唯一色值来源，修改令牌后运行 `node scripts/sync-color-docs.mjs` 生成三份文档的色彩章节；其他规则调整时同步更新文字与可视化规范。
 
+[令牌评审](design-review-tokens.md) 记录了色板、色彩变量与字体变量的现状审计、分级结论与待决策项；评审发现的问题在修复前不构成规范变更。
+
 ## 理念与主题
 
 **安静，但有自己的声音；整体安静，局部鲜活。** 文章、项目和持续变化的思考是主体。绿色和双头像是个人识别，互动细节表达情绪；不以大量装饰证明个性。
@@ -39,9 +41,10 @@
 | `--palette-neutral-45` | `#eaf1eb` |
 | `--palette-neutral-50` | `#e8f2ea` |
 | `--palette-neutral-100` | `#d0ded2` |
+| `--palette-neutral-125` | `#7f9584` |
 | `--palette-neutral-200` | `#aebeb2` |
 | `--palette-neutral-300` | `#93a89a` |
-| `--palette-neutral-400` | `#536a5b` |
+| `--palette-neutral-400` | `#48604e` |
 | `--palette-neutral-500` | `#43544a` |
 | `--palette-neutral-600` | `#3a463d` |
 | `--palette-neutral-650` | `#334638` |
@@ -50,6 +53,8 @@
 | `--palette-neutral-900` | `#1e2721` |
 | `--palette-neutral-950` | `#191d1c` |
 | `--palette-green-50` | `#edf6ef` |
+| `--palette-green-100` | `#e4efe6` |
+| `--palette-green-120` | `#dcecde` |
 | `--palette-green-200` | `#a9d8b4` |
 | `--palette-green-700` | `#3f7050` |
 | `--palette-green-740` | `#435d49` |
@@ -93,16 +98,16 @@
 | `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
 | `--primary-hover` | `#315a40` | `#f5c4d0` | 已着行动色的悬停状态 |
 | `--primary-active` | `#2b4e38` | `#e3a7b8` | 已着行动色的按下状态 |
-| `--secondary` | `#e8f2ea` | `#334638` | 标签与搜索命中等中性局部表面 |
+| `--secondary` | `#e4efe6` | `#334638` | 标签与搜索命中等中性局部表面 |
 | `--secondary-foreground` | `#263b2e` | `#eaf1eb` | 中性局部表面上的正文 |
-| `--muted` | `#e8f2ea` | `#262d29` | 弱化内容表面 |
-| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
-| `--accent` | `#e8f2ea` | `#38232a` | 局部行动弱表面 |
+| `--muted` | `#edf6ef` | `#262d29` | 弱化内容表面 |
+| `--muted-foreground` | `#48604e` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--accent` | `#dcecde` | `#38232a` | 局部行动弱表面 |
 | `--accent-foreground` | `#263b2e` | `#eaf1eb` | 行动弱表面上的正文 |
 | `--destructive` | `#ab2e2e` | `#ffaaa4` | 破坏性操作背景（错误角色别名） |
 | `--destructive-foreground` | `#ffffff` | `#2b1920` | 破坏性操作文字 |
-| `--border` | `#d0ded2` | `#43544a` | 分隔与默认边框 |
-| `--input` | `#d0ded2` | `#43544a` | 输入控件边框 |
+| `--border` | `#7f9584` | `#43544a` | 分隔与默认边框 |
+| `--input` | `#7f9584` | `#43544a` | 输入控件边框 |
 | `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
 | `--chart-1` | `#3f7050` | `#a9d8b4` | 无序分类数据系列 1 |
 | `--chart-2` | `#285e86` | `#9fcbed` | 无序分类数据系列 2 |
@@ -113,9 +118,9 @@
 | `--sidebar-foreground` | `#263b2e` | `#eaf1eb` | 侧栏正文 |
 | `--sidebar-primary` | `#3f7050` | `#df9aae` | 侧栏主要行动 |
 | `--sidebar-primary-foreground` | `#ffffff` | `#2b1920` | 侧栏主要行动文字 |
-| `--sidebar-accent` | `#e8f2ea` | `#334638` | 侧栏选中表面 |
+| `--sidebar-accent` | `#e4efe6` | `#334638` | 侧栏选中表面 |
 | `--sidebar-accent-foreground` | `#263b2e` | `#eaf1eb` | 侧栏选中文字 |
-| `--sidebar-border` | `#d0ded2` | `#43544a` | 侧栏边线 |
+| `--sidebar-border` | `#7f9584` | `#43544a` | 侧栏边线 |
 | `--sidebar-ring` | `#315a40` | `#a9d8b4` | 侧栏焦点 |
 | `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 | `--status-info` | `#285e86` | `#9fcbed` | 信息状态文字与图标 |
@@ -127,15 +132,15 @@
 | `--status-error` | `#ab2e2e` | `#ffaaa4` | 错误状态文字与图标 |
 | `--status-error-surface` | `#fbefee` | `#3d2929` | 错误状态弱表面 |
 | `--term-canvas` | `#ffffff` | `#1e2721` | 终端画布 |
-| `--term-edge` | `#d0ded2` | `#3a463d` | 终端边线 |
-| `--term-muted` | `#536a5b` | `#93a89a` | 终端辅助文字 |
+| `--term-edge` | `#7f9584` | `#3a463d` | 终端边线 |
+| `--term-muted` | `#48604e` | `#93a89a` | 终端辅助文字 |
 | `--term-chrome` | `#ffffff` | `#25342a` | 终端标题栏 |
-| `--term-chrome-edge` | `#d0ded2` | `#435d49` | 终端标题栏边线 |
+| `--term-chrome-edge` | `#7f9584` | `#435d49` | 终端标题栏边线 |
 | `--term-foreground` | `#263b2e` | `#a9d8b4` | 终端标题栏文字 |
 
 每个表面令牌都有对应的 `-foreground`：`background` / `foreground`、`card` / `card-foreground`、`popover` / `popover-foreground`、`primary` / `primary-foreground`、`secondary` / `secondary-foreground`、`muted` / `muted-foreground`、`accent` / `accent-foreground`、`destructive` / `destructive-foreground`，以及 `sidebar-*`。状态文字使用 `--status-*`，弱表面使用 `--status-*-surface`。状态表面的色值已定义并经过纯色对比计算，尚未在实际提示组件中验证。
 
-`--background`、`--primary`、`--ring` 等仍是 HSL 通道，可以用于 `hsl(var(--primary) / 0.5)`。深色主题的 `--muted` 使用面板色，与 `--secondary` 选择表面分开；`--accent` 使用行动弱表面。UnoCSS 的 `theme.colors` 暴露完整配对以及 `brand`、`status-*`、`chart-*`、`sidebar-*`；组件优先使用语义工具类，避免直接写色值。
+`--background`、`--primary`、`--ring` 等仍是 HSL 通道，可以用于 `hsl(var(--primary) / 0.5)`。两套主题的三个弱表面都保持三级阶梯：`--muted`（弱化内容）< `--secondary`（选择与命中）< `--accent`（行动悬停）。日间由绿阶 `green-50 / 100 / 120` 承担，夜间用面板色、选择表面与酒红弱表面。`--border` 使用 `neutral-125`，对画布约 3.1:1，足以让卡片与控件外框立住；更重的分隔仍需新的层级而不是继续压深同一个令牌。UnoCSS 的 `theme.colors` 暴露完整配对以及 `brand`、`status-*`、`chart-*`、`sidebar-*`；组件优先使用语义工具类，避免直接写色值。
 
 ### 数据、对比度与使用边界
 

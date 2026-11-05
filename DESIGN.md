@@ -12,16 +12,16 @@ colors:
   popover-foreground: '#263b2e'
   primary: '#3f7050'
   primary-foreground: '#ffffff'
-  secondary: '#e8f2ea'
+  secondary: '#e4efe6'
   secondary-foreground: '#263b2e'
-  muted: '#e8f2ea'
-  muted-foreground: '#536a5b'
-  accent: '#e8f2ea'
+  muted: '#edf6ef'
+  muted-foreground: '#48604e'
+  accent: '#dcecde'
   accent-foreground: '#263b2e'
   destructive: '#ab2e2e'
   destructive-foreground: '#ffffff'
-  border: '#d0ded2'
-  input: '#d0ded2'
+  border: '#7f9584'
+  input: '#7f9584'
   ring: '#315a40'
   chart-1: '#3f7050'
   chart-2: '#285e86'
@@ -32,9 +32,9 @@ colors:
   sidebar-foreground: '#263b2e'
   sidebar-primary: '#3f7050'
   sidebar-primary-foreground: '#ffffff'
-  sidebar-accent: '#e8f2ea'
+  sidebar-accent: '#e4efe6'
   sidebar-accent-foreground: '#263b2e'
-  sidebar-border: '#d0ded2'
+  sidebar-border: '#7f9584'
   sidebar-ring: '#315a40'
   # site extensions
   brand: '#3f7050'
@@ -49,10 +49,10 @@ colors:
   status-error: '#ab2e2e'
   status-error-surface: '#fbefee'
   term-canvas: '#ffffff'
-  term-edge: '#d0ded2'
-  term-muted: '#536a5b'
+  term-edge: '#7f9584'
+  term-muted: '#48604e'
   term-chrome: '#ffffff'
-  term-chrome-edge: '#d0ded2'
+  term-chrome-edge: '#7f9584'
   term-foreground: '#263b2e'
 colorsDark:
   # shadcn/ui theme tokens
@@ -178,6 +178,8 @@ layout:
 
 本文借鉴 [Vercel 设计文档](https://fchangjun.github.io/awesome-design-md-cn/design-md/vercel/DESIGN.md) 的组织方式，描述本站的设计意图和日常判断。具体规则、完整令牌和实施与验证状态以[设计系统文字规范](docs/design-language.md)及[可视化规范](docs/design-language.html)为准；[AGENTS.md](AGENTS.md) 是项目工作入口。设计灵感来源于 [Notion「个人博客网站前端 UI/UX 设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。
 
+[令牌评审](docs/design-review-tokens.md) 记录了色板、色彩变量与字体变量的现状审计与待决策项；评审结论在落地并同步规范前，不改变本文记录的方向。
+
 ## 1. 视觉主题与氛围
 
 文章和创作是视觉中心。安静的背景、舒展的排版与稳定的层级为阅读留出空间；身份、行动和有意义的互动可以更鲜活。每一种视觉元素都应帮助理解、使用或感受内容。
@@ -211,7 +213,7 @@ layout:
 | `--card` | `#ffffff` | `#262d29` | 面板与浮层表面 |
 | `--primary` | `#3f7050` | `#df9aae` | 主要行动与链接 |
 | `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
-| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--muted-foreground` | `#48604e` | `#aebeb2` | 弱化内容表面上的辅助文字 |
 | `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
 | `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 

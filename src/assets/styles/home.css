@@ -68,7 +68,7 @@
   color: transparent;
 }
 .home-title-punctuation {
-  color: color-mix(in srgb, hsl(var(--brand)) 55%, hsl(var(--background)));
+  color: color-mix(in srgb, hsl(var(--brand)) 75%, hsl(var(--background)));
 }
 .home-title-line { display: block; }
 .home-title-seed {

@@ -259,7 +259,7 @@ ${markdownTable(rows)}
 
 每个表面令牌都有对应的 \`-foreground\`：\`background\` / \`foreground\`、\`card\` / \`card-foreground\`、\`popover\` / \`popover-foreground\`、\`primary\` / \`primary-foreground\`、\`secondary\` / \`secondary-foreground\`、\`muted\` / \`muted-foreground\`、\`accent\` / \`accent-foreground\`、\`destructive\` / \`destructive-foreground\`，以及 \`sidebar-*\`。状态文字使用 \`--status-*\`，弱表面使用 \`--status-*-surface\`。状态表面的色值已定义并经过纯色对比计算，尚未在实际提示组件中验证。
 
-\`--background\`、\`--primary\`、\`--ring\` 等仍是 HSL 通道，可以用于 \`hsl(var(--primary) / 0.5)\`。深色主题的 \`--muted\` 使用面板色，与 \`--secondary\` 选择表面分开；\`--accent\` 使用行动弱表面。UnoCSS 的 \`theme.colors\` 暴露完整配对以及 \`brand\`、\`status-*\`、\`chart-*\`、\`sidebar-*\`；组件优先使用语义工具类，避免直接写色值。
+\`--background\`、\`--primary\`、\`--ring\` 等仍是 HSL 通道，可以用于 \`hsl(var(--primary) / 0.5)\`。两套主题的三个弱表面都保持三级阶梯：\`--muted\`（弱化内容）< \`--secondary\`（选择与命中）< \`--accent\`（行动悬停）。日间由绿阶 \`green-50 / 100 / 120\` 承担，夜间用面板色、选择表面与酒红弱表面。\`--border\` 使用 \`neutral-125\`，对画布约 3.1:1，足以让卡片与控件外框立住；更重的分隔仍需新的层级而不是继续压深同一个令牌。UnoCSS 的 \`theme.colors\` 暴露完整配对以及 \`brand\`、\`status-*\`、\`chart-*\`、\`sidebar-*\`；组件优先使用语义工具类，避免直接写色值。
 
 ### 数据、对比度与使用边界
 
@@ -297,15 +297,21 @@ ${htmlRows}
 async function update(path, content, { frontmatter } = {}) {
   const url = new URL(`../${path}`, import.meta.url)
   const original = await readFile(url, 'utf8')
+  // Windows checkouts are CRLF. Normalize before matching so the markers and the
+  // frontmatter fence are found either way, then restore the file's own ending.
+  const eol = original.includes('\r\n') ? '\r\n' : '\n'
+  const source = original.replace(/\r\n/g, '\n')
   const pattern = /<!-- color-tokens:start -->[\s\S]*?<!-- color-tokens:end -->/
-  if (!pattern.test(original)) throw new Error(`Missing generated section in ${path}`)
-  let next = original.replace(pattern, marker(content))
+  if (!pattern.test(source)) throw new Error(`Missing generated section in ${path}`)
+  let next = source.replace(pattern, marker(content))
   if (frontmatter) {
     next = `${frontmatter}\n\n${next.replace(/^---\n[\s\S]*?\n---\n\n?/, '')}`
   }
   if (process.argv.includes('--check')) {
-    if (next !== original) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
-  } else if (next !== original) await writeFile(url, next)
+    if (next !== source) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
+  } else if (next !== source) {
+    await writeFile(url, next.replace(/\n/g, eol))
+  }
 }
 await update('DESIGN.md', designContent, { frontmatter: buildFrontmatter() })
 await update('docs/design-language.md', detailContent)
