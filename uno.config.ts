@@ -107,22 +107,70 @@ const typographyConfig: TypographyOptions = {
   }
 }
 
-const themeColors = {
-  // Primary
-  primary: 'hsl(var(--primary) / <alpha-value>)',
-  // Foreground & background
-  foreground: 'hsl(var(--foreground) / <alpha-value>)',
-  background: 'hsl(var(--background) / <alpha-value>)',
-  muted: {
-    DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
-    foreground: 'hsl(var(--muted-foreground) / <alpha-value>)'
-  },
-  card: 'hsl(var(--card) / <alpha-value>)',
+// Every exposed token stays a HSL triplet so `hsl(var(--token) / alpha)` keeps
+// working. Pairs follow the shadcn convention: the base token is the surface,
+// `-foreground` is the text/icon color that sits on it.
+const hsl = (token: string) => `hsl(var(${token}) / <alpha-value>)`
 
-  // Basic
-  border: 'hsl(var(--border) / <alpha-value>)',
-  input: 'hsl(var(--input) / <alpha-value>)',
-  ring: 'hsl(var(--ring) / <alpha-value>)'
+const themeColors = {
+  // shadcn/ui theme tokens
+  background: hsl('--background'),
+  foreground: hsl('--foreground'),
+  card: { DEFAULT: hsl('--card'), foreground: hsl('--card-foreground') },
+  popover: { DEFAULT: hsl('--popover'), foreground: hsl('--popover-foreground') },
+  primary: {
+    DEFAULT: hsl('--primary'),
+    foreground: hsl('--primary-foreground'),
+    hover: hsl('--primary-hover'),
+    active: hsl('--primary-active')
+  },
+  secondary: { DEFAULT: hsl('--secondary'), foreground: hsl('--secondary-foreground') },
+  muted: { DEFAULT: hsl('--muted'), foreground: hsl('--muted-foreground') },
+  accent: { DEFAULT: hsl('--accent'), foreground: hsl('--accent-foreground') },
+  destructive: { DEFAULT: hsl('--destructive'), foreground: hsl('--destructive-foreground') },
+  border: hsl('--border'),
+  input: hsl('--input'),
+  ring: hsl('--ring'),
+  chart: {
+    1: hsl('--chart-1'),
+    2: hsl('--chart-2'),
+    3: hsl('--chart-3'),
+    4: hsl('--chart-4'),
+    5: hsl('--chart-5')
+  },
+  sidebar: {
+    DEFAULT: hsl('--sidebar'),
+    foreground: hsl('--sidebar-foreground'),
+    primary: { DEFAULT: hsl('--sidebar-primary'), foreground: hsl('--sidebar-primary-foreground') },
+    accent: { DEFAULT: hsl('--sidebar-accent'), foreground: hsl('--sidebar-accent-foreground') },
+    border: hsl('--sidebar-border'),
+    ring: hsl('--sidebar-ring')
+  },
+
+  // Site extensions
+  brand: hsl('--brand'),
+  status: {
+    info: {
+      DEFAULT: hsl('--status-info'),
+      foreground: hsl('--status-info'),
+      surface: hsl('--status-info-surface')
+    },
+    success: {
+      DEFAULT: hsl('--status-success'),
+      foreground: hsl('--status-success'),
+      surface: hsl('--status-success-surface')
+    },
+    warning: {
+      DEFAULT: hsl('--status-warning'),
+      foreground: hsl('--status-warning'),
+      surface: hsl('--status-warning-surface')
+    },
+    error: {
+      DEFAULT: hsl('--status-error'),
+      foreground: hsl('--status-error'),
+      surface: hsl('--status-error-surface')
+    }
+  }
 }
 
 const rules: Rule<object>[] = [

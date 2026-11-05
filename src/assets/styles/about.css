@@ -1,7 +1,7 @@
 .about-page {
-  color: var(--ink);
-  font-size: var(--reading-size);
-  line-height: var(--reading-leading);
+  color: hsl(var(--foreground));
+  font-size: var(--font-reading);
+  line-height: 1.8;
 }
 
 .about-profile {
@@ -35,16 +35,16 @@
 }
 
 .about-page a {
-  color: var(--leaf);
+  color: hsl(var(--primary));
   text-underline-offset: 4px;
 }
 
 .about-page a:hover {
-  color: var(--color-action-hover);
+  color: hsl(var(--primary-hover));
 }
 
 .about-page a:active {
-  color: var(--color-action-active);
+  color: hsl(var(--primary-active));
 }
 
 .about-profile__links a {
@@ -100,7 +100,7 @@
 }
 
 .about-tech-stack dt {
-  color: var(--quiet);
+  color: hsl(var(--muted-foreground));
 }
 
 .about-tech-stack dd {
@@ -110,7 +110,7 @@
 .about-comments {
   margin-top: 40px;
   padding-top: 28px;
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid hsl(var(--border));
 }
 
 @media (max-width: 680px) {

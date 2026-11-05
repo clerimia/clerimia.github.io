@@ -18,7 +18,7 @@ const { href, class: className, ariaLabel } = Astro.props
     align-items: center;
     gap: 6px;
     min-height: 44px;
-    color: var(--color-text-muted);
+    color: hsl(var(--muted-foreground));
     font-size: var(--font-ui);
     text-decoration: none;
     transition: color 200ms ease;
@@ -27,8 +27,8 @@ const { href, class: className, ariaLabel } = Astro.props
     transition: transform 200ms ease;
   }
   .text-arrow-link__arrow { flex: none; }
-  .text-arrow-link:hover, .text-arrow-link:focus-visible { color: var(--color-action); }
-  .text-arrow-link:active { color: var(--color-action-active); }
+  .text-arrow-link:hover, .text-arrow-link:focus-visible { color: hsl(var(--primary)); }
+  .text-arrow-link:active { color: hsl(var(--primary-active)); }
 
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .text-arrow-link:hover .text-arrow-link__label { transform: translateX(-3px); }

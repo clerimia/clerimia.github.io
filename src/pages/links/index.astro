@@ -143,10 +143,10 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
   .friend-info-copy {
     min-height: 44px;
     padding: 6px 16px;
-    border: 1px solid var(--color-border);
+    border: 1px solid hsl(var(--border));
     border-radius: var(--radius-control);
-    background: var(--color-surface);
-    color: var(--color-text);
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
     font-size: var(--font-ui);
     cursor: pointer;
     transition:
@@ -155,12 +155,12 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
   }
   .friend-info-copy:hover,
   .friend-info-copy:focus-visible {
-    color: var(--color-action);
-    border-color: var(--color-action);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary));
   }
   .friend-info-copy:active {
-    color: var(--color-action-active);
-    border-color: var(--color-action-active);
+    color: hsl(var(--primary-active));
+    border-color: hsl(var(--primary-active));
   }
   .friend-info {
     display: grid;
@@ -168,8 +168,8 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     gap: 4px 8px;
     margin: 20px 0 12px;
     padding-inline-start: 12px;
-    border-inline-start: 3px solid var(--rule);
-    color: var(--ink);
+    border-inline-start: 3px solid hsl(var(--border));
+    color: hsl(var(--foreground));
     font-size: 14px;
     font-style: normal;
   }

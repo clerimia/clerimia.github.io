@@ -1,8 +1,8 @@
 /* Shared feedback for header tools and profile social links. */
 .site-icon-button {
-  --icon-button-edge: var(--color-border);
+  --icon-button-edge: hsl(var(--border));
   position: relative;
-  color: var(--color-text);
+  color: hsl(var(--foreground));
   transition: color 200ms ease, transform 200ms ease;
 }
 
@@ -11,19 +11,19 @@
   position: absolute;
   inset: var(--icon-button-inset, 0px);
   border: 1px solid var(--icon-button-edge);
-  border-radius: var(--icon-button-radius, var(--radius-sm));
+  border-radius: var(--icon-button-radius, var(--radius-control));
   pointer-events: none;
   transition: border-color 200ms ease;
 }
 
 .site-icon-button:hover {
-  --icon-button-edge: var(--color-action);
-  color: var(--color-action);
+  --icon-button-edge: hsl(var(--primary));
+  color: hsl(var(--primary));
 }
 
 .site-icon-button:active {
-  --icon-button-edge: var(--color-action-active);
-  color: var(--color-action-active);
+  --icon-button-edge: hsl(var(--primary-active));
+  color: hsl(var(--primary-active));
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {

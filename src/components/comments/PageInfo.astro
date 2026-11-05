@@ -25,17 +25,17 @@ const { comment, view: _view, class: className, ...props } = Astro.props
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    color: var(--color-text-muted);
+    color: hsl(var(--muted-foreground));
     font-size: var(--font-ui);
     text-decoration: none;
     transition: color var(--motion-feedback) var(--motion-feedback-easing);
   }
   .comment-link:hover,
   .comment-link:focus-visible {
-    color: var(--color-action);
+    color: hsl(var(--primary));
   }
   .comment-link:focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 3px;
   }
   @media (prefers-reduced-motion: reduce) {

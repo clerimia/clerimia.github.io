@@ -1,7 +1,7 @@
 ---
 import { ThemeProvider } from 'astro-pure/components/basic'
-import { Button } from 'astro-pure/user'
 import type { SiteMeta } from 'astro-pure/types'
+import { Button } from 'astro-pure/user'
 import BaseHead from '@/components/BaseHead.astro'
 import SiteFooter from '@/components/SiteFooter.astro'
 import SiteHeader from '@/components/SiteHeader.astro'
@@ -16,12 +16,24 @@ import '@/assets/styles/header.css'
 import '@/assets/styles/icon-button.css'
 
 interface Props {
-  meta: SiteMeta
+  meta: SiteMeta & {
+    publishedDate?: string
+    updatedDate?: string
+    tags?: string[]
+  }
   back?: string
 }
 
 const {
-  meta: { articleDate, description = config.description, ogImage, title },
+  meta: {
+    articleDate,
+    description = config.description,
+    ogImage,
+    publishedDate,
+    title,
+    updatedDate,
+    tags
+  },
   back,
   ...props
 } = Astro.props
@@ -30,16 +42,13 @@ const isHome = Astro.url.pathname === '/'
 
 <html lang={config.locale.lang}>
   <head>
-    <BaseHead {articleDate} {description} {ogImage} {title} />
+    <BaseHead {articleDate} {description} {ogImage} {publishedDate} {title} {updatedDate} {tags} />
     <ThemeProvider />
   </head>
 
   <body class='site-body' {...props}>
     <a class='skip-link' href='#main-content'>跳到正文</a>
-    <div
-      id='main-container'
-      class='site-shell'
-    >
+    <div id='main-container' class='site-shell'>
       <SiteHeader />
       <div
         id='main-content'

@@ -1,13 +1,15 @@
 {
   "name": "clerimia-blog",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && node scripts/postbuild.mjs",
     "preview": "astro preview",
+    "preview:local": "node scripts/preview-local.mjs",
+    "verify:infra": "node --test tests/infrastructure.test.mjs",
     "sync": "astro sync",
     "check": "astro check",
     "astro": "astro",

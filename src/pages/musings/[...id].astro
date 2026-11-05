@@ -1,12 +1,13 @@
 ---
-import { type CollectionEntry, render } from 'astro:content'
+import { render, type CollectionEntry } from 'astro:content'
+
 import { FormattedDate } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import PostLayout from '@/layouts/BlogPost.astro'
-import { integ } from '@/site-config'
-import { getMusings } from '@/utils/posts'
 import TagLinks from '@/components/tags/TagLinks.astro'
+import { getMusings } from '@/utils/posts'
+import { integ } from '@/site-config'
 
 export const prerender = true
 
@@ -33,28 +34,41 @@ const { title, publishDate } = post.data
 
 const meta = {
   title: title || '随笔',
-  description: post.data.description || '日记随感与短随想。'
+  description: post.data.description || '日记随感与短随想。',
+  publishedDate: post.data.publishDate.toISOString(),
+  updatedDate: post.data.updatedDate?.toISOString(),
+  tags: post.data.tags
 }
 ---
 
-{post.data.section === 'essays' ? (
-  <PostLayout post={post as unknown as CollectionEntry<'blog'>} posts={posts as unknown as CollectionEntry<'blog'>[]} {headings} {remarkPluginFrontmatter}>
-    <Content />
-  </PostLayout>
-) : (
-<PageLayout {meta} back='/musings'>
-  <main class='site-page-main'>
-    <div id='content-header' class='animate'>
-      <div class='flex flex-wrap items-baseline gap-x-4'>
-        <FormattedDate date={publishDate} class='text-sm' />
-        {title && <h1 class='text-3xl font-medium'>{title}</h1>}
-      </div>
-    </div>
-
-    <div id='content' class={cn('animate mt-6 max-w-none md:min-w-[45ch]', integ.typography.class)}>
+{
+  post.data.section === 'essays' ? (
+    <PostLayout
+      post={post as unknown as CollectionEntry<'blog'>}
+      posts={posts as unknown as CollectionEntry<'blog'>[]}
+      {headings}
+      {remarkPluginFrontmatter}
+    >
       <Content />
-    </div>
-    <TagLinks {post} class='mt-6' />
-  </main>
-</PageLayout>
-)}
+    </PostLayout>
+  ) : (
+    <PageLayout {meta} back='/musings'>
+      <main class='site-page-main'>
+        <div id='content-header' class='animate'>
+          <div class='flex flex-wrap items-baseline gap-x-4'>
+            <FormattedDate date={publishDate} class='text-sm' />
+            {title && <h1 class='text-3xl font-medium'>{title}</h1>}
+          </div>
+        </div>
+
+        <div
+          id='content'
+          class={cn('animate mt-6 max-w-none md:min-w-[45ch]', integ.typography.class)}
+        >
+          <Content />
+        </div>
+        <TagLinks {post} class='mt-6' />
+      </main>
+    </PageLayout>
+  )
+}

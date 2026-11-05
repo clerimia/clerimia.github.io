@@ -7,7 +7,11 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
 
 interface Props {
-  meta: SiteMeta
+  meta: SiteMeta & {
+    publishedDate?: string
+    updatedDate?: string
+    tags?: string[]
+  }
   back?: string
   hasSidebar?: boolean
   searchIndex?: boolean
@@ -211,10 +215,10 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     width: 44px;
     height: 44px;
     padding: 0;
-    border: 1px solid var(--color-border);
+    border: 1px solid hsl(var(--border));
     border-radius: 50%;
-    background: var(--color-surface);
-    color: var(--color-text-muted);
+    background: hsl(var(--card));
+    color: hsl(var(--muted-foreground));
     cursor: pointer;
     transition:
       color var(--motion-feedback) var(--motion-feedback-easing),
@@ -224,8 +228,8 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     display: none;
   }
   .article-directory-fab:hover {
-    color: var(--color-action);
-    border-color: var(--color-action);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary));
   }
   .article-directory-fab :global(svg) {
     width: 19px;
@@ -252,7 +256,7 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
   }
 
   .article-directory-fab:focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 3px;
   }
 
@@ -271,9 +275,9 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
     padding: max(var(--space-6), env(safe-area-inset-top, 0px))
       max(var(--space-4), env(safe-area-inset-right, 0px))
       max(var(--space-6), env(safe-area-inset-bottom, 0px)) var(--space-6);
-    border-left: 1px solid var(--color-border);
+    border-left: 1px solid hsl(var(--border));
     border-radius: var(--radius-panel) 0 0 var(--radius-panel);
-    background: var(--color-surface);
+    background: hsl(var(--card));
     opacity: 0;
     visibility: hidden;
     pointer-events: none;

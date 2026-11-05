@@ -28,9 +28,9 @@ span.katex-display {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: var(--radius-code);
-  border: 1px solid var(--card-edge);
-  background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1)) !important;
-  color: hsl(var(--code-fg));
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / var(--un-bg-opacity, 1)) !important;
+  color: hsl(var(--foreground));
   display: flex;
   flex-direction: column;
 
@@ -58,7 +58,7 @@ span.katex-display {
         bottom: 0;
         content: '';
         display: block;
-        background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1));
+        background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
         z-index: 1;
       }
       & .line {
@@ -68,7 +68,7 @@ span.katex-display {
           content: counter(step);
           counter-increment: step;
           color: hsl(var(--muted-foreground) / 0.7);
-          background-color: hsl(var(--code-bg) / var(--un-bg-opacity, 1));
+          background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
           inset-inline-start: 0;
           justify-content: end;
           display: inline-flex;
@@ -242,7 +242,7 @@ span.katex-display {
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        hsl(var(--code-bg) / var(--un-bg-opacity, 1)) 60%
+        hsl(var(--muted) / var(--un-bg-opacity, 1)) 60%
       );
     }
   }

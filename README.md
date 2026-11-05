@@ -7,18 +7,18 @@
 
 ## 技术栈
 
-| 能力 | 方案 |
-| --- | --- |
-| 框架 | Astro 6（默认零 JS，静态输出） |
-| 交互 | 原生 JS（`is:inline` script，**不使用任何前端框架**） |
-| 样式 | UnoCSS + 主题内置排版（typography） |
-| 内容 | Content Collections（`blog` / `docs` / `musings`） |
-| 代码高亮 | Shiki（自带行号、语言标签、复制按钮、折叠） |
-| 数学公式 | KaTeX |
-| 全文搜索 | Pagefind |
-| 评论 | Giscus（GitHub Discussions） |
-| 图片灯箱 | medium-zoom |
-| 部署 | GitHub Pages（GitHub Actions 自动构建） |
+| 能力     | 方案                                                  |
+| -------- | ----------------------------------------------------- |
+| 框架     | Astro 6（默认零 JS，静态输出）                        |
+| 交互     | 原生 JS（`is:inline` script，**不使用任何前端框架**） |
+| 样式     | UnoCSS + 主题内置排版（typography）                   |
+| 内容     | Content Collections（`blog` / `docs` / `musings`）    |
+| 代码高亮 | Shiki（自带行号、语言标签、复制按钮、折叠）           |
+| 数学公式 | KaTeX                                                 |
+| 全文搜索 | Pagefind                                              |
+| 评论     | Giscus（GitHub Discussions）                          |
+| 图片灯箱 | medium-zoom                                           |
+| 部署     | GitHub Pages（GitHub Actions 自动构建）               |
 
 > ⚠️ 两个必须保留的配置，改动前请先读注释：
 >
@@ -54,12 +54,29 @@ public/
 ## 常用命令
 
 ```bash
-npm run dev      # 开发预览 http://localhost:4321
-npm run build    # 类型检查 + 构建（输出 dist/，并生成 Pagefind 索引）
-npm run preview  # 本地预览构建产物
-npm run check    # 仅做类型检查
-npm run format   # Prettier 格式化
+npm run dev           # 开发预览 http://localhost:4321
+npm run build         # 类型检查 + 构建 + sitemap 后处理（输出 dist/，并生成 Pagefind 索引）
+npm run preview       # Astro 预览构建产物
+npm run preview:local # 零依赖静态服务器，模拟 GitHub Pages 的 dist/
+npm run check         # 仅做类型检查
+npm run verify:infra  # 构建后校验 sitemap、结构化数据和 Agent 接口
+npm run format        # Prettier 格式化
 ```
+
+## 基础设施
+
+站点保持 Astro 静态输出和 GitHub Pages 部署，不引入 React islands 或服务端运行时。
+
+- **构建**：`scripts/postbuild.mjs` 会从 sitemap 移除搜索页、404、API、`.well-known` 和旧地址跳转页，并按内容 frontmatter 的 `updatedDate` / `publishDate` 补上 `lastmod`。
+- **设计契约**：[DESIGN.md](DESIGN.md) 顶部 frontmatter 由 `color-tokens.css` 与 `app.css` 生成，包含颜色、排版、圆角、间距和布局；主题令牌采用 shadcn/ui 的命名（`background` / `foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar-*`），本站的 `brand`、`primary-hover/active`、`status-*`、`term-*` 作为扩展。
+- **工具类**：UnoCSS 暴露完整的前景/背景配对，组件优先使用 `bg-primary`、`text-primary-foreground`、`text-status-error` 这类语义类，而不是直接写色值。
+- **SEO**：页面输出 canonical、Open Graph、Twitter Card 和 schema.org JSON-LD；文章包含 `BlogPosting`，搜索页与 404 标记为 `noindex`。
+- **Agent 接口**：构建时生成静态 JSON/Markdown，部署后可直接读取：
+  - `/design.md`：设计思想与规范入口
+  - `/api/knowledge/index.json`：公开内容索引
+  - `/api/knowledge/{collection}/{id}.json`：单篇内容的元数据与 Markdown 正文
+  - `/.well-known/site-manifest.json`：站点信息与接口清单
+- **校验**：`tests/infrastructure.test.mjs` 在部署构建中检查上述接口、sitemap 排除项和结构化数据。
 
 ## 写一篇文章
 
@@ -73,7 +90,6 @@ publishDate: '2026-09-17'
 tags: ['标签一', '标签二']
 draft: false
 ---
-
 正文用普通 Markdown 写即可。
 ```
 
@@ -86,12 +102,12 @@ draft: false
 
 ```yaml
 ---
-title: '开随笔'        # 可省略，省略时列表只显示日期与正文预览
+title: '开随笔' # 可省略，省略时列表只显示日期与正文预览
 publishDate: '2026-10-04'
 ---
-
 正文一两段即可。
 ```
+
 ## 自定义
 
 - **站点信息 / 导航 / 社交**：`src/site.config.ts`

@@ -9,7 +9,7 @@
     width: 20px;
     height: 20px;
     flex: none;
-    color: var(--color-text-muted);
+    color: hsl(var(--muted-foreground));
     stroke: currentColor;
     stroke-width: 1.75;
     stroke-linecap: round;
@@ -30,7 +30,7 @@
 
   @media (hover: hover) {
     :global(.direction-arrow-trigger:hover) .direction-arrow {
-      color: var(--color-action);
+      color: hsl(var(--primary));
     }
 
     :global(.direction-arrow-trigger:hover) .direction-arrow__tip {
@@ -43,7 +43,7 @@
   }
 
   :global(.direction-arrow-trigger:focus-visible) .direction-arrow {
-    color: var(--color-action);
+    color: hsl(var(--primary));
   }
 
   :global(.direction-arrow-trigger:focus-visible) .direction-arrow__tip {
