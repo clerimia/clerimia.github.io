@@ -1,5 +1,5 @@
 // Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
-// Modified for local imports and site-only APIs; see docs/rebuild/third-party.md.
+// Modified for local imports and site-only APIs.
 // SVG paths by MingCute Design, Apache-2.0. Only the icons used on this site.
 export const Icons = {
   // mingcute:github-line

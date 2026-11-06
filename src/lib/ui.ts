@@ -1,5 +1,5 @@
 // Date formatting adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
-// Modified to use local configuration; see docs/rebuild/third-party.md.
+// Modified to use local configuration.
 import config from '@/site-config'
 
 export { cn } from '@/lib/utils'

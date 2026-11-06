@@ -1,6 +1,6 @@
 // Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
 // Modified to preserve collection-specific types and retain only used helpers.
-// See docs/rebuild/third-party.md.
+// Upstream: Astro Theme Pure, Apache-2.0.
 import { getCollection, type CollectionEntry, type CollectionKey } from 'astro:content'
 
 type Entry = CollectionEntry<CollectionKey>

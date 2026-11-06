@@ -1,6 +1,6 @@
 ---
 // Local integration for medium-zoom; upstream behavior from Astro Pure 1.4.7.
-// Modified to bundle the installed library; see docs/rebuild/third-party.md.
+// Modified to bundle the installed library.
 import { integ } from '@/site-config'
 interface Props { selector?: string; background?: string }
 const { selector = integ.mediumZoom.selector, background = 'hsl(var(--background) / 0.8)' } = Astro.props
