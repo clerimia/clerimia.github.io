@@ -35,11 +35,8 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Verify published routes survived the rebuild
-        run: npm run verify:urls
-
-      - name: Verify article bodies stay server-rendered
-        run: npm run verify:islands
+      - name: Verify published routes and prerendered articles
+        run: npm run verify:build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
