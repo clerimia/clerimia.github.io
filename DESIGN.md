@@ -267,7 +267,7 @@ layout:
 
 ### 终端子主题
 
-终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/assets/styles/terminal.css)。
+终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/styles/site/terminal.css)。
 
 ### 实现锚点
 

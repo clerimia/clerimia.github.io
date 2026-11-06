@@ -1,10 +1,10 @@
 @import 'tailwindcss';
 @import './tokens.css';
 @import './prose.css';
-@import '../assets/styles/global.css';
-@import '../assets/styles/app.css';
-@import '../assets/styles/header.css';
-@import '../assets/styles/icon-button.css';
+@import './old-global.css';
+@import './site/app.css';
+@import './site/header.css';
+@import './site/icon-button.css';
 
 @plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));

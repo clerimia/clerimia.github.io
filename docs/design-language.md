@@ -224,7 +224,7 @@ Display、Page title、Section 和 Lead 的字号在表中两端之间随视口�
 
 目录当前项以行动色文字和左侧竖线标记阅读位置；指针悬停只改变文字颜色，日间使用 `--primary-active`、夜间使用 `--primary-hover`，当前项悬停时竖线保持不变。键盘焦点使用独立焦点环，触屏不依赖悬停反馈。
 
-实现使用 `src/assets/styles/header.css`，不依赖前端框架。
+实现使用 `src/styles/site/header.css`，不依赖前端框架。
 
 ## 05 动效与交互
 

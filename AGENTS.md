@@ -16,7 +16,7 @@
 
 界面问题很少是「不够显眼」，更多是同一个意思说了两遍。注意力有预算，花在一处就少一处；组件的样式、位置和反馈强度，都应该按它在这屏里该占多少注意力来定。新增或修改可交互元素时按顺序判断：
 
-1. **找同类。** 先 grep `src/assets/styles/` 与现有组件，再查 [docs/design-language.md](docs/design-language.md) 里的同名约定。同样的动作已经有表达就复用：带箭头的次级跳转用 `TextArrowLink` 的「辅助色 → 操作色」，当前页用 `aria-current`，浮层入口用 `data-terminal-trigger`。
+1. **找同类。** 先 grep `src/styles/site/` 与现有组件，再查 [docs/design-language.md](docs/design-language.md) 里的同名约定。同样的动作已经有表达就复用：带箭头的次级跳转用 `TextArrowLink` 的「辅助色 → 操作色」，当前页用 `aria-current`，浮层入口用 `data-terminal-trigger`。
 2. **定语义。** 先说出这个控件是什么：会离开当前页的链接、打开浮层的按钮、还是切换状态的开关。形式跟着语义走——下划线属于链接；按钮和浮层入口用颜色、字形或图标表示可交互。
 3. **一个状态只用一个通道。** 层级从字重、颜色、位置里选一个承担，不靠叠加（颜色 + 下划线 + 背景）把它变响。颜色已经说清楚的地方，就停在这里。
 4. **强度匹配稀有度。** 常驻状态（终端输入框聚焦）用低强度局部信号——光标、`1px` 边线；一次性事件（浮层打开）才配完整焦点环。
@@ -32,7 +32,7 @@
 
 ## 开发约定
 
-- **样式与设计**：使用 UnoCSS + `src/assets/styles/*.css`；现有 token 在 `src/assets/styles/app.css` 的 `:root` / `.dark`。先检查设计系统和已有 token、组件；符合目标的优先复用，不符合规范的按任务范围逐步调整。新增视觉规则要说明用途，不随意引入缺少职责的渐变、阴影、装饰或新配色。
+- **样式与设计**：使用 UnoCSS + `src/styles/site/*.css`；现有 token 在 `src/styles/site/app.css` 的 `:root` / `.dark`。先检查设计系统和已有 token、组件；符合目标的优先复用，不符合规范的按任务范围逐步调整。新增视觉规则要说明用途，不随意引入缺少职责的渐变、阴影、装饰或新配色。
 - **交互**：原生 JS，`is:inline` script；项目不使用前端框架。
 - **主题**：若叶睦（日间）安静、轻盈、柔和；墨提斯（夜间）开放、活力、戏剧性。绿色是跨主题的共同身份；行动色日间为绿、夜间为酒红，强调发生在合适的操作反馈中，酒红不等同错误。两主题共用信息架构、布局、排版与组件语言；修改相关 UI 时检查两套主题。
 - **内容**：博客 `src/content/blog/`，笔记 `src/content/notes/`，短随笔 `src/content/musings/`；schema 在 `src/content.config.ts`。
