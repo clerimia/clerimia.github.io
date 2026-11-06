@@ -23,11 +23,15 @@ import {
   transformerNotationHighlight,
   transformerRemoveNotationEscape
 } from './src/plugins/shiki-official/transformers.ts'
+import { loadEnv } from 'vite'
+
+// SITE_URL is the one deploy-time secret-ish input; everything else derives from it.
+const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), 'SITE_')
 
 // https://astro.build/config
 export default defineConfig({
   // [Basic]
-  site: process.env.SITE_URL ?? 'https://clerimia.github.io',
+  site: env.SITE_URL ?? 'https://clerimia.github.io',
   output: 'static',
   scopedStyleStrategy: 'where',
   trailingSlash: 'never',
