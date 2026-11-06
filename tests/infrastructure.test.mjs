@@ -31,7 +31,7 @@ async function htmlFor(pathname) {
 
 test('agent endpoints are present and readable', async () => {
   const design = await readFile(file('design.md'), 'utf8')
-  assert.match(design, /^---\n[\s\S]*?\n---\n\n# /, 'design.md should keep frontmatter and a Markdown body')
+  assert.match(design, /^---\r?\n[\s\S]*?\r?\n---\r?\n\r?\n# /, 'design.md should keep frontmatter and a Markdown body')
 
   const manifest = JSON.parse(await readFile(file('.well-known/site-manifest.json'), 'utf8'))
   assert.equal(manifest.endpoints.design, '/design.md')

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>clerimia · 设计系统</title>
-    <link rel="stylesheet" href="../src/assets/styles/color-tokens.css" />
+    <link rel="stylesheet" href="../src/styles/tokens.css" />
     <style>
       @font-face {
         font-family: Satoshi;
@@ -904,9 +904,9 @@
               <span class="pill" style="display:inline-block;margin-top:12px;background:hsl(var(--primary));color:hsl(var(--primary-foreground))">主要行动</span>
             </article>
           </div>
-          <p>主题令牌沿用 shadcn/ui 的命名与配对（background/foreground、card、popover、primary、secondary、muted、accent、destructive、border/input/ring、chart-1–5、sidebar）；brand、primary-hover/active、status、term 是本站扩展。值保留 HSL 通道以支持 alpha 与 UnoCSS；直接写 CSS 时使用 <code>hsl(var(--token))</code>。</p>
+          <p>主题令牌沿用 shadcn/ui 的命名与配对（background/foreground、card、popover、primary、secondary、muted、accent、destructive、border/input/ring、chart-1–5、sidebar）；brand、primary-hover/active、status、term 是本站扩展。值保留 HSL 通道以支持 alpha 与 Tailwind 4；直接写 CSS 时使用 <code>hsl(var(--token))</code>。</p>
           <p>品牌保持绿色；中性色组织阅读层级；信息、成功、警告、错误使用对应前景与弱表面；行动状态与焦点独立。数据色用于无序分类，需搭配标签、线型或纹理。状态提示和真实图表仍待实际组件验证。</p>
-          <p>UnoCSS 暴露完整的前景/背景配对，以及 <code>brand</code>、<code>status-*</code>、<code>chart-*</code>、<code>sidebar-*</code> 语义工具类；组件优先使用这些类，而不是直接写色值。</p>
+          <p>Tailwind 4 暴露完整的前景/背景配对，以及 <code>brand</code>、<code>status-*</code>、<code>chart-*</code>、<code>sidebar-*</code> 语义工具类；组件优先使用这些类，而不是直接写色值。</p>
           <div class="subhead"><div><h3>基础色板</h3><p>色块直接引用 CSS 通道，色值由同一来源生成。</p></div></div>
           <div class="palette-swatches">
             <div class="palette-swatch"><span style="background:hsl(var(--palette-neutral-0))" aria-hidden="true"></span><code>--palette-neutral-0</code><small>#ffffff</small></div>
@@ -1078,6 +1078,8 @@
               <p>单位 px / 行高；表中是宽屏与窄屏两端，主要标题字号在其间平滑变化，组件按职责逐步使用。</p>
             </div>
           </div>
+          <p><code>src/styles/tokens.css</code> 集中定义颜色、字体、间距、布局和动效；<code>@theme inline</code> 将 49 个双主题语义色映射为 Tailwind 4 工具类。每个角色使用 <code>--font-{role}</code>、<code>--leading-{role}</code>、<code>--weight-{role}</code>、<code>--tracking-{role}</code> 定义字号、行高、字重、字距，<code>text-{role}</code> 一次应用四项。标题角色 600，其余 400，默认字距 0em；页面标题在 ≤ 680px 仍采用 1.3 行高，正文组件覆盖保留。主题由 <code>.dark</code> 类切换，旧 CSS 的 HSL 通道及终端完整颜色继续兼容。</p>
+          <p><code>src/styles/global.css</code> 加载 Tailwind 4、<code>@tailwindcss/typography</code>、token、<code>prose.css</code> 和现有站点样式。正文保留标题锚点、现代行内代码、引用、表格、列表、图片、键盘标记与 Shiki 覆盖。JS 通过 <code>src/lib/tokens.ts</code> 复用媒体查询并从计算样式读取动效，不复制颜色和排版值。（迁移已实现；静态契约测试验证，重建后的构建和双主题浏览器回归待主流程验证。）</p>
           <p class="scroll-hint">表格可左右滑动查看完整内容 →</p>
           <div class="tablebox" tabindex="0" role="region" aria-label="可横向滚动的字号表">
             <table>

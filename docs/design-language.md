@@ -2,7 +2,7 @@
 
 本文件是设计系统的**文字规范**：定义色彩、排版、尺度、组件和验证方法，供设计与实现查阅。[可视化规范](design-language.html) 展示同一套规则及样例，两者应保持一致。[DESIGN.md](../DESIGN.md) 记录灵感和大方向，[AGENTS.md](../AGENTS.md) 是仓库入口与工作约定。
 
-本规范描述当前设计规则；实施覆盖范围和验证结果应另行记录。色彩以 `src/assets/styles/color-tokens.css` 为唯一色值来源，修改令牌后运行 `node scripts/sync-color-docs.mjs` 生成三份文档的色彩章节；其他规则调整时同步更新文字与可视化规范。
+本规范描述当前设计规则；实施覆盖范围和验证结果应另行记录。色彩以 `src/styles/tokens.css` 为唯一色值来源，修改令牌后运行 `node scripts/sync-color-docs.mjs` 生成三份文档的色彩章节；其他规则调整时同步更新文字与可视化规范。
 
 ## 理念与主题
 
@@ -16,9 +16,9 @@
 <!-- color-tokens:start -->
 ## 01 色彩系统
 
-色彩首先传递信息：身份、阅读层级、反馈、操作状态和数据关系各自命名。`src/assets/styles/color-tokens.css` 是唯一色值来源。基础色板 `--palette-*` 保存 HSL 通道，主题令牌直接引用色板；组件使用 `hsl(var(--token))` 或 UnoCSS 语义类，不再维护第二套颜色别名。色阶数字是固定标识，不承诺均匀亮度，也不保证对比度。
+色彩首先传递信息：身份、阅读层级、反馈、操作状态和数据关系各自命名。`src/styles/tokens.css` 是唯一色值来源。基础色板 `--palette-*` 保存 HSL 通道，主题令牌直接引用色板；组件使用 `hsl(var(--token))` 或 Tailwind 4 语义类，不再维护第二套颜色别名。色阶数字是固定标识，不承诺均匀亮度，也不保证对比度。
 
-主题令牌沿用 shadcn/ui 的命名与前景/背景配对：`--background` / `--foreground`、`--card` / `--card-foreground`、`--popover` / `--popover-foreground`、`--primary` / `--primary-foreground`、`--secondary` / `--secondary-foreground`、`--muted` / `--muted-foreground`、`--accent` / `--accent-foreground`、`--destructive` / `--destructive-foreground`、`--border`、`--input`、`--ring`、`--chart-1–5` 与 `--sidebar-*`。`--brand`、`--primary-hover`、`--primary-active`、`--status-*` 与终端 `--term-*` 是本站扩展。值保存为 HSL 通道，以兼容 `hsl(var(--primary) / alpha)` 和 UnoCSS；终端子主题的 `--term-*` 使用完整颜色。
+主题令牌沿用 shadcn/ui 的命名与前景/背景配对：`--background` / `--foreground`、`--card` / `--card-foreground`、`--popover` / `--popover-foreground`、`--primary` / `--primary-foreground`、`--secondary` / `--secondary-foreground`、`--muted` / `--muted-foreground`、`--accent` / `--accent-foreground`、`--destructive` / `--destructive-foreground`、`--border`、`--input`、`--ring`、`--chart-1–5` 与 `--sidebar-*`。`--brand`、`--primary-hover`、`--primary-active`、`--status-*` 与终端 `--term-*` 是本站扩展。值保存为 HSL 通道，以兼容 `hsl(var(--primary) / alpha)` 和 Tailwind 4；终端子主题的 `--term-*` 使用完整颜色。
 
 | 类别 | 色板与用途 |
 | --- | --- |
@@ -135,7 +135,7 @@
 
 每个表面令牌都有对应的 `-foreground`：`background` / `foreground`、`card` / `card-foreground`、`popover` / `popover-foreground`、`primary` / `primary-foreground`、`secondary` / `secondary-foreground`、`muted` / `muted-foreground`、`accent` / `accent-foreground`、`destructive` / `destructive-foreground`，以及 `sidebar-*`。状态文字使用 `--status-*`，弱表面使用 `--status-*-surface`。状态表面的色值已定义并经过纯色对比计算，尚未在实际提示组件中验证。
 
-`--background`、`--primary`、`--ring` 等仍是 HSL 通道，可以用于 `hsl(var(--primary) / 0.5)`。深色主题的 `--muted` 使用面板色，与 `--secondary` 选择表面分开；`--accent` 使用行动弱表面。UnoCSS 的 `theme.colors` 暴露完整配对以及 `brand`、`status-*`、`chart-*`、`sidebar-*`；组件优先使用语义工具类，避免直接写色值。
+`--background`、`--primary`、`--ring` 等仍是 HSL 通道，可以用于 `hsl(var(--primary) / 0.5)`。深色主题的 `--muted` 使用面板色，与 `--secondary` 选择表面分开；`--accent` 使用行动弱表面。Tailwind 4 的 `@theme inline` 暴露完整配对以及 `brand`、`status-*`、`chart-*`、`sidebar-*`；组件优先使用语义工具类，避免直接写色值。
 
 ### 数据、对比度与使用边界
 
@@ -158,6 +158,10 @@
 | Reading `--font-reading` | 16 / 1.8 | 16 / 1.8 | 长文正文 |
 | UI `--font-ui` | 14 / 1.6 | 14 / 1.6 | 导航、按钮、短摘要 |
 | Meta `--font-meta` | 12 / 1.5 | 12 / 1.5 | 日期与辅助信息 |
+
+实现约定：`src/styles/tokens.css` 集中定义颜色、字体、间距、布局和动效；`@theme inline` 将 49 个双主题语义色映射为 Tailwind 4 工具类。每个排版角色同时定义 `--font-{role}`（字号）、`--leading-{role}`、`--weight-{role}`、`--tracking-{role}`；`text-{role}` 一次应用这四项。标题角色为 600，其余为 400，默认字距为 `0em`；正文原有组件覆盖继续保留。页面标题在 `≤ 680px` 的现有规则仍采用 1.3 行高。主题由 `.dark` 类切换，颜色继续兼容旧 CSS 的 HSL 通道，终端使用完整颜色。
+
+样式入口为 `src/styles/global.css`，加载 Tailwind 4、`@tailwindcss/typography`、token、`prose.css` 和现有站点样式。`prose.css` 保留原 typography 的标题锚点、现代行内代码、引用、表格、列表、图片与键盘标记覆盖，Shiki 样式继续保留。JS 交互通过 `src/lib/tokens.ts` 复用媒体查询并从计算样式读取动效时长，不复制颜色和排版值。（迁移已实现；静态契约测试验证，重建后的构建和双主题浏览器回归待主流程验证。）
 
 Display、Page title、Section 和 Lead 的字号在表中两端之间随视口平滑变化，避免在 680px 两侧突然跳变；表中的窄屏值是下限而不是整个手机区间的固定值。宽屏文章列先比较 680–760px 与真实中英文行长，手机正文随可用宽度收缩；12px 仅用于少量非关键元信息。按内容检查字号、换行、字重与间距，不因为字号表存在就机械套用。
 

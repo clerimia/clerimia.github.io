@@ -1,0 +1,17 @@
+---
+import QRCode from 'qrcode'
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'div'> & { content?: string }
+const { content = Astro.url.href, class: className, ...props } = Astro.props
+// Render locally at build time: sharing works without a third-party script request.
+const svg = await QRCode.toString(content, { type: 'svg', errorCorrectionLevel: 'H', margin: 4, width: 256 })
+---
+
+<div id='qrcode-container' class={className} {...props}>
+  <span role='img' aria-label='本文链接二维码' set:html={svg} />
+</div>
+
+<style>
+  #qrcode-container :global(svg) { display: block; width: 100%; height: auto; }
+</style>

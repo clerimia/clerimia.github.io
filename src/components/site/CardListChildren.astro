@@ -1,0 +1,37 @@
+---
+// Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
+// Modified for local imports and site-only APIs; see docs/rebuild/third-party.md.
+import type { HTMLTag, Polymorphic } from 'astro/types'
+
+import type { CardList } from '@/lib/site-types'
+import { cn } from '@/utils/ui'
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+  main?: boolean
+  children: CardList
+}
+const { main = false, children } = Astro.props
+---
+
+<ul class={cn('flex flex-col gap-y-1', !main && 'subitem list-disc ms-5')}>
+  {
+    children.map((child: CardList[number]) => {
+      const Tag = child.link ? 'a' : 'p'
+      return (
+        <li>
+          <Tag
+            href={child.link}
+            class={cn(
+              'block',
+              main ? 'text-foreground' : 'text-muted-foreground',
+              Tag == 'p' && 'mb-2 mt-1'
+            )}
+          >
+            {child.title}
+          </Tag>
+          {child.children && child.children.length > 0 && <Astro.self children={child.children} />}
+        </li>
+      )
+    })
+  }
+</ul>

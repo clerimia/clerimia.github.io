@@ -1,16 +1,15 @@
 import { readFile, writeFile } from 'node:fs/promises'
 
 // CSS is the only color source. Regenerate the marked sections after changing tokens.
-const css = await readFile(new URL('../src/assets/styles/color-tokens.css', import.meta.url), 'utf8')
+const css = await readFile(new URL('../src/styles/tokens.css', import.meta.url), 'utf8')
 const sections = [...css.matchAll(/(?:^|\n)(:root, \.token-theme|\.dark)\s*\{([^}]*)\}/g)]
 if (sections.length !== 2) throw new Error('Expected light and dark token blocks')
 const declarations = (text) => Object.fromEntries([...text.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, key, value]) => [key, value.trim()]))
 const root = declarations(sections[0][2])
 const dark = { ...root, ...declarations(sections[1][2]) }
 
-const appCss = await readFile(new URL('../src/assets/styles/app.css', import.meta.url), 'utf8')
-const appRoot = appCss.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1]
-if (!appRoot) throw new Error('Expected :root tokens in app.css')
+const appRoot = css.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1]
+if (!appRoot) throw new Error('Expected shared :root scales in tokens.css')
 const appTokens = declarations(appRoot)
 const scale = (name, visited = []) => {
   if (visited.includes(name)) throw new Error(`Circular scale token: ${name}`)
@@ -20,8 +19,7 @@ const scale = (name, visited = []) => {
 }
 
 // The frontmatter is a machine-readable contract for agents and design tools.
-// Colors come from color-tokens.css; scales come from app.css. Line heights and
-// weights are the typography decisions recorded in docs/design-language.md.
+// Colors and all four typography values come from tokens.css.
 const yamlValue = (value) => {
   const text = String(value)
   return /^[\d.]+(?:px|ms)?$/.test(text) ? text : `'${text.replace(/'/g, "''")}'`
@@ -74,16 +72,8 @@ const extensionColors = [
   ['term-chrome-edge', '--term-chrome-edge'],
   ['term-foreground', '--term-foreground']
 ]
-const typography = [
-  ['display', '--font-display', 600, '1.2'],
-  ['page-title', '--font-page-title', 600, '1.25'],
-  ['section', '--font-section', 600, '1.35'],
-  ['item-title', '--font-item-title', 600, '1.45'],
-  ['lead', '--font-lead', 400, '1.75'],
-  ['reading', '--font-reading', 400, '1.8'],
-  ['ui', '--font-ui', 400, '1.6'],
-  ['meta', '--font-meta', 400, '1.5']
-]
+const typography = ['display', 'page-title', 'section', 'item-title', 'lead', 'reading', 'ui', 'meta']
+
 const rounded = [
   ['base', '--radius'],
   ['code', '--radius-code'],
@@ -135,13 +125,14 @@ function buildFrontmatter() {
     lines.push(`  ${name}: ${yamlValue(hex(token, dark))}`)
   }
   lines.push('typography:')
-  for (const [role, token, weight, leading] of typography) {
+  for (const role of typography) {
     lines.push(
       `  ${role}:`,
       '    fontFamily: Satoshi',
-      `    fontSize: ${yamlValue(scale(token))}`,
-      `    fontWeight: ${weight}`,
-      `    lineHeight: ${leading}`
+      `    fontSize: ${yamlValue(scale(`--font-${role}`))}`,
+      `    fontWeight: ${scale(`--weight-${role}`)}`,
+      `    lineHeight: ${scale(`--leading-${role}`)}`,
+      `    letterSpacing: ${yamlValue(scale(`--tracking-${role}`))}`
     )
   }
   lines.push('rounded:')
@@ -218,7 +209,7 @@ const overview = rows.filter(([name]) => ['background', 'foreground', 'card', 'm
 const marker = (content) => `<!-- color-tokens:start -->\n${content}\n<!-- color-tokens:end -->`
 const designContent = `## 2. 色彩与信息职责
 
-色彩的首要任务是传递信息。\`src/assets/styles/color-tokens.css\` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（\`background\`、\`foreground\`、\`card\`、\`popover\`、\`primary\`、\`secondary\`、\`muted\`、\`accent\`、\`destructive\`、\`border\`、\`input\`、\`ring\`、\`chart-1–5\`、\`sidebar\`），\`brand\`、\`primary-hover/active\`、\`status-*\` 与终端 \`term-*\` 作为本站扩展。组件使用 \`hsl(var(--token))\` 或 UnoCSS 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
+色彩的首要任务是传递信息。\`src/styles/tokens.css\` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（\`background\`、\`foreground\`、\`card\`、\`popover\`、\`primary\`、\`secondary\`、\`muted\`、\`accent\`、\`destructive\`、\`border\`、\`input\`、\`ring\`、\`chart-1–5\`、\`sidebar\`），\`brand\`、\`primary-hover/active\`、\`status-*\` 与终端 \`term-*\` 作为本站扩展。组件使用 \`hsl(var(--token))\` 或 Tailwind 4 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
 
 | 类别 | 职责 |
 | --- | --- |
@@ -235,9 +226,9 @@ ${markdownTable(overview)}
 文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、必要控件边界与状态以 3:1 为目标。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。`
 const detailContent = `## 01 色彩系统
 
-色彩首先传递信息：身份、阅读层级、反馈、操作状态和数据关系各自命名。\`src/assets/styles/color-tokens.css\` 是唯一色值来源。基础色板 \`--palette-*\` 保存 HSL 通道，主题令牌直接引用色板；组件使用 \`hsl(var(--token))\` 或 UnoCSS 语义类，不再维护第二套颜色别名。色阶数字是固定标识，不承诺均匀亮度，也不保证对比度。
+色彩首先传递信息：身份、阅读层级、反馈、操作状态和数据关系各自命名。\`src/styles/tokens.css\` 是唯一色值来源。基础色板 \`--palette-*\` 保存 HSL 通道，主题令牌直接引用色板；组件使用 \`hsl(var(--token))\` 或 Tailwind 4 语义类，不再维护第二套颜色别名。色阶数字是固定标识，不承诺均匀亮度，也不保证对比度。
 
-主题令牌沿用 shadcn/ui 的命名与前景/背景配对：\`--background\` / \`--foreground\`、\`--card\` / \`--card-foreground\`、\`--popover\` / \`--popover-foreground\`、\`--primary\` / \`--primary-foreground\`、\`--secondary\` / \`--secondary-foreground\`、\`--muted\` / \`--muted-foreground\`、\`--accent\` / \`--accent-foreground\`、\`--destructive\` / \`--destructive-foreground\`、\`--border\`、\`--input\`、\`--ring\`、\`--chart-1–5\` 与 \`--sidebar-*\`。\`--brand\`、\`--primary-hover\`、\`--primary-active\`、\`--status-*\` 与终端 \`--term-*\` 是本站扩展。值保存为 HSL 通道，以兼容 \`hsl(var(--primary) / alpha)\` 和 UnoCSS；终端子主题的 \`--term-*\` 使用完整颜色。
+主题令牌沿用 shadcn/ui 的命名与前景/背景配对：\`--background\` / \`--foreground\`、\`--card\` / \`--card-foreground\`、\`--popover\` / \`--popover-foreground\`、\`--primary\` / \`--primary-foreground\`、\`--secondary\` / \`--secondary-foreground\`、\`--muted\` / \`--muted-foreground\`、\`--accent\` / \`--accent-foreground\`、\`--destructive\` / \`--destructive-foreground\`、\`--border\`、\`--input\`、\`--ring\`、\`--chart-1–5\` 与 \`--sidebar-*\`。\`--brand\`、\`--primary-hover\`、\`--primary-active\`、\`--status-*\` 与终端 \`--term-*\` 是本站扩展。值保存为 HSL 通道，以兼容 \`hsl(var(--primary) / alpha)\` 和 Tailwind 4；终端子主题的 \`--term-*\` 使用完整颜色。
 
 | 类别 | 色板与用途 |
 | --- | --- |
@@ -259,7 +250,7 @@ ${markdownTable(rows)}
 
 每个表面令牌都有对应的 \`-foreground\`：\`background\` / \`foreground\`、\`card\` / \`card-foreground\`、\`popover\` / \`popover-foreground\`、\`primary\` / \`primary-foreground\`、\`secondary\` / \`secondary-foreground\`、\`muted\` / \`muted-foreground\`、\`accent\` / \`accent-foreground\`、\`destructive\` / \`destructive-foreground\`，以及 \`sidebar-*\`。状态文字使用 \`--status-*\`，弱表面使用 \`--status-*-surface\`。状态表面的色值已定义并经过纯色对比计算，尚未在实际提示组件中验证。
 
-\`--background\`、\`--primary\`、\`--ring\` 等仍是 HSL 通道，可以用于 \`hsl(var(--primary) / 0.5)\`。深色主题的 \`--muted\` 使用面板色，与 \`--secondary\` 选择表面分开；\`--accent\` 使用行动弱表面。UnoCSS 的 \`theme.colors\` 暴露完整配对以及 \`brand\`、\`status-*\`、\`chart-*\`、\`sidebar-*\`；组件优先使用语义工具类，避免直接写色值。
+\`--background\`、\`--primary\`、\`--ring\` 等仍是 HSL 通道，可以用于 \`hsl(var(--primary) / 0.5)\`。深色主题的 \`--muted\` 使用面板色，与 \`--secondary\` 选择表面分开；\`--accent\` 使用行动弱表面。Tailwind 4 的 \`@theme inline\` 暴露完整配对以及 \`brand\`、\`status-*\`、\`chart-*\`、\`sidebar-*\`；组件优先使用语义工具类，避免直接写色值。
 
 ### 数据、对比度与使用边界
 
@@ -279,9 +270,9 @@ const htmlContent = `<div class="subhead"><div><h3>颜色令牌 · 从代码生�
               <span class="pill" style="display:inline-block;margin-top:12px;background:hsl(var(--primary));color:hsl(var(--primary-foreground))">主要行动</span>
             </article>
           </div>
-          <p>主题令牌沿用 shadcn/ui 的命名与配对（background/foreground、card、popover、primary、secondary、muted、accent、destructive、border/input/ring、chart-1–5、sidebar）；brand、primary-hover/active、status、term 是本站扩展。值保留 HSL 通道以支持 alpha 与 UnoCSS；直接写 CSS 时使用 <code>hsl(var(--token))</code>。</p>
+          <p>主题令牌沿用 shadcn/ui 的命名与配对（background/foreground、card、popover、primary、secondary、muted、accent、destructive、border/input/ring、chart-1–5、sidebar）；brand、primary-hover/active、status、term 是本站扩展。值保留 HSL 通道以支持 alpha 与 Tailwind 4；直接写 CSS 时使用 <code>hsl(var(--token))</code>。</p>
           <p>品牌保持绿色；中性色组织阅读层级；信息、成功、警告、错误使用对应前景与弱表面；行动状态与焦点独立。数据色用于无序分类，需搭配标签、线型或纹理。状态提示和真实图表仍待实际组件验证。</p>
-          <p>UnoCSS 暴露完整的前景/背景配对，以及 <code>brand</code>、<code>status-*</code>、<code>chart-*</code>、<code>sidebar-*</code> 语义工具类；组件优先使用这些类，而不是直接写色值。</p>
+          <p>Tailwind 4 暴露完整的前景/背景配对，以及 <code>brand</code>、<code>status-*</code>、<code>chart-*</code>、<code>sidebar-*</code> 语义工具类；组件优先使用这些类，而不是直接写色值。</p>
           <div class="subhead"><div><h3>基础色板</h3><p>色块直接引用 CSS 通道，色值由同一来源生成。</p></div></div>
           <div class="palette-swatches">
 ${htmlPalette}
@@ -297,14 +288,16 @@ ${htmlRows}
 async function update(path, content, { frontmatter } = {}) {
   const url = new URL(`../${path}`, import.meta.url)
   const original = await readFile(url, 'utf8')
+  // Git may check out CRLF on Windows; compare generated content canonically.
+  const normalized = original.replace(/\r\n/g, '\n')
   const pattern = /<!-- color-tokens:start -->[\s\S]*?<!-- color-tokens:end -->/
-  if (!pattern.test(original)) throw new Error(`Missing generated section in ${path}`)
-  let next = original.replace(pattern, marker(content))
+  if (!pattern.test(normalized)) throw new Error(`Missing generated section in ${path}`)
+  let next = normalized.replace(pattern, marker(content))
   if (frontmatter) {
     next = `${frontmatter}\n\n${next.replace(/^---\n[\s\S]*?\n---\n\n?/, '')}`
   }
   if (process.argv.includes('--check')) {
-    if (next !== original) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
+    if (next !== normalized) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
   } else if (next !== original) await writeFile(url, next)
 }
 await update('DESIGN.md', designContent, { frontmatter: buildFrontmatter() })

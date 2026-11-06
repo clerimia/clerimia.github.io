@@ -1,0 +1,114 @@
+file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:307
+    if (next !== original) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
+                                 ^
+
+Error: DESIGN.md is out of date; run node scripts/sync-color-docs.mjs
+    at update (file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:307:34)
+    at async file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:310:1
+
+Node.js v24.21.0
+✔ paired theme tokens remain legible in both themes (3.6311ms)
+✔ theme tokens map directly to the palette (0.3154ms)
+✔ duplicate color layers and legacy aliases are gone (0.1783ms)
+✖ generated color documentation matches CSS tokens (177.8339ms)
+✔ hero gives reading destinations priority over the optional terminal (10.6228ms)
+✔ recent posts come immediately after the hero, with the quote after the posts (1.5423ms)
+✔ terminal entry retains native button and dialog semantics (2.0372ms)
+✔ hero preserves its identity and both theme avatars (0.9751ms)
+✖ agent endpoints are present and readable (6.8389ms)
+✔ sitemap excludes app-only routes and redirect stubs (31.2482ms)
+✔ article pages expose BlogPosting structured data (2.283ms)
+✔ search and 404 are marked noindex (3.0251ms)
+✔ about: return link and main content use the shared page frame (10.5259ms)
+✔ links: return link and main content use the shared page frame (1.5093ms)
+✔ blog: return link and main content use the shared page frame (1.0333ms)
+✔ notes: return link and main content use the shared page frame (1.0132ms)
+✔ musings: return link and main content use the shared page frame (1.1787ms)
+✔ archives: return link and main content use the shared page frame (0.938ms)
+✔ search: return link and main content use the shared page frame (1.0496ms)
+✔ terms: return link and main content use the shared page frame (0.9042ms)
+✔ blog/tags: return link and main content use the shared page frame (0.8861ms)
+✔ notes/tags: return link and main content use the shared page frame (1.889ms)
+✔ musings/tags: return link and main content use the shared page frame (0.8791ms)
+✔ blog/tags/ai: return link and main content use the shared page frame (0.9568ms)
+✔ notes/tags/astro: return link and main content use the shared page frame (0.8448ms)
+✔ blog/ai-workloads-scion: return link and main content use the shared page frame (1.111ms)
+✔ notes/astro-theme-pure-notes: return link and main content use the shared page frame (1.0169ms)
+✔ musings/2026-10-04-kaibisheng: return link and main content use the shared page frame (0.9593ms)
+✔ terms/privacy-policy: return link and main content use the shared page frame (0.9876ms)
+✔ blog and essay lists are disjoint (7.6885ms)
+✔ homepage latest posts exclude essays (2.7795ms)
+✔ essay detail, return link, tag links and feed use the essay URL (2.8911ms)
+✔ blog archive excludes the essay and the old URL only redirects (1.5476ms)
+✔ the Blog tag index excludes Musings tags (8.5745ms)
+✔ section overviews link to their own tag indexes (4.3805ms)
+✔ old tag URLs redirect to a single scoped page (2.698ms)
+✔ blog has its own tag index and results (2.3203ms)
+✔ notes has its own tag index and results (1.4763ms)
+✔ musings has its own tag index and results (1.401ms)
+✔ article tag links stay in their own section (2.7768ms)
+✔ prerender activation restores a theme changed from light (2.0575ms)
+✔ prerender activation restores a theme changed from dark (0.9183ms)
+✔ a page restored from the back-forward cache uses the latest theme (0.7866ms)
+✔ a theme change in another tab updates this page and its toggle (0.8042ms)
+✔ a theme changed by another site control updates the header toggle (0.6411ms)
+✔ theme changes pause color transitions until the new theme is painted (0.9389ms)
+✔ friend information has one labelled button that copies all four fields (6.0262ms)
+✔ friend information retains the complete site and avatar URLs (1.3235ms)
+✔ policy overview addresses visitors and retains all policy destinations (2.2417ms)
+✔ policy detail pages do not enter the article search index (2.4768ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 48
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 743.0183
+
+✖ failing tests:
+
+test at tests\color-tokens.test.mjs:120:1
+✖ generated color documentation matches CSS tokens (177.8339ms)
+  Error: Command failed: E:\develop\node\node.exe scripts/sync-color-docs.mjs --check
+  file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:307
+      if (next !== original) throw new Error(`${path} is out of date; run node scripts/sync-color-docs.mjs`)
+                                   ^
+  
+  Error: DESIGN.md is out of date; run node scripts/sync-color-docs.mjs
+      at update (file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:307:34)
+      at async file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/scripts/sync-color-docs.mjs:310:1
+  
+  Node.js v24.21.0
+  
+      at genericNodeError (node:internal/errors:986:15)
+      at wrappedFn (node:internal/errors:540:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at TestContext.<anonymous> (file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/tests/color-tokens.test.mjs:121:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    status: 1,
+    signal: null,
+    output: [ null, <Buffer >, <Buffer 66 69 6c 65 3a 2f 2f 2f 44 3a 2f 4d 79 53 63 69 65 6e 63 65 44 65 6d 6f 2f 42 6c 6f 67 2f 2e 63 6c 61 75 64 65 2f 77 6f 72 6b 74 72 65 65 73 2f 6d 61 ... 533 more bytes> ],
+    pid: 24336,
+    stdout: <Buffer >,
+    stderr: <Buffer 66 69 6c 65 3a 2f 2f 2f 44 3a 2f 4d 79 53 63 69 65 6e 63 65 44 65 6d 6f 2f 42 6c 6f 67 2f 2e 63 6c 61 75 64 65 2f 77 6f 72 6b 74 72 65 65 73 2f 6d 61 ... 533 more bytes>
+  }
+
+test at tests\infrastructure.test.mjs:32:1
+✖ agent endpoints are present and readable (6.8389ms)
+  AssertionError [ERR_ASSERTION]: design.md should keep frontmatter and a Markdown body
+      at TestContext.<anonymous> (file:///D:/MyScienceDemo/Blog/.claude/worktrees/magical-feistel-76cb03/tests/infrastructure.test.mjs:34:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: "---\r\nversion: alpha\r\nname: clerimia\r\ndescription: '安静，但有自己的声音。整体安静，局部鲜活。'\r\ncolors:\r\n  # shadcn/ui theme tokens\r\n  background: '#f9fcf9'\r\n  foreground: '#263b2e'\r\n  card: '#ffffff'\r\n  card-foreground: '#263b2e'\r\n  popover: '#ffffff'\r\n  popover-foreground: '#263b2e'\r\n  primary: '#3f7050'\r\n  primary-foreground: '#ffffff'\r\n  secondary: '#e8f2ea'\r\n  secondary-foreground: '#263b2e'\r\n  muted: '#e8f2ea'\r\n  muted-foreground: '#536a5b'\r\n  accent: '#e8f2ea'\r\n  accent-foreground: '#263b2e'\r\n  destructive: '#ab2e2e'\r\n  destructive-foreground: '#ffffff'\r\n  border: '#d0ded2'\r\n  input: '#d0ded2'\r\n  ring: '#315a40'\r\n  chart-1: '#3f7050'\r\n  chart-2: '#285e86'\r\n  chart-3: '#704e86'\r\n  chart-4: '#805417'\r\n  chart-5: '#8a4f66'\r\n  sidebar: '#ffffff'\r\n  sidebar-foreground: '#263b2e'\r\n  sidebar-primary: '#3f7050'\r\n  sidebar-primary-foreground: '#ffffff'\r\n  sidebar-accent: '#e8f2ea'\r\n  sidebar-accent-foreground: '#263b2e'\r\n  sidebar-border: '#d0ded2'\r\n  sidebar-ring: '#315a40'\r\n  # site extensions\r\n  brand: '#3f7050'\r\n  primary-hover: '#315a40'\r\n  primary-active: '#2b4e38'\r\n  status-info: '#285e86'\r\n  status-info-surface: '#eef5fa'\r\n  status-success: '#3f7050'\r\n  status-success-surface: '#edf6ef'\r\n  status-warning: '#805417'\r\n  status-warning-surface: '#fbf2e4'\r\n  status-error: '#ab2e2e'\r\n  status-error-surface: '#fbefee'\r\n  term-canvas: '#ffffff'\r\n  term-edge: '#d0ded2'\r\n  term-muted: '#536a5b'\r\n  term-chrome: '#ffffff'\r\n  term-chrome-edge: '#d0ded2'\r\n  term-foreground: '#263b2e'\r\ncolorsDark:\r\n  # shadcn/ui theme tokens\r\n  background: '#191d1c'\r\n  foreground: '#eaf1eb'\r\n  card: '#262d29'\r\n  card-foreground: '#eaf1eb'\r\n  popover: '#262d29'\r\n  popover-foreground: '#eaf1eb'\r\n  primary: '#df9aae'\r\n  primary-foreground: '#2b1920'\r\n  secondary: '#334638'\r\n  secondary-foreground: '#eaf1eb'\r\n  muted: '#262d29'\r\n  muted-foreground: '#aebeb2'\r\n  accent: '#38232a'\r\n  accent-foreground: '#eaf1eb'\r\n  destructive: '#ffaaa4'\r\n  destructive-foreground: '#2b1920'\r\n  border: '#43544a'\r\n  input: '#43544a'\r\n  ring: '#a9d8b4'\r\n  chart-1: '#a9d8b4'\r\n  chart-2: '#9fcbed'\r\n  chart-3: '#d4b6e7'\r\n  chart-4: '#e4c18a'\r\n  chart-5: '#e2b3c6'\r\n  sidebar: '#262d29'\r\n  sidebar-foreground: '#eaf1eb'\r\n  sidebar-primary: '#df9aae'\r\n  sidebar-primary-foreground: '#2b1920'\r\n  sidebar-accent: '#334638'\r\n  sidebar-accent-foreground: '#eaf1eb'\r\n  sidebar-border: '#43544a'\r\n  sidebar-ring: '#a9d8b4'\r\n  # site extensions\r\n  brand: '#a9d8b4'\r\n  primary-hover: '#f5c4d0'\r\n  primary-active: '#e3a7b8'\r\n  status-info: '#9fcbed'\r\n  status-info-surface: '#1e3342'\r\n  status-success: '#a9d8b4'\r\n  status-success-surface: '#22382b'\r\n  status-warning: '#e4c18a'\r\n  status-warning-surface: '#382e20'\r\n  status-error: '#ffaaa4'\r\n  status-error-surface: '#3d2929'\r\n  term-canvas: '#1e2721'\r\n  term-edge: '#3a463d'\r\n  term-muted: '#93a89a'\r\n  term-chrome: '#25342a'\r\n  term-chrome-edge: '#435d49'\r\n  term-foreground: '#a9d8b4'\r\ntypography:\r\n  display:\r\n    fontFamily: Satoshi\r\n    fontSize: 'clamp(34px, calc(26.6px + 2vw), 48px)'\r\n    fontWeight: 600\r\n    lineHeight: 1.2\r\n  page-title:\r\n    fontFamily: Satoshi\r\n    fontSize: 'clamp(28px, calc(23.6px + 1.2vw), 36px)'\r\n    fontWeight: 600\r\n    lineHeight: 1.25\r\n  section:\r\n    fontFamily: Satoshi\r\n    fontSize: 'clamp(22px, calc(20.8px + 0.3vw), 24px)'\r\n    fontWeight: 600\r\n    lineHeight: 1.35\r\n  item-title:\r\n    fontFamily: Satoshi\r\n    fontSize: 18px\r\n    fontWeight: 600\r\n    lineHeight: 1.45\r\n  lead:\r\n    fontFamily: Satoshi\r\n    fontSize: 'clamp(17px, calc(16.5px + 0.15vw), 18px)'\r\n    fontWeight: 400\r\n    lineHeight: 1.75\r\n  reading:\r\n    fontFamily: Satoshi\r\n    fontSize: 16px\r\n    fontWeight: 400\r\n    lineHeight: 1.8\r\n  ui:\r\n    fontFamily: Satoshi\r\n    fontSize: 14px\r\n    fontWeight: 400\r\n    lineHeight: 1.6\r\n  meta:\r\n    fontFamily: Satoshi\r\n    fontSize: 12px\r\n    fontWeight: 400\r\n    lineHeight: 1.5\r\nrounded:\r\n  base: 10px\r\n  code: 6px\r\n  control: 10px\r\n  panel: 16px\r\n  dialog: 24px\r\n  pill: 999px\r\nspacing:\r\n  space-1: 4px\r\n  space-2: 8px\r\n  space-3: 12px\r\n  space-4: 16px\r\n  space-5: 20px\r\n  space-6: 24px\r\n  space-8: 32px\r\n  space-12: 48px\r\n  space-18: 72px\r\nlayout:\r\n  wide: 1080px\r\n  reading: 760px\r\n  aside: 224px\r\n---\r\n\r\n# Design System: clerimia\r\n\r\n> **安静，但有自己的声音。整体安静，局部鲜活。**\r\n\r\n这里是一个承载文章、项目与持续变化的思考的个人博客。「一边创作，一边成为自己」既是创作理念，也是设计的起点：界面让内容被看见，也在合适的细节里留下个人的声音。\r\n\r\n本文借鉴 [Vercel 设计文档](https://fchangjun.github.io/awesome-design-md-cn/design-md/vercel/DESIGN.md) 的组织方式，描述本站的设计意图和日常判断。具体规则、完整令牌和实施与验证状态以[设计系统文字规范](docs/design-language.md)及[可视化规范](docs/design-language.html)为准；[AGENTS.md](AGENTS.md) 是项目工作入口。设计灵感来源于 [Notion「个人博客网站前端 UI/UX 设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。\r\n\r\n## 1. 视觉主题与氛围\r\n\r\n文章和创作是视觉中心。安静的背景、舒展的排版与稳定的层级为阅读留出空间；身份、行动和有意义的互动可以更鲜活。每一种视觉元素都应帮助理解、使用或感受内容。\r\n\r\n若叶睦与 Mortis 启发了两套主题：外在的安静、内在的表达欲，以及不同自我能够共存的可能。两种角色是同一个人的不同面向，共用信息结构与交互方式。\r\n\r\n- **若叶睦 · 日间**：安静、轻盈、柔和。近白画布、深灰绿文字和低饱和绿色营造清透的阅读环境。\r\n- **墨提斯 · 夜间**：开放、活力、戏剧性。炭灰画布让正文保持安静，绿色延续身份，酒红在行动和适合的交互反馈中出现。\r\n- **共同身份**：绿色、双头像和少量角色细节让日夜主题仍属于同一个人。角色元素提供情绪，内容负责表达。\r\n- **内容优先**：通过对齐、留白与排版组织主次；装饰应让信息更易理解，或带来明确的情感价值。\r\n\r\n<!-- color-tokens:start -->\r\n## 2. 色彩与信息职责\r\n\r\n色彩的首要任务是传递信息。`src/assets/styles/color-tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 UnoCSS 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。\r\n\r\n| 类别 | 职责 |\r\n| --- | --- |\r\n| 品牌色 | 绿色贯穿双主题，表达共同身份 |\r\n| 中性色 | 建立画布、文字、表面与边界层级 |\r\n| 语义色 | 信息、成功、警告、错误各有前景与弱表面，并配文字或图标 |\r\n| 交互状态色 | 行动、悬停、按下、焦点职责独立；酒红行动色不等同错误 |\r\n| 数据可视化色 | 固定映射无序系列，并配标签、线型或纹理 |\r\n\r\n### 双主题速查\r\n\r\n| 语义令牌 | 日间 | 夜间 | 用途 |\r\n| --- | --- | --- | --- |\r\n| `--background` | `#f9fcf9` | `#191d1c` | 页面画布 |\r\n| `--foreground` | `#263b2e` | `#eaf1eb` | 正文与标题 |\r\n| `--card` | `#ffffff` | `#262d29` | 面板与浮层表面 |\r\n| `--primary` | `#3f7050` | `#df9aae` | 主要行动与链接 |\r\n| `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |\r\n| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |\r\n| `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |\r\n| `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |\r\n\r\n文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、必要控件边界与状态以 3:1 为目标。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。\r\n<!-- color-tokens:end -->\r\n\r\n## 3. 排版规则\r\n\r\n排版首先服务于中文、英文、代码和长文的舒适阅读。正文使用 Satoshi，中文回退 Microsoft YaHei 和 system-ui；代码与终端使用 ui-monospace、Consolas、monospace。中文标题从正常字距开始，英文品牌字标可以独立微调。\r\n\r\n| 层级 | 宽屏 / 窄屏起点 | 行高 | 职责 |\r\n| --- | --- | --- | --- |\r\n| Display | 48 / 34px | 1.2 | 展示性标题 |\r\n| Page title | 36 / 28px | 1.25 / 1.3 | 页面与文章标题 |\r\n| Section | 24 / 22px | 1.35 | 区块标题 |\r\n| Item title | 18px | 1.45 | 文章条目标题 |\r\n| Lead | 18 / 17px | 1.75 | 简介与引言 |\r\n| Reading | 16px | 1.8 | 长文正文 |\r\n| UI | 14px | 1.6 | 导航、按钮与短摘要 |\r\n| Meta | 12px | 1.5 | 日期与少量辅助信息 |\r\n\r\n正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值与验证状态见[排版规范](docs/design-language.md#02-字体与字号)。不要通过降低正文对比度来制造安静感。\r\n\r\n## 4. 组件语言\r\n\r\n### 链接、按钮与导航\r\n\r\n链接负责前往目的地，按钮负责执行操作或打开浮层，开关表达状态。正文链接保留下划线；次级跳转复用 `TextArrowLink`，默认使用辅助文字色，交互时转为行动色。导航当前项通过 `aria-current` 和可辨识的视觉状态表达。\r\n\r\n主要行动应清楚，次要行动降低权重。同一页面中同一层级的相同动作采用一致表达。触屏不依赖悬停，键盘焦点立即可见，目标优先至少 `44 × 44px`。\r\n\r\n### 文章列表与内容\r\n\r\n详细文章列表使用单列卡片：默认透出画布，以细边线和圆角建立边界；文章链接悬停或键盘聚焦时使用行动弱表面，标签保持独立操作。归档使用紧凑行，不将每一项都做成卡片。正文的标题、引用、代码、图片说明与目录应支持阅读主线。\r\n\r\n### 终端与身份细节\r\n\r\n终端是可操作的站点入口，也承载个人身份。标题栏使用身份牌，用户名使用身份绿，提示符使用行动色；成功和错误结果配合文字说明。终端输入焦点是常驻状态，以光标和局部边线表达；按钮与链接保留独立焦点环。窗口红黄绿圆点借用 macOS 窗口语言，不承担本站状态语义。\r\n\r\n### 友链菜园\r\n\r\n友链页以菜园为灵感，藤蔓、嫩芽与月亮建立温柔的场景；朋友和他们的创作仍是主体。整张友链卡片作为单一外链，描述应完整可读。装饰服务于场景与识别，不遮盖内容或操作。实现见 [links/index.astro](src/pages/links/index.astro) 与 [links/](src/components/links/)。\r\n\r\n### 终端子主题\r\n\r\n终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/assets/styles/terminal.css)。\r\n\r\n### 实现锚点\r\n\r\n| 约定 | 实现位置 |\r\n| --- | --- |\r\n| 次级跳转 | [TextArrowLink.astro](src/components/TextArrowLink.astro) |\r\n| 文章列表卡片 | [PostPreview.astro](src/components/PostPreview.astro) |\r\n| 页头与移动菜单 | [SiteHeader.astro](src/components/SiteHeader.astro) |\r\n| 色彩契约 | [color-tokens.css](src/assets/styles/color-tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |\r\n| UnoCSS 语义映射 | [uno.config.ts](uno.config.ts) |\r\n| 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |\r\n\r\n## 5. 布局与空间\r\n\r\n页面以阅读路径而非填满屏幕为目标。首页先介绍作者，再引导探索文章与作品；文章页优先保证正文行长。页头、返回入口和内容共享左基线，阅读列限宽后仍靠左。\r\n\r\n| 尺度 | 设计值 | 作用 |\r\n| --- | --- | --- |\r\n| 站点页框 | 最大 `1080px` | 容纳导航与页面内容 |\r\n| 阅读列 | 最大 `760px` | 长文与长段文字 |\r\n| 文章目录 | `224px`，与正文间距 `32px` | 空间充足时并列 |\r\n| 页面边距 | `20 / 24 / 32px` | 随视口宽度变化 |\r\n| 返回入口到内容 | `24px` | 保持内页节奏一致 |\r\n\r\n基础间距采用 `4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 72px`。圆角按职责选择：代码 `6px`、控件 `10px`、面板 `16px`、对话框 `24px`，胶囊用于合适的标签或状态。宽度、间距和断点的完整规则见[页面框架](docs/design-language.md#04-页面框架与断点)。\r\n\r\n## 6. 表面、边界与层次\r\n\r\n| 层次 | 表达 | 适用场景 |\r\n| --- | --- | --- |\r\n| 画布 | 平面背景与留白 | 页面、普通阅读内容 |\r\n| 分组 | 细边线或必要的局部表面 | 文章卡片、独立内容区域 |\r\n| 浮层 | 独立表面，必要时使用阴影与遮罩 | 对话框、终端、移动目录 |\r\n| 焦点 | 清晰且立即出现的焦点环 | 键盘进入链接、按钮和其他控件 |\r\n\r\n优先使用位置、间距和排版表达关系。边线用于分组或交互边界；阴影主要服务于浮层。不要叠加多种强调方式来表达同一个状态，也不要为了装饰而普遍增加渐变、阴影或新配色。首页标语和局部身份细节有已记录的视觉例外。\r\n\r\n## 7. 动效与交互\r\n\r\n动效用于回应操作或说明浮层的出现和消失；普通阅读内容保持稳定。指针反馈以短暂的颜色或边框变化为主，焦点不延迟。主题切换时正文与画布同步更新，避免过渡中出现低对比度。\r\n\r\n首页首屏可以保留有节制的入场、枝叶和身份轨道动效，表达博客的个性。启用减少动态效果时，内容立即呈现，非必要位移和持续动画停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见[动效与交互规范](docs/design-language.md#05-动效与交互)。\r\n\r\n## 8. 响应式行为\r\n\r\n从手机单列阅读和触屏操作出发，随可用空间增加再安排目录或并列内容。日夜主题共享相同的布局、阅读顺序和操作方式。\r\n\r\n| 视口宽度 | 布局变化 |\r\n| --- | --- |\r\n| `≤ 680px` | 两侧 `20px`；单列，首页简介与头像上下排列 |\r\n| `> 680px` 且 `< 1000px` | 两侧 `24px`；正文单列，目录收进入口 |\r\n| `≥ 1000px` | 两侧 `32px`；内容容器足够宽时，正文与目录并列 |\r\n\r\n页头在 `760px` 以下将栏目与搜索收入菜单；文章目录并列还要求内容容器至少 `936px`。长标题和链接允许换行，代码与表格在各自区域滚动，页面本身避免横向溢出。验证应覆盖宽屏、手机宽度、两套主题、键盘与减少动态效果；浏览器模拟不能替代真实设备。\r\n\r\n<a id"... 1201 more characters,
+    expected: /^---\n[\s\S]*?\n---\n\n# /,
+    operator: 'match',
+    diff: 'simple'
+  }

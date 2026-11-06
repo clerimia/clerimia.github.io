@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-pure/user'
+import Icon from '@/components/site/Icon.astro'
 import { theme } from '@/site-config'
 
 const pathname = Astro.url.pathname
@@ -186,7 +186,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
     root.classList.toggle('dark', isDark)
   }
 
-  // 说明：<head> 里的内联脚本负责「首屏无闪烁」的初始着色（astro-pure ThemeProvider）；
+  // 说明：<head> 里的内联脚本负责「首屏无闪烁」的初始着色（本地 ThemeProvider）；
   // 这里负责后续的重新同步——预渲染激活、往返缓存（bfcache）、以及其它标签页改了主题。
   // 两处都读同一个 localStorage.theme，行为一致。
   function applyStoredTheme() {
@@ -209,7 +209,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
     themeButton?.setAttribute('title', isDark ? '切换到浅色' : '切换到深色')
     themeButton?.setAttribute('aria-label', isDark ? '切换到浅色' : '切换到深色')
 
-    // 主题色跟随站点配色；astro-pure 默认写的 #0B0B10 / #FCFCFD 和本站的绿调不搭。
+    // 浏览器主题色跟随站点日夜画布配色。
     const meta =
       typeof document.querySelector === 'function'
         ? document.querySelector('meta[name="theme-color"]')

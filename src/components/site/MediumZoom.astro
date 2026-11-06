@@ -1,0 +1,28 @@
+---
+// Local integration for medium-zoom; upstream behavior from Astro Pure 1.4.7.
+// Modified to bundle the installed library; see docs/rebuild/third-party.md.
+import { integ } from '@/site-config'
+interface Props { selector?: string; background?: string }
+const { selector = integ.mediumZoom.selector, background = 'hsl(var(--background) / 0.8)' } = Astro.props
+---
+
+<site-image-zoom data-selector={selector} data-background={background} hidden />
+<script>
+  import mediumZoom, { type Zoom } from 'medium-zoom'
+  class SiteImageZoom extends HTMLElement {
+    zoom?: Zoom
+    connectedCallback() {
+      this.zoom = mediumZoom(this.dataset.selector ?? '.prose .zoomable', {
+        background: this.dataset.background
+      })
+    }
+    disconnectedCallback() { this.zoom?.detach() }
+  }
+  if (!customElements.get('site-image-zoom')) customElements.define('site-image-zoom', SiteImageZoom)
+</script>
+<style is:global>
+  .medium-zoom-overlay, .medium-zoom-image--opened { z-index: 999; }
+  @media (prefers-reduced-motion: reduce) {
+    .medium-zoom-overlay, .medium-zoom-image { transition: none !important; }
+  }
+</style>

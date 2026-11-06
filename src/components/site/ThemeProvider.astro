@@ -1,0 +1,33 @@
+---
+// Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
+// Modified for site colors, storage fallbacks and safe toast text.
+// See docs/rebuild/third-party.md.
+---
+
+{/* Run in the head before the body paints, including when storage is unavailable. */}
+<script is:inline>
+  (() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const apply = () => {
+      let saved = null
+      try { saved = localStorage.getItem('theme') } catch {}
+      const dark = saved === 'dark' || ((!saved || saved === 'system') && media.matches)
+      document.dispatchEvent(new CustomEvent('site:theme-changing'))
+      document.documentElement.classList.toggle('dark', dark)
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#191d1c' : '#f9fcf9')
+      document.dispatchEvent(new CustomEvent('site:theme-change'))
+    }
+    apply()
+    media.addEventListener('change', apply)
+    document.addEventListener('astro:page-load', apply)
+    document.addEventListener('toast', (event) => {
+      const { message, time = 3000 } = event.detail
+      const toast = document.createElement('div')
+      toast.className = 'fixed bottom-8 z-50 px-4 py-2 bg-muted text-foreground rounded-lg border shadow-lg flex items-center gap-2'
+      toast.setAttribute('role', 'status')
+      toast.textContent = message
+      document.body.appendChild(toast)
+      setTimeout(() => toast.remove(), time)
+    })
+  })()
+</script>

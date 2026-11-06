@@ -5,10 +5,10 @@ import type { CollectionEntry } from 'astro:content'
 // Plugin styles
 import 'katex/dist/katex.min.css'
 
-import config from 'virtual:config'
+import config from '@/site-config'
 
-import { MediumZoom } from 'astro-pure/advanced'
-import { ArticleBottom } from 'astro-pure/components/pages'
+import MediumZoom from '@/components/site/MediumZoom.astro'
+import ArticleBottom from '@/components/site/ArticleBottom.astro'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import Copyright from '@/components/blog/Copyright.astro'
 import Hero from '@/components/blog/Hero.astro'

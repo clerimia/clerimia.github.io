@@ -1,48 +1,22 @@
-import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/types'
+import type { CardListData } from '@/lib/site-types'
 
 const tagline = '一边创作，一边成为自己'
 
-export const theme: ThemeUserConfig = {
-  // [Basic]
-  /** Title for your website. Will be used in metadata and as browser tab title. */
+export const theme = {
   title: 'clerimia',
-  /** Will be used in index page & copyright declaration */
   author: 'clerimia',
-  /** Description metadata for your website. Can be used in page metadata. */
   description: tagline,
-  /** The tagline for your website. */
   tagline,
-  /** The default favicon for your site which should be a path to an image in the `public/` directory. */
-  favicon: '/favicon/favicon.ico',
-  /** The default social card image for your site which should be a path to an image in the `public/` directory. */
+  // The resolved shape used by BaseHead, rather than an integration input string.
+  favicon: { href: '/favicon/favicon.ico', type: 'image/x-icon' },
   socialCard: '/images/social-card.png',
-  /** Set a logo image to show in the homepage. */
-  logo: {
-    src: '/src/assets/avatar.png',
-    alt: 'clerimia'
-  },
-  /** Specify the default language for this site. */
   locale: {
     lang: 'zh-CN',
     attrs: 'zh_CN',
-    // Date locale
     dateLocale: 'zh-CN',
-    dateOptions: {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    }
+    dateOptions: { day: 'numeric', month: 'short', year: 'numeric' } satisfies Intl.DateTimeFormatOptions
   },
-
   titleDelimiter: '•',
-  prerender: true, // pagefind search is not supported with prerendering disabled
-  npmCDN: 'https://cdn.jsdelivr.net/npm',
-
-  // Still in test
-  head: [],
-  customCss: [],
-
-  /** Configure the header of your site. */
   header: {
     menu: [
       { title: 'Blog', link: '/blog' },
@@ -52,130 +26,51 @@ export const theme: ThemeUserConfig = {
       { title: 'About', link: '/about' }
     ]
   },
-
-  /** Configure the footer of your site. */
   footer: {
-    // Year format
-    year: `© ${new Date().getFullYear()}`,
-    // Footer links
-    links: [],
-    /** Enable displaying a “Astro & Pure theme powered” link in your site's footer. */
-    credits: true,
-    /** Optional details about the social media accounts for this site. */
     social: [
       { icon: 'github', label: 'GitHub', href: 'https://github.com/clerimia' },
       { icon: 'rss', label: 'RSS', href: '/rss.xml' }
     ]
   },
-
-  // [Content]
   content: {
-    /** External links configuration */
-    externalLinks: {
-      content: ' ↗',
-      /** Properties for the external links element */
-      properties: { style: 'user-select:none' }
-    },
-    /** Blog page size for pagination (optional) */
+    externalLinks: { content: ' ↗', properties: { style: 'user-select:none' } },
     blogPageSize: 8,
-    /** Share buttons to show */
-    // Currently support weibo, x, bluesky
-    share: ['weibo', 'x', 'bluesky']
-    /** Enable image captions (default false) */
-    // imageCaption: true
+    share: ['weibo', 'x', 'bluesky'] as const
   }
 }
 
-export const integ: IntegrationUserConfig = {
-  // [Links]
-  // https://astro-pure.js.org/docs/integrations/links
+export const integ = {
   links: {
-    // Friend logbook
     logbook: [
       { date: '2026-09-17', content: '这里记录友链的变化，欢迎来交换链接。' },
       { date: '2026-09-17', content: '先把站点搭起来，再慢慢写内容。' }
     ],
-    // Yourself link info
     applyTip: [
       { name: 'Name', val: theme.title },
-      { name: 'Desc', val: theme.description || 'Null' },
+      { name: 'Desc', val: theme.description },
       { name: 'Link', val: 'https://clerimia.github.io/' },
       { name: 'Avatar', val: 'https://avatars.githubusercontent.com/u/128227262?v=4' }
     ],
-    // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false
   },
-  // [Search]
   pagefind: true,
-  // Add a random quote to the footer (default on homepage footer)
-  // See: https://astro-pure.js.org/docs/integrations/advanced#web-content-render
-  // [Quote]
-  quote: {
-    // - Hitokoto
-    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
-    // 分类: a=动画 b=漫画 c=游戏 d=文学 i=诗词 j=网易云 k=哲学 l=抖机灵
-    server: 'https://v1.hitokoto.cn/?c=a',
-    // 句子后附出处：有作者时显示「——作者《作品》」，否则只显示作品名
-    target: `(data) => {
-      if (!data.hitokoto) return 'Error'
-      let source = ''
-      if (data.from_who && data.from) source = ' ——' + data.from_who + '《' + data.from + '》'
-      else if (data.from_who) source = ' ——' + data.from_who
-      else if (data.from) source = ' ——' + data.from
-      return data.hitokoto + source
-    }`
-  },
-  // [Typography]
-  // https://unocss.dev/presets/typography
-  typography: {
-    class: 'prose text-base',
-    // The style of blockquote font `normal` / `italic` (default to italic in typography)
-    blockquoteStyle: 'italic',
-    // The style of inline code block `code` / `modern` (default to code in typography)
-    inlineCodeBlockStyle: 'modern'
-  },
-  // [Lightbox]
-  // A lightbox library that can add zoom effect
-  // https://astro-pure.js.org/docs/integrations/others#medium-zoom
+  quote: { server: 'https://v1.hitokoto.cn/?c=a' },
+  typography: { class: 'prose text-base' },
   mediumZoom: {
-    enable: true, // disable it will not load the whole library
+    enable: true,
     selector: '.prose .zoomable',
-    options: {
-      className: 'zoomable'
-    }
-  },
-  // Comment system
-  // 主题内置的是 Waline（需要自建服务端）；本站改用基于 GitHub Discussions 的 Giscus，
-  // 组件在 `src/components/comments/` 中实现，故此处保持关闭。
-  waline: {
-    enable: false,
-    showMeta: false,
-    emoji: [],
-    additionalConfigs: {}
+    options: { className: 'zoomable' }
   }
 }
 
 export const terms: CardListData = {
   title: 'Site Policies',
   list: [
-    {
-      title: '隐私政策',
-      link: '/terms/privacy-policy'
-    },
-    {
-      title: '使用条款',
-      link: '/terms/terms-and-conditions'
-    },
-    {
-      title: '版权声明',
-      link: '/terms/copyright'
-    },
-    {
-      title: '免责声明',
-      link: '/terms/disclaimer'
-    }
+    { title: '隐私政策', link: '/terms/privacy-policy' },
+    { title: '使用条款', link: '/terms/terms-and-conditions' },
+    { title: '版权声明', link: '/terms/copyright' },
+    { title: '免责声明', link: '/terms/disclaimer' }
   ]
 }
 
-const config = { ...theme, integ } as Config
-export default config
+export default { ...theme, integ }

@@ -1,4 +1,4 @@
-/* Theme tokens are HSL channels so `hsl(var(--token) / alpha)` and UnoCSS keep working.
+/* Theme tokens are HSL channels so `hsl(var(--token) / alpha)` remain compatible with existing site CSS.
    The palette is the only source of raw values; components use the semantic tokens below. */
 :root, .token-theme {
   --palette-neutral-0: 0.00000 0.00000% 100.00000%;
@@ -155,4 +155,162 @@
   --term-chrome: hsl(var(--palette-green-940));
   --term-chrome-edge: hsl(var(--palette-green-740));
   --term-foreground: hsl(var(--palette-green-200));
+}
+
+/* Shared scales; both themes use the same layout and typography. */
+:root {
+  color-scheme: light;
+  /* 同一套尺度由日夜主题共用。 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-18: 72px;
+  --layout-wide: 1080px;
+  --layout-reading: 760px;
+  --layout-aside: 224px;
+  --motion-feedback: 160ms;
+  --motion-feedback-easing: ease-out;
+  --motion-overlay: 220ms;
+  --motion-overlay-easing: cubic-bezier(0.2, 0, 0, 1);
+  --radius-code: 6px;
+  --radius-control: 10px;
+  --radius-panel: 16px;
+  --radius-dialog: 24px;
+  --radius-pill: 999px;
+  --font-display: clamp(34px, calc(26.6px + 2vw), 48px);
+  --font-page-title: clamp(28px, calc(23.6px + 1.2vw), 36px);
+  --font-section: clamp(22px, calc(20.8px + 0.3vw), 24px);
+  --font-item-title: 18px;
+  --font-lead: clamp(17px, calc(16.5px + 0.15vw), 18px);
+  --font-reading: 16px;
+  --font-ui: 14px;
+  --font-meta: 12px;
+
+  --radius: var(--radius-control);
+  --font-family-sans: Satoshi, "Microsoft YaHei", system-ui, sans-serif;
+  --font-family-mono: ui-monospace, Consolas, monospace;
+  --leading-display: 1.2;
+  --weight-display: 600;
+  --tracking-display: 0em;
+  --leading-page-title: 1.25;
+  --weight-page-title: 600;
+  --tracking-page-title: 0em;
+  --leading-section: 1.35;
+  --weight-section: 600;
+  --tracking-section: 0em;
+  --leading-item-title: 1.45;
+  --weight-item-title: 600;
+  --tracking-item-title: 0em;
+  --leading-lead: 1.75;
+  --weight-lead: 400;
+  --tracking-lead: 0em;
+  --leading-reading: 1.8;
+  --weight-reading: 400;
+  --tracking-reading: 0em;
+  --leading-ui: 1.6;
+  --weight-ui: 400;
+  --tracking-ui: 0em;
+  --leading-meta: 1.5;
+  --weight-meta: 400;
+  --tracking-meta: 0em;
+}
+
+@theme inline {
+  /* Restrict utilities to the existing semantic palette. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-brand: hsl(var(--brand));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-active: hsl(var(--primary-active));
+  --color-status-info: hsl(var(--status-info));
+  --color-status-info-surface: hsl(var(--status-info-surface));
+  --color-status-success: hsl(var(--status-success));
+  --color-status-success-surface: hsl(var(--status-success-surface));
+  --color-status-warning: hsl(var(--status-warning));
+  --color-status-warning-surface: hsl(var(--status-warning-surface));
+  --color-status-error: hsl(var(--status-error));
+  --color-status-error-surface: hsl(var(--status-error-surface));
+  --color-term-canvas: var(--term-canvas);
+  --color-term-edge: var(--term-edge);
+  --color-term-muted: var(--term-muted);
+  --color-term-chrome: var(--term-chrome);
+  --color-term-chrome-edge: var(--term-chrome-edge);
+  --color-term-foreground: var(--term-foreground);
+  --color-status-info-foreground: hsl(var(--status-info));
+  --color-status-success-foreground: hsl(var(--status-success));
+  --color-status-warning-foreground: hsl(var(--status-warning));
+  --color-status-error-foreground: hsl(var(--status-error));
+
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+  --text-display: var(--font-display);
+  --text-display--line-height: var(--leading-display);
+  --text-display--font-weight: var(--weight-display);
+  --text-display--letter-spacing: var(--tracking-display);
+  --text-page-title: var(--font-page-title);
+  --text-page-title--line-height: var(--leading-page-title);
+  --text-page-title--font-weight: var(--weight-page-title);
+  --text-page-title--letter-spacing: var(--tracking-page-title);
+  --text-section: var(--font-section);
+  --text-section--line-height: var(--leading-section);
+  --text-section--font-weight: var(--weight-section);
+  --text-section--letter-spacing: var(--tracking-section);
+  --text-item-title: var(--font-item-title);
+  --text-item-title--line-height: var(--leading-item-title);
+  --text-item-title--font-weight: var(--weight-item-title);
+  --text-item-title--letter-spacing: var(--tracking-item-title);
+  --text-lead: var(--font-lead);
+  --text-lead--line-height: var(--leading-lead);
+  --text-lead--font-weight: var(--weight-lead);
+  --text-lead--letter-spacing: var(--tracking-lead);
+  --text-reading: var(--font-reading);
+  --text-reading--line-height: var(--leading-reading);
+  --text-reading--font-weight: var(--weight-reading);
+  --text-reading--letter-spacing: var(--tracking-reading);
+  --text-ui: var(--font-ui);
+  --text-ui--line-height: var(--leading-ui);
+  --text-ui--font-weight: var(--weight-ui);
+  --text-ui--letter-spacing: var(--tracking-ui);
+  --text-meta: var(--font-meta);
+  --text-meta--line-height: var(--leading-meta);
+  --text-meta--font-weight: var(--weight-meta);
+  --text-meta--letter-spacing: var(--tracking-meta);
 }

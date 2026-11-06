@@ -1,6 +1,6 @@
 import type { PaginateFunction } from 'astro'
 import { getCollection, type CollectionEntry } from 'astro:content'
-import { getUniqueTagsWithCount, sortMDByDate } from 'astro-pure/server'
+import { getUniqueTagsWithCount, sortMDByDate } from '@/utils/content'
 import config from '@/site-config'
 import { getMusings, getPosts } from '@/utils/posts'
 

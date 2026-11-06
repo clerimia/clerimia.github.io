@@ -1,9 +1,9 @@
 ---
-import config from 'virtual:config'
+import config from '@/site-config'
 
-import { cn, getFormattedDate } from 'astro-pure/utils'
-import { QRCode } from 'astro-pure/advanced'
-import { Icon } from 'astro-pure/user'
+import { cn, getFormattedDate } from '@/utils/ui'
+import QRCode from '@/components/site/QRCode.astro'
+import Icon from '@/components/site/Icon.astro'
 
 /**
  * 文章底部的版权卡。
@@ -140,7 +140,7 @@ const shares = {
 </style>
 
 <script>
-  import { showToast } from 'astro-pure/utils'
+  import { showToast } from '@/utils/ui'
 
   const copyLink = document.getElementById('copy-link')
   copyLink?.addEventListener('click', async () => {

@@ -1,0 +1,13 @@
+{
+  "commit": "cf08de85a370c0b7452e9ef0866943fd9497581d",
+  "node": "v24.21.0",
+  "buildPages": 67,
+  "htmlRoutes": 67,
+  "distFiles": 211,
+  "sitemapEntries": 42,
+  "tests": {
+    "total": 50,
+    "pass": 48,
+    "fail": 2
+  }
+}

@@ -29,7 +29,7 @@ span.katex-display {
   margin-bottom: 0.5rem;
   border-radius: var(--radius-code);
   border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--muted) / var(--un-bg-opacity, 1)) !important;
+  background-color: hsl(var(--muted)) !important;
   color: hsl(var(--foreground));
   display: flex;
   flex-direction: column;
@@ -58,7 +58,7 @@ span.katex-display {
         bottom: 0;
         content: '';
         display: block;
-        background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
+        background-color: hsl(var(--muted));
         z-index: 1;
       }
       & .line {
@@ -68,7 +68,7 @@ span.katex-display {
           content: counter(step);
           counter-increment: step;
           color: hsl(var(--muted-foreground) / 0.7);
-          background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
+          background-color: hsl(var(--muted));
           inset-inline-start: 0;
           justify-content: end;
           display: inline-flex;
@@ -145,9 +145,9 @@ span.katex-display {
       padding: 0.5rem;
       margin-right: 0.5rem;
       border-radius: 0.25rem;
-      color: hsl(var(--muted-foreground) / var(--un-text-opacity, 1));
-      background-color: hsl(var(--card) / var(--un-bg-opacity, 1));
-      border: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
+      color: hsl(var(--muted-foreground));
+      background-color: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
     }
     &.copied {
       & .success {
@@ -206,7 +206,7 @@ span.katex-display {
     column-gap: 0.3rem;
     box-sizing: border-box;
     margin: 0;
-    border-top: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
+    border-top: 1px solid hsl(var(--border));
     & .desc::before {
       content: 'Collapse';
     }
@@ -222,7 +222,7 @@ span.katex-display {
     }
     & .collapse-toggle {
       margin: 0.5rem;
-      border: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
+      border: 1px solid hsl(var(--border));
       & .desc::before {
         content: 'Show all';
       }
@@ -242,7 +242,7 @@ span.katex-display {
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        hsl(var(--muted) / var(--un-bg-opacity, 1)) 60%
+        hsl(var(--muted)) 60%
       );
     }
   }

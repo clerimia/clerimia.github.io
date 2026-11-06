@@ -8,9 +8,9 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
-import config from 'virtual:config'
+import config from '@/site-config'
 
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { getBlogCollection, sortMDByDate } from '@/utils/content'
 import { getCollection } from 'astro:content'
 import { getMusingUrl } from '@/utils/posts'
 

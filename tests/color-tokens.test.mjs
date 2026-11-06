@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { execFileSync } from 'node:child_process'
 
-const css = await readFile(new URL('../src/assets/styles/color-tokens.css', import.meta.url), 'utf8')
+const css = await readFile(new URL('../src/styles/tokens.css', import.meta.url), 'utf8')
 const blocks = [...css.matchAll(/(?:^|\n)(:root, \.token-theme|\.dark)\s*\{([^}]*)\}/g)]
 const declarations = (text) =>
   Object.fromEntries(

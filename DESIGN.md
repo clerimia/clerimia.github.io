@@ -112,41 +112,49 @@ typography:
     fontSize: 'clamp(34px, calc(26.6px + 2vw), 48px)'
     fontWeight: 600
     lineHeight: 1.2
+    letterSpacing: '0em'
   page-title:
     fontFamily: Satoshi
     fontSize: 'clamp(28px, calc(23.6px + 1.2vw), 36px)'
     fontWeight: 600
     lineHeight: 1.25
+    letterSpacing: '0em'
   section:
     fontFamily: Satoshi
     fontSize: 'clamp(22px, calc(20.8px + 0.3vw), 24px)'
     fontWeight: 600
     lineHeight: 1.35
+    letterSpacing: '0em'
   item-title:
     fontFamily: Satoshi
     fontSize: 18px
     fontWeight: 600
     lineHeight: 1.45
+    letterSpacing: '0em'
   lead:
     fontFamily: Satoshi
     fontSize: 'clamp(17px, calc(16.5px + 0.15vw), 18px)'
     fontWeight: 400
     lineHeight: 1.75
+    letterSpacing: '0em'
   reading:
     fontFamily: Satoshi
     fontSize: 16px
     fontWeight: 400
     lineHeight: 1.8
+    letterSpacing: '0em'
   ui:
     fontFamily: Satoshi
     fontSize: 14px
     fontWeight: 400
     lineHeight: 1.6
+    letterSpacing: '0em'
   meta:
     fontFamily: Satoshi
     fontSize: 12px
     fontWeight: 400
     lineHeight: 1.5
+    letterSpacing: '0em'
 rounded:
   base: 10px
   code: 6px
@@ -192,7 +200,7 @@ layout:
 <!-- color-tokens:start -->
 ## 2. 色彩与信息职责
 
-色彩的首要任务是传递信息。`src/assets/styles/color-tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 UnoCSS 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
+色彩的首要任务是传递信息。`src/styles/tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 Tailwind 4 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
 
 | 类别 | 职责 |
 | --- | --- |
@@ -233,6 +241,8 @@ layout:
 | UI | 14px | 1.6 | 导航、按钮与短摘要 |
 | Meta | 12px | 1.5 | 日期与少量辅助信息 |
 
+实现以 `src/styles/tokens.css` 为统一来源，Tailwind 4 的 `text-{role}` 同时应用字号、行高、字重和字距（标题角色 600，其余 400，默认 `0em`）；`.dark` 类切换主题。`src/styles/global.css` 汇集语义映射、typography 与现有站点样式，正文的标题锚点、现代行内代码、引用、表格、列表、图片、键盘标记和 Shiki 覆盖保留。JS 通过 `src/lib/tokens.ts` 读取 CSS 动效和复用媒体查询。（迁移已实现；静态契约测试验证，构建及双主题浏览器回归待主流程验证。）
+
 正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值与验证状态见[排版规范](docs/design-language.md#02-字体与字号)。不要通过降低正文对比度来制造安静感。
 
 ## 4. 组件语言
@@ -266,8 +276,8 @@ layout:
 | 次级跳转 | [TextArrowLink.astro](src/components/TextArrowLink.astro) |
 | 文章列表卡片 | [PostPreview.astro](src/components/PostPreview.astro) |
 | 页头与移动菜单 | [SiteHeader.astro](src/components/SiteHeader.astro) |
-| 色彩契约 | [color-tokens.css](src/assets/styles/color-tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
-| UnoCSS 语义映射 | [uno.config.ts](uno.config.ts) |
+| 色彩契约 | [tokens.css](src/styles/tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
+| Tailwind 4 语义映射 | [tokens.css](src/styles/tokens.css)、[global.css](src/styles/global.css) |
 | 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |
 
 ## 5. 布局与空间
@@ -323,7 +333,7 @@ layout:
 - 用绿色连接身份，用主题行动色回应操作，让状态和焦点各司其职。
 - 优先复用现有令牌、组件与交互语言；为新规则说明场景和验证方式。
 - 使用语义工具类（如 `bg-muted`、`text-primary-foreground`、`text-status-error`），不要写十六进制色值。
-- 修改颜色时先改 [color-tokens.css](src/assets/styles/color-tokens.css)，再运行 `node scripts/sync-color-docs.mjs` 更新文档。
+- 修改颜色时先改 [tokens.css](src/styles/tokens.css)，再运行 `node scripts/sync-color-docs.mjs` 更新文档。
 - 在两套主题、真实内容与不同宽度下检查阅读、焦点和状态。
 - 保留能增加识别性、可读性或情感价值的个人细节。
 
@@ -334,7 +344,7 @@ layout:
 - 将同一个意思用颜色、下划线和背景反复强调。
 - 为了统一外观而把所有内容包进卡片，或让装饰盖过文章。
 - 在手机上通过缩小文字、裁掉内容或依赖悬停来容纳桌面布局。
-- 直接编辑生成的颜色章节，或引入 `presetWind3` 的原始色板绕过语义令牌。
+- 直接编辑生成的颜色章节，或引入 Tailwind 的原始色板绕过语义令牌。
 - 把终端、身份牌或代码块改造成普通的 `card`；它们有各自的表面职责。
 
 最终以四项标准评估设计：**清晰、舒适、一致、有我自己的声音**。访客应能理解主次、舒适阅读、预测同类操作，并从绿色、双头像与克制的细节中认出这里属于谁。

@@ -1,5 +1,9 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import AstroPureIntegration from 'astro-pure'
+import mdx from '@astrojs/mdx'
+import sitemap from '@astrojs/sitemap'
+import react from '@astrojs/react'
+import tailwindcss from '@tailwindcss/vite'
+import { remarkContent, rehypeExternalLinks } from './src/plugins/content'
 import { defineConfig, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
@@ -19,15 +23,13 @@ import {
   transformerNotationHighlight,
   transformerRemoveNotationEscape
 } from './src/plugins/shiki-official/transformers.ts'
-import config from './src/site.config.ts'
 
 // https://astro.build/config
 export default defineConfig({
   // [Basic]
-  site: 'https://clerimia.github.io',
-  // Deploy to a sub path
-  // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
-  // base: '/astro-pure/',
+  site: process.env.SITE_URL ?? 'https://clerimia.github.io',
+  output: 'static',
+  scopedStyleStrategy: 'where',
   trailingSlash: 'never',
   // root: './my-project-directory',
   // 默认只绑定 localhost。需要手机真机调试时再临时改成 { host: true }，
@@ -58,8 +60,9 @@ export default defineConfig({
 
   // [Markdown]
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkContent],
     rehypePlugins: [
+      rehypeExternalLinks,
       [rehypeKatex, {}],
       rehypeHeadingIds,
       [
@@ -110,16 +113,8 @@ export default defineConfig({
   },
 
   // [Integrations]
-  integrations: [
-    // astro-pure will automatically add sitemap, mdx & unocss
-    // sitemap(),
-    // mdx(),
-    AstroPureIntegration(config)
-    // 注意：不要添加 @astrojs/react。Astro 6 的 React 集成会注入
-    // `vite-react-refresh-wrapper`，在 dev 模式下与 rolldown-vite 不兼容，
-    // 导致所有 CSS/JS 资源 500（官方 issue #16229，标记为不修复）。
-    // 站点的交互组件（首页终端、Toast、目录滚动监听）均用原生 JS 实现。
-  ],
+  integrations: [mdx({ optimize: true }), sitemap(), react()],
+  vite: { plugins: [tailwindcss()] },
 
   // [Experimental]
   experimental: {

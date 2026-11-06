@@ -1,8 +1,8 @@
 ---
 import { buildJsonLd, serializeJsonLd } from '@/lib/seo'
-import config from 'virtual:config'
+import config from '@/site-config'
 
-import type { SiteMeta } from 'astro-pure/types'
+import type { SiteMeta } from '@/lib/site-types'
 
 type Props = SiteMeta & {
   publishedDate?: string
