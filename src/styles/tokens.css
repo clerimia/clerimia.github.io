@@ -6,9 +6,10 @@
   --palette-neutral-45: 128.57143 20.00000% 93.13725%;
   --palette-neutral-50: 132.00000 27.77778% 92.94118%;
   --palette-neutral-100: 128.57143 17.50000% 84.31373%;
+  --palette-neutral-125: 133.33333 9.00000% 54.11765%;
   --palette-neutral-200: 135.00000 10.95890% 71.37255%;
   --palette-neutral-300: 140.00000 10.76923% 61.76471%;
-  --palette-neutral-400: 140.86957 12.16931% 37.05882%;
+  --palette-neutral-400: 135.00000 14.28571% 32.94118%;
   --palette-neutral-500: 144.70588 11.25828% 29.60784%;
   --palette-neutral-600: 135.00000 9.37500% 25.09804%;
   --palette-neutral-650: 135.78947 15.70248% 23.72549%;
@@ -17,6 +18,8 @@
   --palette-neutral-900: 140.00000 13.04348% 13.52941%;
   --palette-neutral-950: 165.00000 7.40741% 10.58824%;
   --palette-green-50: 133.33333 33.33333% 94.70588%;
+  --palette-green-100: 130.90909 25.58140% 91.56863%;
+  --palette-green-120: 127.50000 29.62963% 89.41176%;
   --palette-green-200: 134.04255 37.60000% 75.49020%;
   --palette-green-700: 140.81633 28.00000% 34.31373%;
   --palette-green-740: 133.84615 16.25000% 31.37255%;
@@ -55,16 +58,16 @@
   --popover-foreground: var(--palette-neutral-700);
   --primary: var(--palette-green-700);
   --primary-foreground: var(--palette-neutral-0);
-  --secondary: var(--palette-neutral-50);
+  --secondary: var(--palette-green-100);
   --secondary-foreground: var(--palette-neutral-700);
-  --muted: var(--palette-neutral-50);
+  --muted: var(--palette-green-50);
   --muted-foreground: var(--palette-neutral-400);
-  --accent: var(--palette-neutral-50);
+  --accent: var(--palette-green-120);
   --accent-foreground: var(--palette-neutral-700);
   --destructive: var(--palette-red-700);
   --destructive-foreground: var(--palette-neutral-0);
-  --border: var(--palette-neutral-100);
-  --input: var(--palette-neutral-100);
+  --border: var(--palette-neutral-125);
+  --input: var(--palette-neutral-125);
   --ring: var(--palette-green-800);
   --chart-1: var(--palette-green-700);
   --chart-2: var(--palette-blue-700);
@@ -75,9 +78,9 @@
   --sidebar-foreground: var(--palette-neutral-700);
   --sidebar-primary: var(--palette-green-700);
   --sidebar-primary-foreground: var(--palette-neutral-0);
-  --sidebar-accent: var(--palette-neutral-50);
+  --sidebar-accent: var(--palette-green-100);
   --sidebar-accent-foreground: var(--palette-neutral-700);
-  --sidebar-border: var(--palette-neutral-100);
+  --sidebar-border: var(--palette-neutral-125);
   --sidebar-ring: var(--palette-green-800);
 
   /* Site extensions */
@@ -95,10 +98,10 @@
 
   /* Terminal sub-theme: complete colors, not HSL channels. */
   --term-canvas: hsl(var(--palette-neutral-0));
-  --term-edge: hsl(var(--palette-neutral-100));
+  --term-edge: hsl(var(--palette-neutral-125));
   --term-muted: hsl(var(--palette-neutral-400));
   --term-chrome: hsl(var(--palette-neutral-0));
-  --term-chrome-edge: hsl(var(--palette-neutral-100));
+  --term-chrome-edge: hsl(var(--palette-neutral-125));
   --term-foreground: hsl(var(--palette-neutral-700));
 }
 

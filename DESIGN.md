@@ -12,16 +12,16 @@ colors:
   popover-foreground: '#263b2e'
   primary: '#3f7050'
   primary-foreground: '#ffffff'
-  secondary: '#e8f2ea'
+  secondary: '#e4efe6'
   secondary-foreground: '#263b2e'
-  muted: '#e8f2ea'
-  muted-foreground: '#536a5b'
-  accent: '#e8f2ea'
+  muted: '#edf6ef'
+  muted-foreground: '#48604e'
+  accent: '#dcecde'
   accent-foreground: '#263b2e'
   destructive: '#ab2e2e'
   destructive-foreground: '#ffffff'
-  border: '#d0ded2'
-  input: '#d0ded2'
+  border: '#7f9584'
+  input: '#7f9584'
   ring: '#315a40'
   chart-1: '#3f7050'
   chart-2: '#285e86'
@@ -32,9 +32,9 @@ colors:
   sidebar-foreground: '#263b2e'
   sidebar-primary: '#3f7050'
   sidebar-primary-foreground: '#ffffff'
-  sidebar-accent: '#e8f2ea'
+  sidebar-accent: '#e4efe6'
   sidebar-accent-foreground: '#263b2e'
-  sidebar-border: '#d0ded2'
+  sidebar-border: '#7f9584'
   sidebar-ring: '#315a40'
   # site extensions
   brand: '#3f7050'
@@ -49,10 +49,10 @@ colors:
   status-error: '#ab2e2e'
   status-error-surface: '#fbefee'
   term-canvas: '#ffffff'
-  term-edge: '#d0ded2'
-  term-muted: '#536a5b'
+  term-edge: '#7f9584'
+  term-muted: '#48604e'
   term-chrome: '#ffffff'
-  term-chrome-edge: '#d0ded2'
+  term-chrome-edge: '#7f9584'
   term-foreground: '#263b2e'
 colorsDark:
   # shadcn/ui theme tokens
@@ -219,7 +219,7 @@ layout:
 | `--card` | `#ffffff` | `#262d29` | 面板与浮层表面 |
 | `--primary` | `#3f7050` | `#df9aae` | 主要行动与链接 |
 | `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
-| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--muted-foreground` | `#48604e` | `#aebeb2` | 弱化内容表面上的辅助文字 |
 | `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
 | `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 
@@ -236,9 +236,10 @@ layout:
 | `--palette-neutral-45` | `#eaf1eb` |
 | `--palette-neutral-50` | `#e8f2ea` |
 | `--palette-neutral-100` | `#d0ded2` |
+| `--palette-neutral-125` | `#7f9584` |
 | `--palette-neutral-200` | `#aebeb2` |
 | `--palette-neutral-300` | `#93a89a` |
-| `--palette-neutral-400` | `#536a5b` |
+| `--palette-neutral-400` | `#48604e` |
 | `--palette-neutral-500` | `#43544a` |
 | `--palette-neutral-600` | `#3a463d` |
 | `--palette-neutral-650` | `#334638` |
@@ -247,6 +248,8 @@ layout:
 | `--palette-neutral-900` | `#1e2721` |
 | `--palette-neutral-950` | `#191d1c` |
 | `--palette-green-50` | `#edf6ef` |
+| `--palette-green-100` | `#e4efe6` |
+| `--palette-green-120` | `#dcecde` |
 | `--palette-green-200` | `#a9d8b4` |
 | `--palette-green-700` | `#3f7050` |
 | `--palette-green-740` | `#435d49` |
@@ -290,16 +293,16 @@ layout:
 | `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
 | `--primary-hover` | `#315a40` | `#f5c4d0` | 已着行动色的悬停状态 |
 | `--primary-active` | `#2b4e38` | `#e3a7b8` | 已着行动色的按下状态 |
-| `--secondary` | `#e8f2ea` | `#334638` | 标签与搜索命中等中性局部表面 |
+| `--secondary` | `#e4efe6` | `#334638` | 标签与搜索命中等中性局部表面 |
 | `--secondary-foreground` | `#263b2e` | `#eaf1eb` | 中性局部表面上的正文 |
-| `--muted` | `#e8f2ea` | `#262d29` | 弱化内容表面 |
-| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
-| `--accent` | `#e8f2ea` | `#38232a` | 局部行动弱表面 |
+| `--muted` | `#edf6ef` | `#262d29` | 弱化内容表面 |
+| `--muted-foreground` | `#48604e` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--accent` | `#dcecde` | `#38232a` | 局部行动弱表面 |
 | `--accent-foreground` | `#263b2e` | `#eaf1eb` | 行动弱表面上的正文 |
 | `--destructive` | `#ab2e2e` | `#ffaaa4` | 破坏性操作背景（错误角色别名） |
 | `--destructive-foreground` | `#ffffff` | `#2b1920` | 破坏性操作文字 |
-| `--border` | `#d0ded2` | `#43544a` | 分隔与默认边框 |
-| `--input` | `#d0ded2` | `#43544a` | 输入控件边框 |
+| `--border` | `#7f9584` | `#43544a` | 分隔与默认边框 |
+| `--input` | `#7f9584` | `#43544a` | 输入控件边框 |
 | `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
 | `--chart-1` | `#3f7050` | `#a9d8b4` | 无序分类数据系列 1 |
 | `--chart-2` | `#285e86` | `#9fcbed` | 无序分类数据系列 2 |
@@ -310,9 +313,9 @@ layout:
 | `--sidebar-foreground` | `#263b2e` | `#eaf1eb` | 侧栏正文 |
 | `--sidebar-primary` | `#3f7050` | `#df9aae` | 侧栏主要行动 |
 | `--sidebar-primary-foreground` | `#ffffff` | `#2b1920` | 侧栏主要行动文字 |
-| `--sidebar-accent` | `#e8f2ea` | `#334638` | 侧栏选中表面 |
+| `--sidebar-accent` | `#e4efe6` | `#334638` | 侧栏选中表面 |
 | `--sidebar-accent-foreground` | `#263b2e` | `#eaf1eb` | 侧栏选中文字 |
-| `--sidebar-border` | `#d0ded2` | `#43544a` | 侧栏边线 |
+| `--sidebar-border` | `#7f9584` | `#43544a` | 侧栏边线 |
 | `--sidebar-ring` | `#315a40` | `#a9d8b4` | 侧栏焦点 |
 | `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 | `--status-info` | `#285e86` | `#9fcbed` | 信息状态文字与图标 |
@@ -324,13 +327,13 @@ layout:
 | `--status-error` | `#ab2e2e` | `#ffaaa4` | 错误状态文字与图标 |
 | `--status-error-surface` | `#fbefee` | `#3d2929` | 错误状态弱表面 |
 | `--term-canvas` | `#ffffff` | `#1e2721` | 终端画布 |
-| `--term-edge` | `#d0ded2` | `#3a463d` | 终端边线 |
-| `--term-muted` | `#536a5b` | `#93a89a` | 终端辅助文字 |
+| `--term-edge` | `#7f9584` | `#3a463d` | 终端边线 |
+| `--term-muted` | `#48604e` | `#93a89a` | 终端辅助文字 |
 | `--term-chrome` | `#ffffff` | `#25342a` | 终端标题栏 |
-| `--term-chrome-edge` | `#d0ded2` | `#435d49` | 终端标题栏边线 |
+| `--term-chrome-edge` | `#7f9584` | `#435d49` | 终端标题栏边线 |
 | `--term-foreground` | `#263b2e` | `#a9d8b4` | 终端标题栏文字 |
 
-每个表面令牌都有对应的 `-foreground`。状态文字使用 `--status-*`，弱表面使用 `--status-*-surface`。深色主题的 `--muted` 使用面板色，与 `--secondary` 选择表面分开；`--accent` 使用行动弱表面。组件优先使用语义工具类，避免直接写色值。
+每个表面令牌都有对应的 `-foreground`。状态文字使用 `--status-*`，弱表面使用 `--status-*-surface`。两套主题的三个弱表面都保持三级阶梯：`--muted`（弱化内容）< `--secondary`（选择与命中）< `--accent`（行动悬停）；日间由绿阶 `green-50 / 100 / 120` 承担，夜间用面板色、选择表面与酒红弱表面。`--border` 使用 `neutral-125`，对画布约 3.1:1，足以让卡片与控件外框立住；更重的分隔需要新的层级，而不是继续压深同一个令牌。组件优先使用语义工具类，避免直接写色值。
 <!-- color-tokens:end -->
 
 ## 3. 排版规则
