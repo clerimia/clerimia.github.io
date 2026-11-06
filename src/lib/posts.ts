@@ -1,5 +1,5 @@
 import { type CollectionEntry, getCollection } from 'astro:content'
-import { getBlogCollection, sortMDByDate } from '@/utils/content'
+import { getBlogCollection, sortMDByDate } from '@/lib/content'
 
 export type PostSection = 'blog' | 'essays'
 

@@ -14,8 +14,8 @@ import Copyright from '@/components/blog/Copyright.astro'
 import Hero from '@/components/blog/Hero.astro'
 import PostTOC from '@/components/blog/PostTOC.astro'
 import { Comment, PageInfo } from '@/components/comments'
-import { getPostSectionUrl } from '@/utils/posts'
-import { getEntrySection } from '@/utils/tags'
+import { getPostSectionUrl } from '@/lib/posts'
+import { getEntrySection } from '@/lib/tags'
 
 interface Props {
   post: CollectionEntry<'blog'>

@@ -1,10 +1,10 @@
 ---
 import type { Page } from 'astro'
 import Paginator from '@/components/site/Paginator.astro'
-import PostPreview from '@/components/PostPreview.astro'
+import PostPreview from '@/components/site/PostPreview.astro'
 import TagLinks from '@/components/tags/TagLinks.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { getTagUrl, sectionTitles, type ContentSection, type TaggedEntry } from '@/utils/tags'
+import { getTagUrl, sectionTitles, type ContentSection, type TaggedEntry } from '@/lib/tags'
 
 interface Props {
   section: ContentSection

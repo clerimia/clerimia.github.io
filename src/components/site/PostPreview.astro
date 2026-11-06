@@ -3,10 +3,10 @@ import { Image } from 'astro:assets'
 import { type CollectionEntry, render } from 'astro:content'
 import FormattedDate from '@/components/site/FormattedDate.astro'
 import Icon from '@/components/site/Icon.astro'
-import DirectionalArrow from '@/components/DirectionalArrow.astro'
+import DirectionalArrow from '@/components/site/DirectionalArrow.astro'
 import TagLink from '@/components/tags/TagLink.astro'
-import { getMusingUrl } from '@/utils/posts'
-import { getEntrySection, getTagUrl } from '@/utils/tags'
+import { getMusingUrl } from '@/lib/posts'
+import { getEntrySection, getTagUrl } from '@/lib/tags'
 
 type Props = {
   post: CollectionEntry<'blog'> | CollectionEntry<'musings'>

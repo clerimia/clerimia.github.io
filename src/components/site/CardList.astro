@@ -2,7 +2,7 @@
 // Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
 // Modified to retain only the static policy list; see docs/rebuild/third-party.md.
 import type { CardListData } from '@/lib/site-types'
-import { cn } from '@/utils/ui'
+import { cn } from '@/lib/ui'
 import CardListChildren from './CardListChildren.astro'
 
 type Props = CardListData & { class?: string; style?: string | Record<string, string> }

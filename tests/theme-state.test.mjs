@@ -4,7 +4,7 @@ import test from 'node:test'
 import { runInNewContext } from 'node:vm'
 import ts from 'typescript'
 
-const header = await readFile(new URL('../src/components/SiteHeader.astro', import.meta.url), 'utf8')
+const header = await readFile(new URL('../src/components/site/SiteHeader.astro', import.meta.url), 'utf8')
 const script = ts.transpile(header.match(/<script>([\s\S]*?)<\/script>/)[1])
 
 // Execute the real header script in a document that initialized before the user changed theme.

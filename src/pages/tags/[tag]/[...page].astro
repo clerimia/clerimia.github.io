@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro'
-import RedirectPage from '@/components/RedirectPage.astro'
-import { contentSections, getTagPaths, getTagUrl } from '@/utils/tags'
+import RedirectPage from '@/components/site/RedirectPage.astro'
+import { contentSections, getTagPaths, getTagUrl } from '@/lib/tags'
 
 // Old unscoped links resolve to one section, preferring Blog for shared tag names.
 export const getStaticPaths = (async ({ paginate }) => {

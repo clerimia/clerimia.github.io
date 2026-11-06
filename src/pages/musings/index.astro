@@ -1,8 +1,8 @@
 ---
-import PostPreview from '@/components/PostPreview.astro'
+import PostPreview from '@/components/site/PostPreview.astro'
 import TagSidebar from '@/components/tags/TagSidebar.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { getMusings, type MusingEntry } from '@/utils/posts'
+import { getMusings, type MusingEntry } from '@/lib/posts'
 
 export const prerender = true
 const meta = { title: 'Musings', description: '记录阅读、生活与思考，长短皆可。' }

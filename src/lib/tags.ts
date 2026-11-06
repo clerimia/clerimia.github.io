@@ -1,8 +1,8 @@
 import type { PaginateFunction } from 'astro'
 import { getCollection, type CollectionEntry } from 'astro:content'
-import { getUniqueTagsWithCount, sortMDByDate } from '@/utils/content'
+import { getUniqueTagsWithCount, sortMDByDate } from '@/lib/content'
 import config from '@/site-config'
-import { getMusings, getPosts } from '@/utils/posts'
+import { getMusings, getPosts } from '@/lib/posts'
 
 export const contentSections = ['blog', 'notes', 'musings'] as const
 export type ContentSection = (typeof contentSections)[number]

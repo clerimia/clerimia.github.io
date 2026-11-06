@@ -9,7 +9,7 @@ import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 
-import { getBlogCollection, sortMDByDate } from '@/utils/content'
+import { getBlogCollection, sortMDByDate } from '@/lib/content'
 import config from '@/site-config'
 
 // Get dynamic import of images as a map collection

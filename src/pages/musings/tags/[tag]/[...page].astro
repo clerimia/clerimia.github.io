@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths, Page } from 'astro'
 import TagResults from '@/components/tags/TagResults.astro'
-import { getTagPaths, type TaggedEntry } from '@/utils/tags'
+import { getTagPaths, type TaggedEntry } from '@/lib/tags'
 
 export const getStaticPaths = (async ({ paginate }) => getTagPaths('musings', paginate)) satisfies GetStaticPaths
 

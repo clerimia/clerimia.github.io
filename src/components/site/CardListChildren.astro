@@ -4,7 +4,7 @@
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
 import type { CardList } from '@/lib/site-types'
-import { cn } from '@/utils/ui'
+import { cn } from '@/lib/ui'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
   main?: boolean

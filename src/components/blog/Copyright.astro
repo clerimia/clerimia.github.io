@@ -1,7 +1,7 @@
 ---
 import config from '@/site-config'
 
-import { cn, getFormattedDate } from '@/utils/ui'
+import { cn, getFormattedDate } from '@/lib/ui'
 import QRCode from '@/components/site/QRCode.astro'
 import Icon from '@/components/site/Icon.astro'
 
@@ -140,7 +140,7 @@ const shares = {
 </style>
 
 <script>
-  import { showToast } from '@/utils/ui'
+  import { showToast } from '@/lib/ui'
 
   const copyLink = document.getElementById('copy-link')
   copyLink?.addEventListener('click', async () => {

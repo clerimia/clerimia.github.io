@@ -1,7 +1,7 @@
 ---
-import PostPreview from '@/components/PostPreview.astro'
-import { groupCollectionsByYear } from '@/utils/content'
-import { getPosts } from '@/utils/posts'
+import PostPreview from '@/components/site/PostPreview.astro'
+import { groupCollectionsByYear } from '@/lib/content'
+import { getPosts } from '@/lib/posts'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true

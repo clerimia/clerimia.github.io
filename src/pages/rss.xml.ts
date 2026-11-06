@@ -10,9 +10,9 @@ import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import config from '@/site-config'
 
-import { getBlogCollection, sortMDByDate } from '@/utils/content'
+import { getBlogCollection, sortMDByDate } from '@/lib/content'
 import { getCollection } from 'astro:content'
-import { getMusingUrl } from '@/utils/posts'
+import { getMusingUrl } from '@/lib/posts'
 
 // Get dynamic import of images as a map collection
 const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(
