@@ -2,7 +2,7 @@
 import links from '@/public/links.json'
 import config from '@/site-config'
 
-import { Timeline } from 'astro-pure/user'
+import Timeline from '@/components/site/Timeline.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { Comment } from '@/components/comments'
 import FriendList from '@/components/links/FriendList.astro'
@@ -10,7 +10,7 @@ import GardenSprout from '@/components/links/GardenSprout.astro'
 import GardenVine from '@/components/links/GardenVine.astro'
 import LinkDisclosure from '@/components/links/LinkDisclosure.astro'
 
-import '@/assets/styles/links.css'
+import '@/styles/site/links.css'
 
 const { friends } = links
 const linksConf = config.integ.links!

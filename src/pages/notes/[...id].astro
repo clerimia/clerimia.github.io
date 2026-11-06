@@ -1,9 +1,9 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
 
-import { MediumZoom } from 'astro-pure/advanced'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button } from 'astro-pure/user'
+import MediumZoom from '@/components/site/MediumZoom.astro'
+import { getBlogCollection, sortMDByDate } from '@/lib/content'
+import Button from '@/components/site/Button.astro'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import PostTOC from '@/components/blog/PostTOC.astro'
 import TagLinks from '@/components/tags/TagLinks.astro'

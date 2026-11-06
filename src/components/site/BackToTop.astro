@@ -1,0 +1,94 @@
+---
+// Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
+// Modified for resizing content, cleanup and reduced motion.
+import Icon from './Icon.astro'
+interface Props { header: string; content: string; needPercent?: boolean }
+const { header, content, needPercent = true } = Astro.props
+---
+
+<div class='z-10 md:z-50 group fixed bottom-8 end-4 transition-all flex flex-col gap-y-4 sm:end-8' id='action-buttons'>
+  <slot name='other-icons' />
+  <scroll-button data-header={header} data-content={content} data-percent={String(needPercent)}>
+    <button type='button' aria-label='返回顶部' class='relative size-10 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 sm:size-12 opacity-0' id='to-top-btn'>
+      <div aria-hidden='true' class='top-text absolute bottom-0 end-0 start-0 top-0 flex items-center justify-center group-[.ended]:opacity-0'>
+        <span class='text'>0</span><span class='text-xs'>%</span>
+      </div>
+      <Icon name='up' class='top-icon group-[.ended]:opacity-100' />
+    </button>
+  </scroll-button>
+</div>
+
+<script>
+  class ScrollButton extends HTMLElement {
+    observer?: IntersectionObserver
+    resizeObserver?: ResizeObserver
+    abort?: AbortController
+    frame = 0
+    connectedCallback() {
+      const actions = this.closest<HTMLElement>('#action-buttons')
+      const button = this.querySelector<HTMLButtonElement>('button')
+      const percentText = this.querySelector<HTMLElement>('.top-text .text')
+      const header = document.getElementById(this.dataset.header ?? '')
+      const article = document.getElementById(this.dataset.content ?? '')
+      if (!actions || !button) return
+      this.abort = new AbortController()
+      const { signal } = this.abort
+      button.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+      }, { signal })
+      if (header) {
+        this.observer = new IntersectionObserver(([entry]) => {
+          actions.classList.toggle('show', !entry.isIntersecting)
+          button.disabled = entry.isIntersecting
+        })
+        this.observer.observe(header)
+      }
+      const update = () => {
+        this.frame = 0
+        if (this.dataset.percent === 'false' || !article) {
+          actions.classList.add('ended')
+          return
+        }
+        const top = article.getBoundingClientRect().top + window.scrollY
+        const distance = article.scrollHeight - document.documentElement.clientHeight
+        const percent = window.scrollY < top ? 0 : distance <= 0 ? 100 : Math.round(Math.min(1, (window.scrollY - top) / distance) * 100)
+        if (percentText) percentText.textContent = String(percent)
+        actions.classList.toggle('ended', percent >= 100)
+      }
+      const schedule = () => { if (!this.frame) this.frame = requestAnimationFrame(update) }
+      document.addEventListener('scroll', schedule, { passive: true, signal })
+      window.addEventListener('resize', schedule, { signal })
+      if (article) {
+        this.resizeObserver = new ResizeObserver(schedule)
+        this.resizeObserver.observe(article)
+      }
+      update()
+    }
+    disconnectedCallback() {
+      this.abort?.abort()
+      this.observer?.disconnect()
+      this.resizeObserver?.disconnect()
+      cancelAnimationFrame(this.frame)
+    }
+  }
+  if (!customElements.get('scroll-button')) customElements.define('scroll-button', ScrollButton)
+</script>
+
+<style>
+  #action-buttons {
+    transform: translateY(4rem);
+    &.show {
+      transform: translateY(0);
+      & #to-top-btn { opacity: 1; }
+    }
+    & #to-top-btn {
+      & .top-text, & .top-icon { transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+      & .top-text { opacity: 1; }
+      & .top-icon { opacity: 0; }
+    }
+    &.ended #to-top-btn, & #to-top-btn:hover {
+      & .top-text { opacity: 0; }
+      & .top-icon { opacity: 1; }
+    }
+  }
+</style>

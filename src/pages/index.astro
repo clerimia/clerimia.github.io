@@ -1,17 +1,17 @@
 ---
 import { Image } from 'astro:assets'
 
-import { Icon } from 'astro-pure/user'
+import Icon from '@/components/site/Icon.astro'
 import DailyQuote from '@/components/home/DailyQuote.astro'
-import DirectionalArrow from '@/components/DirectionalArrow.astro'
-import TextArrowLink from '@/components/TextArrowLink.astro'
+import DirectionalArrow from '@/components/site/DirectionalArrow.astro'
+import TextArrowLink from '@/components/site/TextArrowLink.astro'
 import darkAvatar from '@/assets/avatar-dark.png'
 import avatar from '@/assets/avatar.png'
 
-import '@/assets/styles/home.css'
+import '@/styles/site/home.css'
 
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { getPosts, getPostUrl } from '@/utils/posts'
+import { getPosts, getPostUrl } from '@/lib/posts'
 
 const posts = (await getPosts()).filter((post) => post.data.section === 'blog').slice(0, 3)
 ---

@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './prose.css';
+@import './old-global.css';
+@import './site/app.css';
+@import './site/header.css';
+@import './site/icon-button.css';
+
+@plugin '@tailwindcss/typography';
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* The old safelist includes classes assembled by the table of contents. */
+@source inline('rounded-t-2xl rounded-b-2xl text-base prose');
+
+@layer base {
+  /* Tailwind 4 defaults borders to currentColor; the site has always used border. */
+  *,
+  ::before,
+  ::after,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: hsl(var(--border));
+  }
+}

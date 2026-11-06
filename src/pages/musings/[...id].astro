@@ -1,12 +1,12 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
 
-import { FormattedDate } from 'astro-pure/user'
-import { cn } from 'astro-pure/utils'
+import FormattedDate from '@/components/site/FormattedDate.astro'
+import { cn } from '@/lib/ui'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import PostLayout from '@/layouts/BlogPost.astro'
 import TagLinks from '@/components/tags/TagLinks.astro'
-import { getMusings } from '@/utils/posts'
+import { getMusings } from '@/lib/posts'
 import { integ } from '@/site-config'
 
 export const prerender = true

@@ -112,41 +112,49 @@ typography:
     fontSize: 'clamp(34px, calc(26.6px + 2vw), 48px)'
     fontWeight: 600
     lineHeight: 1.2
+    letterSpacing: '0em'
   page-title:
     fontFamily: Satoshi
     fontSize: 'clamp(28px, calc(23.6px + 1.2vw), 36px)'
     fontWeight: 600
     lineHeight: 1.25
+    letterSpacing: '0em'
   section:
     fontFamily: Satoshi
     fontSize: 'clamp(22px, calc(20.8px + 0.3vw), 24px)'
     fontWeight: 600
     lineHeight: 1.35
+    letterSpacing: '0em'
   item-title:
     fontFamily: Satoshi
     fontSize: 18px
     fontWeight: 600
     lineHeight: 1.45
+    letterSpacing: '0em'
   lead:
     fontFamily: Satoshi
     fontSize: 'clamp(17px, calc(16.5px + 0.15vw), 18px)'
     fontWeight: 400
     lineHeight: 1.75
+    letterSpacing: '0em'
   reading:
     fontFamily: Satoshi
     fontSize: 16px
     fontWeight: 400
     lineHeight: 1.8
+    letterSpacing: '0em'
   ui:
     fontFamily: Satoshi
     fontSize: 14px
     fontWeight: 400
     lineHeight: 1.6
+    letterSpacing: '0em'
   meta:
     fontFamily: Satoshi
     fontSize: 12px
     fontWeight: 400
     lineHeight: 1.5
+    letterSpacing: '0em'
 rounded:
   base: 10px
   code: 6px
@@ -176,7 +184,7 @@ layout:
 
 这里是一个承载文章、项目与持续变化的思考的个人博客。「一边创作，一边成为自己」既是创作理念，也是设计的起点：界面让内容被看见，也在合适的细节里留下个人的声音。
 
-本文借鉴 [Vercel 设计文档](https://fchangjun.github.io/awesome-design-md-cn/design-md/vercel/DESIGN.md) 的组织方式，描述本站的设计意图和日常判断。具体规则、完整令牌和实施与验证状态以[设计系统文字规范](docs/design-language.md)及[可视化规范](docs/design-language.html)为准；[AGENTS.md](AGENTS.md) 是项目工作入口。设计灵感来源于 [Notion「个人博客网站前端 UI/UX 设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。
+本文借鉴 [Vercel 设计文档](https://fchangjun.github.io/awesome-design-md-cn/design-md/vercel/DESIGN.md) 的组织方式，描述本站的设计意图和日常判断。本文同时承担设计规范的角色：色彩、排版、尺度与组件规则都写在下面，色值表由 `src/styles/tokens.css` 生成；[AGENTS.md](AGENTS.md) 是项目工作入口。设计灵感来源于 [Notion「个人博客网站前端 UI/UX 设计」](https://app.notion.com/p/40540f8bc1e6804ab903fa51c4225aae)（整理于 2026-10-26）。
 
 ## 1. 视觉主题与氛围
 
@@ -192,7 +200,7 @@ layout:
 <!-- color-tokens:start -->
 ## 2. 色彩与信息职责
 
-色彩的首要任务是传递信息。`src/assets/styles/color-tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 UnoCSS 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌及使用边界见[色彩系统](docs/design-language.md#01-色彩系统)。
+色彩的首要任务是传递信息。`src/styles/tokens.css` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1–5`、`sidebar`），`brand`、`primary-hover/active`、`status-*` 与终端 `term-*` 作为本站扩展。组件使用 `hsl(var(--token))` 或 Tailwind 4 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌表见本节。
 
 | 类别 | 职责 |
 | --- | --- |
@@ -216,6 +224,113 @@ layout:
 | `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
 
 文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、必要控件边界与状态以 3:1 为目标。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。
+
+### 基础色板
+
+下表由色板通道换算为便于查看的十六进制色值；通道是内部基础值，组件应使用语义令牌。
+
+| 基础色板通道 | 色值 |
+| --- | --- |
+| `--palette-neutral-0` | `#ffffff` |
+| `--palette-neutral-25` | `#f9fcf9` |
+| `--palette-neutral-45` | `#eaf1eb` |
+| `--palette-neutral-50` | `#e8f2ea` |
+| `--palette-neutral-100` | `#d0ded2` |
+| `--palette-neutral-200` | `#aebeb2` |
+| `--palette-neutral-300` | `#93a89a` |
+| `--palette-neutral-400` | `#536a5b` |
+| `--palette-neutral-500` | `#43544a` |
+| `--palette-neutral-600` | `#3a463d` |
+| `--palette-neutral-650` | `#334638` |
+| `--palette-neutral-700` | `#263b2e` |
+| `--palette-neutral-800` | `#262d29` |
+| `--palette-neutral-900` | `#1e2721` |
+| `--palette-neutral-950` | `#191d1c` |
+| `--palette-green-50` | `#edf6ef` |
+| `--palette-green-200` | `#a9d8b4` |
+| `--palette-green-700` | `#3f7050` |
+| `--palette-green-740` | `#435d49` |
+| `--palette-green-800` | `#315a40` |
+| `--palette-green-900` | `#2b4e38` |
+| `--palette-green-940` | `#25342a` |
+| `--palette-green-950` | `#22382b` |
+| `--palette-wine-100` | `#f5c4d0` |
+| `--palette-wine-200` | `#e3a7b8` |
+| `--palette-wine-300` | `#df9aae` |
+| `--palette-wine-900` | `#38232a` |
+| `--palette-wine-950` | `#2b1920` |
+| `--palette-blue-50` | `#eef5fa` |
+| `--palette-blue-200` | `#9fcbed` |
+| `--palette-blue-700` | `#285e86` |
+| `--palette-blue-950` | `#1e3342` |
+| `--palette-amber-50` | `#fbf2e4` |
+| `--palette-amber-200` | `#e4c18a` |
+| `--palette-amber-700` | `#805417` |
+| `--palette-amber-950` | `#382e20` |
+| `--palette-red-50` | `#fbefee` |
+| `--palette-red-200` | `#ffaaa4` |
+| `--palette-red-700` | `#ab2e2e` |
+| `--palette-red-950` | `#3d2929` |
+| `--palette-violet-200` | `#d4b6e7` |
+| `--palette-violet-700` | `#704e86` |
+| `--palette-rose-200` | `#e2b3c6` |
+| `--palette-rose-700` | `#8a4f66` |
+
+### 主题语义令牌
+
+| 语义令牌 | 日间 | 夜间 | 用途 |
+| --- | --- | --- | --- |
+| `--background` | `#f9fcf9` | `#191d1c` | 页面画布 |
+| `--foreground` | `#263b2e` | `#eaf1eb` | 正文与标题 |
+| `--card` | `#ffffff` | `#262d29` | 面板与浮层表面 |
+| `--card-foreground` | `#263b2e` | `#eaf1eb` | 面板与浮层上的正文 |
+| `--popover` | `#ffffff` | `#262d29` | 浮层表面 |
+| `--popover-foreground` | `#263b2e` | `#eaf1eb` | 浮层上的正文 |
+| `--primary` | `#3f7050` | `#df9aae` | 主要行动与链接 |
+| `--primary-foreground` | `#ffffff` | `#2b1920` | 实心行动底上的文字 |
+| `--primary-hover` | `#315a40` | `#f5c4d0` | 已着行动色的悬停状态 |
+| `--primary-active` | `#2b4e38` | `#e3a7b8` | 已着行动色的按下状态 |
+| `--secondary` | `#e8f2ea` | `#334638` | 标签与搜索命中等中性局部表面 |
+| `--secondary-foreground` | `#263b2e` | `#eaf1eb` | 中性局部表面上的正文 |
+| `--muted` | `#e8f2ea` | `#262d29` | 弱化内容表面 |
+| `--muted-foreground` | `#536a5b` | `#aebeb2` | 弱化内容表面上的辅助文字 |
+| `--accent` | `#e8f2ea` | `#38232a` | 局部行动弱表面 |
+| `--accent-foreground` | `#263b2e` | `#eaf1eb` | 行动弱表面上的正文 |
+| `--destructive` | `#ab2e2e` | `#ffaaa4` | 破坏性操作背景（错误角色别名） |
+| `--destructive-foreground` | `#ffffff` | `#2b1920` | 破坏性操作文字 |
+| `--border` | `#d0ded2` | `#43544a` | 分隔与默认边框 |
+| `--input` | `#d0ded2` | `#43544a` | 输入控件边框 |
+| `--ring` | `#315a40` | `#a9d8b4` | 键盘焦点 |
+| `--chart-1` | `#3f7050` | `#a9d8b4` | 无序分类数据系列 1 |
+| `--chart-2` | `#285e86` | `#9fcbed` | 无序分类数据系列 2 |
+| `--chart-3` | `#704e86` | `#d4b6e7` | 无序分类数据系列 3 |
+| `--chart-4` | `#805417` | `#e4c18a` | 无序分类数据系列 4 |
+| `--chart-5` | `#8a4f66` | `#e2b3c6` | 无序分类数据系列 5 |
+| `--sidebar` | `#ffffff` | `#262d29` | 侧栏表面 |
+| `--sidebar-foreground` | `#263b2e` | `#eaf1eb` | 侧栏正文 |
+| `--sidebar-primary` | `#3f7050` | `#df9aae` | 侧栏主要行动 |
+| `--sidebar-primary-foreground` | `#ffffff` | `#2b1920` | 侧栏主要行动文字 |
+| `--sidebar-accent` | `#e8f2ea` | `#334638` | 侧栏选中表面 |
+| `--sidebar-accent-foreground` | `#263b2e` | `#eaf1eb` | 侧栏选中文字 |
+| `--sidebar-border` | `#d0ded2` | `#43544a` | 侧栏边线 |
+| `--sidebar-ring` | `#315a40` | `#a9d8b4` | 侧栏焦点 |
+| `--brand` | `#3f7050` | `#a9d8b4` | 跨主题绿色身份 |
+| `--status-info` | `#285e86` | `#9fcbed` | 信息状态文字与图标 |
+| `--status-info-surface` | `#eef5fa` | `#1e3342` | 信息状态弱表面 |
+| `--status-success` | `#3f7050` | `#a9d8b4` | 成功状态文字与图标 |
+| `--status-success-surface` | `#edf6ef` | `#22382b` | 成功状态弱表面 |
+| `--status-warning` | `#805417` | `#e4c18a` | 警告状态文字与图标 |
+| `--status-warning-surface` | `#fbf2e4` | `#382e20` | 警告状态弱表面 |
+| `--status-error` | `#ab2e2e` | `#ffaaa4` | 错误状态文字与图标 |
+| `--status-error-surface` | `#fbefee` | `#3d2929` | 错误状态弱表面 |
+| `--term-canvas` | `#ffffff` | `#1e2721` | 终端画布 |
+| `--term-edge` | `#d0ded2` | `#3a463d` | 终端边线 |
+| `--term-muted` | `#536a5b` | `#93a89a` | 终端辅助文字 |
+| `--term-chrome` | `#ffffff` | `#25342a` | 终端标题栏 |
+| `--term-chrome-edge` | `#d0ded2` | `#435d49` | 终端标题栏边线 |
+| `--term-foreground` | `#263b2e` | `#a9d8b4` | 终端标题栏文字 |
+
+每个表面令牌都有对应的 `-foreground`。状态文字使用 `--status-*`，弱表面使用 `--status-*-surface`。深色主题的 `--muted` 使用面板色，与 `--secondary` 选择表面分开；`--accent` 使用行动弱表面。组件优先使用语义工具类，避免直接写色值。
 <!-- color-tokens:end -->
 
 ## 3. 排版规则
@@ -233,7 +348,9 @@ layout:
 | UI | 14px | 1.6 | 导航、按钮与短摘要 |
 | Meta | 12px | 1.5 | 日期与少量辅助信息 |
 
-正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值与验证状态见[排版规范](docs/design-language.md#02-字体与字号)。不要通过降低正文对比度来制造安静感。
+实现以 `src/styles/tokens.css` 为统一来源，Tailwind 4 的 `text-{role}` 同时应用字号、行高、字重和字距（标题角色 600，其余 400，默认 `0em`）；`.dark` 类切换主题。`src/styles/global.css` 汇集语义映射、typography 与现有站点样式，正文的标题锚点、现代行内代码、引用、表格、列表、图片、键盘标记和 Shiki 覆盖保留。JS 通过 `src/lib/tokens.ts` 读取 CSS 动效和复用媒体查询。（迁移已实现；静态契约测试验证，构建及双主题浏览器回归待主流程验证。）
+
+正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值见本节表格。不要通过降低正文对比度来制造安静感。
 
 ## 4. 组件语言
 
@@ -257,17 +374,17 @@ layout:
 
 ### 终端子主题
 
-终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/assets/styles/terminal.css)。
+终端不是另一张普通卡片，而是页面里的独立“设备”。它使用自己的 `--term-*` 画布、边线和辅助文字，以及等宽字体节奏；标题栏使用 `--term-chrome / --term-chrome-edge / --term-foreground`。窗口红黄绿圆点沿用 macOS 系统色，属于固定的外来窗口语言，不映射为本站成功、警告或错误。输入焦点是常驻状态，由光标和局部边线表达；按钮、链接和目录仍使用独立焦点环。实现见 [Terminal.astro](src/components/home/Terminal.astro) 与 [terminal.css](src/styles/site/terminal.css)。
 
 ### 实现锚点
 
 | 约定 | 实现位置 |
 | --- | --- |
-| 次级跳转 | [TextArrowLink.astro](src/components/TextArrowLink.astro) |
-| 文章列表卡片 | [PostPreview.astro](src/components/PostPreview.astro) |
-| 页头与移动菜单 | [SiteHeader.astro](src/components/SiteHeader.astro) |
-| 色彩契约 | [color-tokens.css](src/assets/styles/color-tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
-| UnoCSS 语义映射 | [uno.config.ts](uno.config.ts) |
+| 次级跳转 | [TextArrowLink.astro](src/components/site/TextArrowLink.astro) |
+| 文章列表卡片 | [PostPreview.astro](src/components/site/PostPreview.astro) |
+| 页头与移动菜单 | [SiteHeader.astro](src/components/site/SiteHeader.astro) |
+| 色彩契约 | [tokens.css](src/styles/tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
+| Tailwind 4 语义映射 | [tokens.css](src/styles/tokens.css)、[global.css](src/styles/global.css) |
 | 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |
 
 ## 5. 布局与空间
@@ -282,7 +399,7 @@ layout:
 | 页面边距 | `20 / 24 / 32px` | 随视口宽度变化 |
 | 返回入口到内容 | `24px` | 保持内页节奏一致 |
 
-基础间距采用 `4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 72px`。圆角按职责选择：代码 `6px`、控件 `10px`、面板 `16px`、对话框 `24px`，胶囊用于合适的标签或状态。宽度、间距和断点的完整规则见[页面框架](docs/design-language.md#04-页面框架与断点)。
+基础间距采用 `4 / 8 / 12 / 16 / 20 / 24 / 32 / 48 / 72px`。圆角按职责选择：代码 `6px`、控件 `10px`、面板 `16px`、对话框 `24px`，胶囊用于合适的标签或状态。宽度、间距和断点的完整规则见上表与第 8 节。
 
 ## 6. 表面、边界与层次
 
@@ -299,7 +416,7 @@ layout:
 
 动效用于回应操作或说明浮层的出现和消失；普通阅读内容保持稳定。指针反馈以短暂的颜色或边框变化为主，焦点不延迟。主题切换时正文与画布同步更新，避免过渡中出现低对比度。
 
-首页首屏可以保留有节制的入场、枝叶和身份轨道动效，表达博客的个性。启用减少动态效果时，内容立即呈现，非必要位移和持续动画停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见[动效与交互规范](docs/design-language.md#05-动效与交互)。
+首页首屏可以保留有节制的入场、枝叶和身份轨道动效，表达博客的个性。启用减少动态效果时，内容立即呈现，非必要位移和持续动画停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见上表。
 
 ## 8. 响应式行为
 
@@ -323,7 +440,7 @@ layout:
 - 用绿色连接身份，用主题行动色回应操作，让状态和焦点各司其职。
 - 优先复用现有令牌、组件与交互语言；为新规则说明场景和验证方式。
 - 使用语义工具类（如 `bg-muted`、`text-primary-foreground`、`text-status-error`），不要写十六进制色值。
-- 修改颜色时先改 [color-tokens.css](src/assets/styles/color-tokens.css)，再运行 `node scripts/sync-color-docs.mjs` 更新文档。
+- 修改颜色时先改 [tokens.css](src/styles/tokens.css)，再运行 `node scripts/sync-color-docs.mjs` 更新文档。
 - 在两套主题、真实内容与不同宽度下检查阅读、焦点和状态。
 - 保留能增加识别性、可读性或情感价值的个人细节。
 
@@ -334,14 +451,14 @@ layout:
 - 将同一个意思用颜色、下划线和背景反复强调。
 - 为了统一外观而把所有内容包进卡片，或让装饰盖过文章。
 - 在手机上通过缩小文字、裁掉内容或依赖悬停来容纳桌面布局。
-- 直接编辑生成的颜色章节，或引入 `presetWind3` 的原始色板绕过语义令牌。
+- 直接编辑生成的颜色章节，或引入 Tailwind 的原始色板绕过语义令牌。
 - 把终端、身份牌或代码块改造成普通的 `card`；它们有各自的表面职责。
 
 最终以四项标准评估设计：**清晰、舒适、一致、有我自己的声音**。访客应能理解主次、舒适阅读、预测同类操作，并从绿色、双头像与克制的细节中认出这里属于谁。
 
 ## 10. 给设计与编码代理的使用指南
 
-开始修改界面前，先读本文和[设计系统文字规范](docs/design-language.md)，涉及视觉选择时对照[可视化规范](docs/design-language.html)。先查找现有 token、组件和同类交互；如需调整具体色值、尺度或组件规则，同步更新文字与可视化规范，并标明提案、实现和验证状态。
+开始修改界面前，先读本文和 [AGENTS.md](AGENTS.md)。先查找现有 token、组件和同类交互；如需调整具体色值、尺度或组件规则，同步更新对应章节，并标明提案、实现和验证状态。
 
 可以这样描述任务：
 

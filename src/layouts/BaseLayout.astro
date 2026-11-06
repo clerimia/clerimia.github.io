@@ -1,19 +1,16 @@
 ---
-import { ThemeProvider } from 'astro-pure/components/basic'
-import type { SiteMeta } from 'astro-pure/types'
-import { Button } from 'astro-pure/user'
-import BaseHead from '@/components/BaseHead.astro'
-import SiteFooter from '@/components/SiteFooter.astro'
-import SiteHeader from '@/components/SiteHeader.astro'
-import TerminalDialog from '@/components/TerminalDialog.astro'
+import ThemeProvider from '@/components/site/ThemeProvider.astro'
+import type { SiteMeta } from '@/lib/site-types'
+import Button from '@/components/site/Button.astro'
+import BaseHead from '@/components/site/BaseHead.astro'
+import SiteFooter from '@/components/site/SiteFooter.astro'
+import SiteHeader from '@/components/site/SiteHeader.astro'
+import TerminalDialog from '@/components/site/TerminalDialog.astro'
 import config from '@/site-config'
 
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseLayout /> component.
-import '@/assets/styles/global.css'
-import '@/assets/styles/app.css'
-import '@/assets/styles/header.css'
-import '@/assets/styles/icon-button.css'
+import '@/styles/global.css'
 
 interface Props {
   meta: SiteMeta & {

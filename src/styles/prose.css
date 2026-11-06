@@ -1,0 +1,122 @@
+/* Tailwind typography shares the former preset's base spacing and type scale.
+   Keep the site's overrides here, before app.css and the Shiki rules. */
+.prose {
+  --tw-prose-body: hsl(var(--foreground));
+  --tw-prose-headings: hsl(var(--foreground));
+  --tw-prose-lead: hsl(var(--muted-foreground));
+  --tw-prose-links: hsl(var(--foreground));
+  --tw-prose-bold: hsl(var(--foreground));
+  --tw-prose-counters: hsl(var(--muted-foreground) / 0.6);
+  --tw-prose-bullets: hsl(var(--muted-foreground) / 0.4);
+  --tw-prose-hr: hsl(var(--muted-foreground) / 0.4);
+  --tw-prose-quotes: hsl(var(--foreground));
+  --tw-prose-quote-borders: hsl(var(--border));
+  --tw-prose-captions: hsl(var(--muted-foreground));
+  --tw-prose-kbd: hsl(var(--foreground));
+  --tw-prose-code: hsl(var(--foreground));
+  --tw-prose-pre-code: hsl(var(--muted-foreground));
+  --tw-prose-pre-bg: transparent;
+  --tw-prose-th-borders: hsl(var(--border));
+  --tw-prose-td-borders: hsl(var(--border));
+}
+
+.prose :where(h2, h3, h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
+  scroll-margin-top: 4rem;
+}
+
+.prose :where(h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a):not(:where(.not-prose, .not-prose *)) {
+  margin-inline-start: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  transition: opacity 0.2s ease;
+  opacity: 0;
+  user-select: none;
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6):where(:hover, :target) > a:not(:where(.not-prose, .not-prose *)),
+.prose :where(h1, h2, h3, h4, h5, h6) > a:focus:not(:where(.not-prose, .not-prose *)) {
+  opacity: 1;
+}
+
+.prose :where(a):not(:where(.not-prose, .not-prose *)) {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Current site configuration uses the modern inline-code treatment. */
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
+  padding: 0.3em 0.5em;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-code);
+  background-color: hsl(var(--muted));
+}
+
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::before,
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::after {
+  content: none;
+}
+
+.prose :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+  border-width: 0;
+  border-inline-start: 3px solid hsl(var(--border));
+  border-radius: 0;
+  padding-inline: 1rem;
+  box-shadow: none;
+  font-style: normal;
+}
+
+.prose :where(table):not(:where(.not-prose, .not-prose *)) {
+  display: block;
+  font-size: 0.875em;
+  overflow-x: auto;
+}
+
+.prose :where(table tr):not(:where(.not-prose, .not-prose *)) {
+  border-bottom-width: 1px;
+}
+
+.prose :where(tbody tr:last-child):not(:where(.not-prose, .not-prose *)) {
+  border-bottom-width: 0;
+}
+
+.prose :where(thead th):not(:where(.not-prose, .not-prose *)) {
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.prose :where(td, th):not(:where(.not-prose, .not-prose *)) {
+  border: inherit;
+  text-align: start;
+  padding: 0.57em;
+}
+
+.prose :where(thead th:first-child, tbody td:first-child, tfoot td:first-child):not(:where(.not-prose, .not-prose *)) {
+  padding-inline-start: 0;
+}
+
+.prose :where(ol, ul):not(:where(.not-prose, .not-prose *)) {
+  padding-inline-start: 1.625em;
+}
+
+.prose :where(ol > li, ul > li):not(:where(.not-prose, .not-prose *)) {
+  padding-inline-start: 0.375em;
+}
+
+.prose :where(li):not(:where(.not-prose, .not-prose *)) {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose :where(img):not(:where(.not-prose, .not-prose *)) {
+  border-radius: var(--radius);
+  margin: 0 auto;
+}
+
+.prose :where(kbd):not(:where(.not-prose, .not-prose *)) {
+  border-color: hsl(var(--border));
+  box-shadow: none;
+}
+
+.prose :where(sup > a):not(:where(.not-prose, .not-prose *)) {
+  scroll-margin-top: 4rem;
+}

@@ -1,0 +1,82 @@
+---
+import "@pagefind/default-ui/css/ui.css"
+import SearchIsland from "@/components/islands/SiteSearch"
+---
+
+<aside class='form my-4'>
+  <SearchIsland client:load baseUrl={import.meta.env.BASE_URL} dev={import.meta.env.DEV} />
+  <noscript>搜索需要启用 JavaScript。你也可以通过<a href='/archives'>归档</a>浏览文章。</noscript>
+</aside>
+
+<style is:global>
+  #site-search {
+    --pagefind-ui-scale: 0.8;
+    --pagefind-ui-primary: hsl(var(--primary));
+    --pagefind-ui-text: hsl(var(--foreground));
+    --pagefind-ui-background: hsl(var(--muted));
+    --pagefind-ui-border: hsl(var(--border));
+    --pagefind-ui-tag: hsl(var(--border));
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: inherit;
+  }
+
+  #site-search .pagefind-ui__search-input {
+    font-weight: normal;
+  }
+
+  /* Pagefind 默认白色勾选符在夜间浅酒红底上对比不足。 */
+  #site-search .pagefind-ui__filter-value::before {
+    border-color: hsl(var(--primary-foreground));
+  }
+
+  /* 搜索命中沿用主题选中表面，保持文字清晰且不引入高亮黄。 */
+  #site-search mark {
+    padding-inline: 0.1em;
+    border-radius: var(--radius-code);
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+    font-weight: 600;
+  }
+
+  #site-search .pagefind-ui__filter-name {
+    min-height: 44px;
+    height: auto;
+  }
+
+  #site-search .pagefind-ui__filter-group {
+    gap: 0;
+    padding-top: var(--space-2);
+  }
+
+  #site-search .pagefind-ui__filter-value {
+    min-height: 44px;
+  }
+
+  #site-search .pagefind-ui__filter-label {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-height: 44px;
+    padding-inline-start: 24px;
+    overflow-wrap: anywhere;
+  }
+
+  #site-search .pagefind-ui__filter-checkbox {
+    position: absolute;
+    inset-inline-start: 0;
+  }
+
+  /* 子结果用一条短竖线代替 Pagefind 默认的「⤷」，在中文排版里更干净。
+     这些节点由 Pagefind 在运行时渲染，必须用 :global 才能命中。 */
+  #site-search .pagefind-ui__result-nested .pagefind-ui__result-link::before {
+    content: '';
+    width: 2px;
+    height: 0.9em;
+    border-radius: 1px;
+    background: currentColor;
+    opacity: 0.28;
+    top: 0.2em;
+    right: calc(100% + 0.45em);
+  }
+</style>

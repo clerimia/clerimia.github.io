@@ -2,9 +2,9 @@
 import type { MarkdownHeading } from 'astro'
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 
-import { getPosts } from '@/utils/posts'
+import { getPosts } from '@/lib/posts'
 import PostLayout from '@/layouts/BlogPost.astro'
-import RedirectPage from '@/components/RedirectPage.astro'
+import RedirectPage from '@/components/site/RedirectPage.astro'
 
 export const prerender = true
 

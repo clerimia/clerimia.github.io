@@ -2,8 +2,9 @@
 import { Image } from 'astro:assets'
 import type { InferEntrySchema } from 'astro:content'
 
-import { FormattedDate, Icon } from 'astro-pure/user'
-import { getTagUrl, type ContentSection } from '@/utils/tags'
+import FormattedDate from '@/components/site/FormattedDate.astro'
+import Icon from '@/components/site/Icon.astro'
+import { getTagUrl, type ContentSection } from '@/lib/tags'
 
 // Local version of Astro Pure's Hero with section-aware tag links.
 interface Props {
