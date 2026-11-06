@@ -40,7 +40,7 @@ bunfig.toml
 /src/content/blog/test.*
 /test/
 
-# 主题上游源码目录（站点从 npm 安装 astro-pure，此处仅作本地参考）
+# 早期主题的上游源码目录（已不再依赖，保留忽略以防误提交）
 /packages/
 /preset/
 

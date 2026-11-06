@@ -13,12 +13,14 @@ type SearchResult = {
   sub_results: Array<{ url: string }>
 }
 
-export default function SiteSearch({ baseUrl = '/' }: { baseUrl?: string }) {
+export default function SiteSearch({ baseUrl = '/', dev = false }: { baseUrl?: string; dev?: boolean }) {
   const container = useRef<HTMLDivElement>(null)
   const [error, setError] = useState(false)
   const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
+    // The Pagefind index only exists in a production build.
+    if (dev) return
     let disposed = false
     let search: { destroy: () => void } | undefined
     setError(false)
@@ -61,7 +63,11 @@ export default function SiteSearch({ baseUrl = '/' }: { baseUrl?: string }) {
     }
     void mount()
     return () => { disposed = true; search?.destroy() }
-  }, [baseUrl, attempt])
+  }, [baseUrl, attempt, dev])
+
+  if (dev) {
+    return <p>开发模式下搜索索引尚未生成：请先运行 <code>npm run build</code>，再通过预览查看搜索。</p>
+  }
 
   return <>
     <div id="site-search" ref={container} />

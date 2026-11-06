@@ -91,6 +91,14 @@ test('theme tokens map directly to the palette', () => {
   assert.notEqual(resolve('--accent', dark), resolve('--secondary', dark), 'dark accent and selection differ')
 })
 
+test('both themes define exactly the same semantic tokens', () => {
+  const semantic = (values) => Object.keys(values).filter((key) => !key.startsWith('--palette-'))
+  const lightKeys = semantic(light).sort()
+  const darkKeys = semantic(dark).sort()
+  assert.deepEqual(darkKeys, lightKeys, 'the dark theme must define the same token set')
+  assert.equal(lightKeys.length, 49, 'the semantic token count changed; update the design docs too')
+})
+
 test('duplicate color layers and legacy aliases are gone', () => {
   const removed = [
     '--token-canvas',

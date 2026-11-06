@@ -47,6 +47,15 @@ jobs:
       - name: Verify infrastructure and agent endpoints
         run: node --test tests/infrastructure.test.mjs
 
+      - name: Run the full unit test suite
+        run: npm test
+
+      - name: Verify published routes survived the rebuild
+        run: npm run verify:urls
+
+      - name: Verify article bodies stay server-rendered
+        run: npm run verify:islands
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

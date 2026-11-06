@@ -3,13 +3,9 @@ import "@pagefind/default-ui/css/ui.css"
 import SearchIsland from "@/components/islands/SiteSearch"
 ---
 
-<aside class="form my-4">
-  {import.meta.env.DEV ? (
-    <p>开发模式下搜索不可用：请先构建，再通过预览使用搜索。</p>
-  ) : (
-    <SearchIsland client:load baseUrl={import.meta.env.BASE_URL} />
-  )}
-  <noscript>搜索需要启用 JavaScript。你也可以通过<a href="/archives">归档</a>浏览文章。</noscript>
+<aside class='form my-4'>
+  <SearchIsland client:load baseUrl={import.meta.env.BASE_URL} dev={import.meta.env.DEV} />
+  <noscript>搜索需要启用 JavaScript。你也可以通过<a href='/archives'>归档</a>浏览文章。</noscript>
 </aside>
 
 <style is:global>

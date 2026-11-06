@@ -32,11 +32,11 @@
 
 ## 开发约定
 
-- **样式与设计**：使用 UnoCSS + `src/styles/site/*.css`；现有 token 在 `src/styles/site/app.css` 的 `:root` / `.dark`。先检查设计系统和已有 token、组件；符合目标的优先复用，不符合规范的按任务范围逐步调整。新增视觉规则要说明用途，不随意引入缺少职责的渐变、阴影、装饰或新配色。
-- **交互**：原生 JS，`is:inline` script；项目不使用前端框架。
+- **样式与设计**：使用 Tailwind CSS 4 + `src/styles/`（入口 `global.css`，token 在 `tokens.css` 的 `:root` / `.dark`）。先检查设计系统和已有 token、组件；符合目标的优先复用，不符合规范的按任务范围逐步调整。新增视觉规则要说明用途，不随意引入缺少职责的渐变、阴影、装饰或新配色。
+- **组件与交互**：站点外壳用 Astro 组件（`src/components/site/` 等）；shadcn/ui 组件源码放在 `src/components/ui/`，需要时用 `npx shadcn@latest add <组件>` 添加并按本站 token 调整；只有确实需要复杂交互时才写 React island（`src/components/islands/`），文章正文保持静态渲染。
 - **主题**：若叶睦（日间）安静、轻盈、柔和；墨提斯（夜间）开放、活力、戏剧性。绿色是跨主题的共同身份；行动色日间为绿、夜间为酒红，强调发生在合适的操作反馈中，酒红不等同错误。两主题共用信息架构、布局、排版与组件语言；修改相关 UI 时检查两套主题。
 - **内容**：博客 `src/content/blog/`，笔记 `src/content/notes/`，短随笔 `src/content/musings/`；schema 在 `src/content.config.ts`。
-- **依赖与构建**：修改依赖或构建配置前先读 [README.md](README.md)，尤其是必须保留的 Vite 7 override 和不引入 `@astrojs/react`。
-- **验证**：UI 改动跑 `npm run check` 与 `npm run build`，并在桌面宽屏与 390px 宽、日夜两套主题下各走一遍关键页面（首页、列表、文章详情）。修改 sitemap、SEO、结构化数据或 Agent 接口后，再运行 `npm run verify:infra`。记录未完成的检查与待验证假设。
+- **依赖与构建**：修改依赖或构建配置前先读 [README.md](README.md)，尤其是必须保留的 Vite 7 override 和 `@astrojs/react` 的 5.x 上限。
+- **验证**：UI 改动跑 `npm run check` 与 `npm run build`，并在桌面宽屏与 390px 宽、日夜两套主题下各走一遍关键页面（首页、列表、文章详情）。改动路由时运行 `npm run verify:urls`；修改 sitemap、SEO、结构化数据或 Agent 接口后，再运行 `npm run verify:infra`。记录未完成的检查与待验证假设。
 
 设计取舍按 [DESIGN.md 的「设计判断标准」](DESIGN.md#九设计判断标准) 评估：清晰、舒适、一致、有我自己的声音。

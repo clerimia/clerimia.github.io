@@ -273,9 +273,9 @@ layout:
 
 | 约定 | 实现位置 |
 | --- | --- |
-| 次级跳转 | [TextArrowLink.astro](src/components/TextArrowLink.astro) |
-| 文章列表卡片 | [PostPreview.astro](src/components/PostPreview.astro) |
-| 页头与移动菜单 | [SiteHeader.astro](src/components/SiteHeader.astro) |
+| 次级跳转 | [TextArrowLink.astro](src/components/site/TextArrowLink.astro) |
+| 文章列表卡片 | [PostPreview.astro](src/components/site/PostPreview.astro) |
+| 页头与移动菜单 | [SiteHeader.astro](src/components/site/SiteHeader.astro) |
 | 色彩契约 | [tokens.css](src/styles/tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
 | Tailwind 4 语义映射 | [tokens.css](src/styles/tokens.css)、[global.css](src/styles/global.css) |
 | 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |

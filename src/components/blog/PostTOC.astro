@@ -41,7 +41,7 @@ const label = (text: string) => (text.endsWith('#') ? text.slice(0, -1) : text)
 
 <script>
   // 滚动监听：只高亮「当前正在读」的那一条。
-  // astro-pure 原版会把所有进入视口的标题一起点亮，短页面上整块目录都会变绿。
+  // 早期实现会把所有进入视口的标题一起点亮，短页面上整块目录都会变绿。
   class Toc extends HTMLElement {
     connectedCallback() {
       const links = Array.from(this.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'))
