@@ -212,12 +212,10 @@ input:not([data-slot]):focus-visible,
   border-radius: 8px;
 }
 
-/* Long-form text shares one reading rhythm; code keeps its own line height. */
+/* Long-form text shares one reading rhythm; inline code must not stretch its line. */
 .site-content--inner .prose :where(:not(pre) > code) {
-  display: inline-block;
-  max-width: 100%;
+  display: inline;
   overflow-wrap: anywhere;
-  vertical-align: baseline;
 }
 
 .site-content--inner .prose {

@@ -21,14 +21,14 @@ const { href, class: className, ...attrs } = Astro.props
 </a>
 
 <style>
-  /* One tag action, one form: a compact Badge inside a 44px target. */
+  /* One tag action, one form: a compact Badge inside a control-height target. */
   .tag-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 7px;
+    min-width: var(--control-height);
+    min-height: var(--control-height);
+    padding: 5px;
     text-decoration: none;
   }
 </style>

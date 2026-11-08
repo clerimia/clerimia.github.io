@@ -59,11 +59,11 @@ const isHome = Astro.url.pathname === '/'
           back && (
             <a
               class={cn(
-                buttonVariants({ variant: 'outline', size: 'sm' }),
-                'site-back text-muted-foreground'
+                buttonVariants({ variant: 'secondary', size: 'sm' }),
+                'site-back text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
               data-slot='button'
-              data-variant='outline'
+              data-variant='secondary'
               data-size='sm'
               href={back}
               data-astro-prefetch
