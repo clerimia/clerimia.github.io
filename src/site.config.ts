@@ -42,7 +42,7 @@ export const theme = {
 export const integ = {
   links: {
     logbook: [
-      { date: '2026-11-08', content: '新增友链：Evan——已识乾坤大，犹怜草木青。' },
+      { date: '2026-11-08', content: '新增友链：Evan 的 Agent 手记。' },
       { date: '2026-10-28', content: '新增友链：Zaixi Personal Blog。' },
       { date: '2026-10-27', content: '新增友链：Joye Blog。' },
       { date: '2026-09-17', content: '这里记录友链的变化，欢迎来交换链接。' },
