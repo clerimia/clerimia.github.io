@@ -29,6 +29,10 @@ jobs:
           node-version: 22
           cache: npm
 
+      # 锁文件由 npm 11 生成，CI 需要相同大版本才能通过 npm ci 校验
+      - name: Use npm 11
+        run: npm install -g npm@11
+
       - name: Install dependencies
         run: npm ci
 
