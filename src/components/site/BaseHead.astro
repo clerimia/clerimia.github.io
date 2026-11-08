@@ -16,7 +16,10 @@ const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url).href
 const iconUrl = (path: string) => `${path}?v=clerimia-20261029`
-const noindex = Astro.url.pathname === '/search' || Astro.url.pathname === '/404'
+const noindex =
+  Astro.url.pathname === '/search' ||
+  Astro.url.pathname === '/404' ||
+  Astro.url.pathname === '/design'
 const isArticle = Boolean(articleDate || publishedDate)
 const jsonLd = buildJsonLd({
   site: Astro.site,

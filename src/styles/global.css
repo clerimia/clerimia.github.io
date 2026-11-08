@@ -21,4 +21,10 @@
   ::file-selector-button {
     border-color: hsl(var(--border));
   }
+
+  /* 主题切换到透明叠加时仍保持可读的前景对比。 */
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+    color: hsl(var(--foreground));
+  }
 }

@@ -41,8 +41,10 @@ body.site-body {
   line-height: 1.65;
 }
 
-button,
-input {
+/* shadcn/ui primitives mark their roots with data-slot. Keep the legacy
+   element defaults away from them so Tailwind utilities can own their look. */
+button:not([data-slot]),
+input:not([data-slot]) {
   font: inherit;
 }
 
@@ -51,20 +53,20 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
+button:not([data-slot]) {
   color: inherit;
 }
 
-a {
+a:not([data-slot]) {
   color: inherit;
   transition: color 160ms ease;
 }
 
-a:hover {
+a:not([data-slot]):hover {
   color: hsl(var(--primary-hover));
 }
 
-a:active {
+a:not([data-slot]):active {
   color: hsl(var(--primary-active));
 }
 
@@ -75,9 +77,9 @@ html.theme-changing *::after {
   transition: none !important;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
+button:not([data-slot]):focus-visible,
+a:not([data-slot]):focus-visible,
+input:not([data-slot]):focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 4px;
