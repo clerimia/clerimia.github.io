@@ -33,7 +33,7 @@
 ## 开发约定
 
 - **样式与设计**：使用 Tailwind CSS 4 + `src/styles/`（入口 `global.css`，token 在 `tokens.css` 的 `:root` / `.dark`）。设计系统按三层组织：原语（`--primitive-*`）→ 语义（shadcn/ui 命名，如 `--background`、`--primary`）→ 组件（只消费 `bg-*` / `text-*` 等语义工具类）。基础原语在 `src/components/ui/`，根节点带 `data-slot`；浏览器画板在 `/design`，Pencil 令牌画板在 `pencil-shadcn.pen` 的 `Brand: Clerimia` 主题。先检查设计系统和已有 token、组件；符合目标的优先复用，不符合规范的按任务范围逐步调整。新增视觉规则要说明用途，不随意引入缺少职责的渐变、阴影、装饰或新配色。
-- **组件与交互**：站点外壳用 Astro 组件（`src/components/site/` 等）；shadcn/ui 组件源码放在 `src/components/ui/`，需要时用 `npx shadcn@latest add <组件>` 从官方 registry 添加并按本站 token 调整，**不手写已有组件的外壳**；表单优先用 `FieldGroup + Field`，输入框内按钮用 `InputGroup`。只有确实需要复杂交互时才写 React island（`src/components/islands/`），文章正文保持静态渲染。
+- **组件与交互**：站点外壳用 Astro 组件（`src/components/site/` 等）；shadcn/ui 组件源码放在 `src/components/ui/`，需要时用 `npx shadcn@latest add <组件>` 从官方 registry 添加并按本站 token 调整，**不手写已有组件的外壳**；表单优先用 `FieldGroup + Field`，输入框内按钮用 `InputGroup`。按钮型行动用 `Button`；`.astro` 里的链接型行动用 `buttonVariants` 套原生 `<a>` 并加 `data-slot='button'`，不要在 Astro 模板中给 React `Button` 用 `asChild`（Astro slot 不是可合并的 React 元素）。标签用 `Badge`，面板用 `Card`，分隔线用 `Separator`，分页用 `Pagination`。只有确实需要复杂交互时才写 React island（`src/components/islands/`），文章正文保持静态渲染。
 - **主题**：若叶睦（日间）安静、轻盈、柔和；墨提斯（夜间）开放、活力、戏剧性。绿色是跨主题的共同身份；行动色日间为绿、夜间为酒红，强调发生在合适的操作反馈中，酒红不等同错误。两主题共用信息架构、布局、排版与组件语言；修改相关 UI 时检查两套主题。
 - **内容**：博客 `src/content/blog/`，笔记 `src/content/notes/`，短随笔 `src/content/musings/`；schema 在 `src/content.config.ts`。
 - **依赖与构建**：`package.json` 的 `overrides.vite` 必须保留 `"^7"`（Astro 6 需要 Vite 7），`@astrojs/react` 固定 5.x（6.x 要求 Vite 8）；升级 Astro 时三者一起升。

@@ -1,6 +1,10 @@
 ---
-import Button from '@/components/site/Button.astro'
+import { ArrowRight } from 'lucide-react'
+
 import PageLayout from '@/layouts/BaseLayout.astro'
+import { buttonVariants } from '@/components/ui/button'
+
+const actionClass = buttonVariants({ variant: 'outline' })
 
 const meta = {
   description: '页面不存在',
@@ -14,9 +18,27 @@ const meta = {
     <p class='mt-3 text-muted-foreground'>这个地址下面没有页面。</p>
     <p class='text-lg'>可能是链接写错了，也可能是文章被挪走了。</p>
     <div class='mt-6 flex flex-wrap items-center justify-center gap-3'>
-      <Button title='返回首页' href='/' variant='ahead' />
-      <Button title='浏览文章' href='/blog' variant='ahead' />
-      <Button title='搜索站点' href='/search' variant='ahead' />
+      <a class={actionClass} data-slot='button' data-variant='outline' href='/' data-astro-prefetch>
+        返回首页<ArrowRight aria-hidden='true' />
+      </a>
+      <a
+        class={actionClass}
+        data-slot='button'
+        data-variant='outline'
+        href='/blog'
+        data-astro-prefetch
+      >
+        浏览文章<ArrowRight aria-hidden='true' />
+      </a>
+      <a
+        class={actionClass}
+        data-slot='button'
+        data-variant='outline'
+        href='/search'
+        data-astro-prefetch
+      >
+        搜索站点<ArrowRight aria-hidden='true' />
+      </a>
     </div>
   </div>
 </PageLayout>

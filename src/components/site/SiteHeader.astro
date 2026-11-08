@@ -1,5 +1,8 @@
 ---
+import { cn } from '@/lib/ui'
+
 import Icon from '@/components/site/Icon.astro'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { theme } from '@/site-config'
 
 const pathname = Astro.url.pathname
@@ -28,7 +31,13 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
           }
         </div>
         <a
-          class='site-square-button site-search-button site-search-button--mobile'
+          class={cn(
+            buttonVariants({ variant: 'ghost', size: 'icon' }),
+            'site-square-button site-search-button site-search-button--mobile'
+          )}
+          data-slot='button'
+          data-variant='ghost'
+          data-size='icon'
           href='/search'
           aria-label='搜索'
           title='搜索'
@@ -40,17 +49,25 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
 
     <div class='site-header__actions' role='group' aria-label='站点工具'>
       <a
-        class='site-square-button site-icon-button site-search-button site-search-button--desktop'
+        class={cn(
+          buttonVariants({ variant: 'ghost', size: 'icon' }),
+          'site-square-button site-icon-button site-search-button site-search-button--desktop'
+        )}
+        data-slot='button'
+        data-variant='ghost'
+        data-size='icon'
         href='/search'
         aria-label='搜索'
         title='搜索'
       >
         <Icon name='search' />
       </a>
-      <button
-        class='site-square-button site-icon-button site-terminal-button'
+      <Button
+        className='site-square-button site-icon-button site-terminal-button'
         data-terminal-trigger
         type='button'
+        variant='ghost'
+        size='icon'
         aria-label='打开终端'
         title='打开终端 (`)'
         aria-haspopup='dialog'
@@ -58,21 +75,25 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         aria-expanded='false'
       >
         <span aria-hidden='true'>&gt;_</span>
-      </button>
-      <button
-        class='site-square-button site-icon-button site-theme-button'
+      </Button>
+      <Button
+        className='site-square-button site-icon-button site-theme-button'
         id='site-theme-toggle'
         type='button'
+        variant='ghost'
+        size='icon'
         aria-label='切换深浅色'
         title='切换深浅色'
       >
         <Icon class='theme-icon theme-icon--sun' name='sun' />
         <Icon class='theme-icon theme-icon--moon' name='moon' />
-      </button>
-      <button
-        class='site-square-button site-icon-button site-menu-button'
+      </Button>
+      <Button
+        className='site-square-button site-icon-button site-menu-button'
         id='site-menu-toggle'
         type='button'
+        variant='ghost'
+        size='icon'
         aria-label='展开主导航'
         aria-controls='site-navigation'
         aria-expanded='false'
@@ -88,7 +109,7 @@ const isActive = (link: string) => pathname === link || pathname.startsWith(`${l
         >
           <path d='M5 7h14'></path><path d='M5 12h14'></path><path d='M5 17h14'></path>
         </svg>
-      </button>
+      </Button>
     </div>
   </header>
 </div>

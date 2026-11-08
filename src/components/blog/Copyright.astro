@@ -1,9 +1,11 @@
 ---
-import config from '@/site-config'
-
 import { cn, getFormattedDate } from '@/lib/ui'
-import QRCode from '@/components/site/QRCode.astro'
+
 import Icon from '@/components/site/Icon.astro'
+import QRCode from '@/components/site/QRCode.astro'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import config from '@/site-config'
 
 /**
  * 文章底部的版权卡。
@@ -26,8 +28,7 @@ const {
   class: className
 } = Astro.props
 
-const imageSrc =
-  typeof heroImage?.src === 'string' ? heroImage.src : (heroImage?.src?.src ?? '')
+const imageSrc = typeof heroImage?.src === 'string' ? heroImage.src : (heroImage?.src?.src ?? '')
 
 const shares = {
   weibo: {
@@ -45,11 +46,8 @@ const shares = {
 } as const
 ---
 
-<div
-  class={cn(
-    'relative flex flex-col gap-y-2 rounded-xl border px-3 sm:px-4 py-2 sm:py-3',
-    className
-  )}
+<Card
+  className={cn('relative gap-y-2 rounded-xl bg-transparent px-3 py-2 sm:px-4 sm:py-3', className)}
 >
   <Icon class='absolute end-4 top-4 size-20 opacity-10' name='copyright' aria-hidden='true' />
 
@@ -91,36 +89,46 @@ const shares = {
   {/* 操作 */}
   <div class='relative'>
     <div class='flex flex-row gap-3'>
-      <button
+      <Button
         id='copy-link'
         type='button'
+        variant='ghost'
+        size='icon-sm'
         aria-label='复制本文链接'
         title='复制本文链接'
-        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+        className='rounded-full bg-muted text-muted-foreground hover:bg-muted hover:text-primary'
       >
-        <Icon class='size-5' name='link' />
-      </button>
-      <button
+        <Icon name='link' />
+      </Button>
+      <Button
         id='get-qrcode'
         type='button'
+        variant='ghost'
+        size='icon-sm'
         aria-label='显示二维码'
         title='显示二维码'
-        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+        className='rounded-full bg-muted text-muted-foreground hover:bg-muted hover:text-primary'
       >
-        <Icon class='size-5' name='qrcode' />
-      </button>
+        <Icon name='qrcode' />
+      </Button>
       {
         config.content.share.map((share) => (
           <a
+            class={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
+              'rounded-full bg-muted text-muted-foreground hover:bg-muted hover:text-primary'
+            )}
+            data-slot='button'
+            data-variant='ghost'
+            data-size='icon-sm'
             href={shares[share].link}
             target='_blank'
             rel='noopener noreferrer'
             id={`share-${share}`}
             aria-label={shares[share].label}
             title={shares[share].label}
-            class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
           >
-            <Icon class='size-5' name={share} />
+            <Icon name={share} />
           </a>
         ))
       }
@@ -129,7 +137,7 @@ const shares = {
       class='absolute z-10 -mt-2 box-content max-h-0 max-w-44 overflow-hidden rounded-xl border bg-muted p-4 opacity-0 transition-all duration-300 ease-in-out'
     />
   </div>
-</div>
+</Card>
 
 <style>
   #qrcode-container.expanded {

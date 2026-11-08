@@ -1,9 +1,11 @@
 ---
-import BackToTop from '@/components/site/BackToTop.astro'
 import type { SiteMeta } from '@/lib/site-types'
-import Icon from '@/components/site/Icon.astro'
 import { cn } from '@/lib/ui'
+
 import PageLayout from '@/layouts/BaseLayout.astro'
+import BackToTop from '@/components/site/BackToTop.astro'
+import Icon from '@/components/site/Icon.astro'
+import { Button } from '@/components/ui/button'
 import { integ } from '@/site-config'
 
 interface Props {
@@ -80,10 +82,12 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
   <BackToTop header='content-header' content='content'>
     {
       hasSidebar && (
-        <button
+        <Button
           slot='other-icons'
           id='sidebar-btn'
-          class='article-directory-fab'
+          variant='outline'
+          size='icon'
+          className='article-directory-fab'
           data-sidebar-trigger
           type='button'
           aria-label='展开目录'
@@ -92,7 +96,7 @@ const { meta, back = '/', hasSidebar = false, searchIndex = true, ...props } = A
           data-pagefind-ignore
         >
           <Icon name='list' />
-        </button>
+        </Button>
       )
     }
   </BackToTop>

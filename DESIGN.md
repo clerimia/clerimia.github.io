@@ -429,7 +429,9 @@ layout:
 
 ### 基础原语（shadcn/ui）
 
-组件语言以 shadcn/ui 的官方 registry 为基线，不手写组件外壳。基础集通过 `npx shadcn@latest add` 安装到 `src/components/ui/`，保留官方 API、`data-slot`、`class-variance-authority` 变体与 `cn` 合并；只做两类本地调整：让变体接入本站 token，以及把控件高度接到 `--control-height-*`。当前包括 `Button`、`Badge`、`Card`、`Input`、`Textarea`、`Label`、`Separator`、`Alert`、`Avatar`、`Skeleton`、`Field` 与 `InputGroup`；需要更多组件时继续用 CLI 添加，不把整套组件库一次性搬进来。
+组件语言以 shadcn/ui 的官方 registry 为基线，不手写组件外壳。基础集通过 `npx shadcn@latest add` 安装到 `src/components/ui/`，保留官方 API、`data-slot`、`class-variance-authority` 变体与 `cn` 合并；只做两类本地调整：让变体接入本站 token，以及把控件高度接到 `--control-height-*`。当前包括 `Button`、`Badge`、`Card`、`Input`、`Textarea`、`Label`、`Separator`、`Alert`、`Avatar`、`Skeleton`、`Field`、`InputGroup` 与 `Pagination`；需要更多组件时继续用 CLI 添加，不把整套组件库一次性搬进来。
+
+站点外壳复用同一套原语：按钮型行动使用 `Button`；链接型行动在 `.astro` 中用 `buttonVariants(...)` 生成原生 `<a>` 的类名并标记 `data-slot="button"`（React 的 `asChild` 无法在 Astro 模板中合并 slot 子元素，因此不用于 `.astro`）；标签使用 `Badge`，面板使用 `Card`，分隔线使用 `Separator`，搜索失败提示使用 `Alert`，终端输入使用 `Input`，分页使用 `Pagination`。终端窗口、文章整卡、友链菜园、原生 disclosure 与返回顶部承担专门交互，保留自有结构。
 
 - **Button**：官方 `default / secondary / outline / ghost / destructive / link` 变体与尺寸；默认高 `36px`，窄屏 `44px`。默认变体的悬停/按下使用 `--primary-hover / --primary-active`，破坏性按钮使用 `--destructive-foreground`，避免依赖已从语义色板移除的 `white`。焦点沿用官方 shadcn 的 `3px` ring。
 - **Badge**：官方胶囊形基线，增加本站的 `info / success / warning / error` 状态变体；状态徽章必须同时有文字，颜色不是唯一信号。
@@ -437,8 +439,9 @@ layout:
 - **Input / Textarea / Label**：官方控件；输入框高 `36px`（窄屏 `44px`），边框使用 `--input`，聚焦环使用官方 `3px` ring。表单布局使用 `FieldGroup + Field + FieldLabel`，输入框内按钮使用 `InputGroup + InputGroupInput + InputGroupButton`。
 - **Alert**：官方 `default / destructive` 之外增加 `info / success / warning / error` 弱表面变体；标题与描述提供文字说明，图标只做辅助。
 - **Avatar / Separator / Skeleton**：官方组件；头像使用 `size="lg"` 得到 `40px` 圆形；分隔线 `1px`；骨架只用于加载占位，并遵循减少动态效果。
+- **Pagination**：官方 `Pagination / PaginationContent / PaginationItem / PaginationLink`；站点分页保留左右对齐的纯文字链接样式，通过 `className` 降低按钮表面，不额外引入页码。
 
-旧站点 CSS 的元素级规则（`button`、`a`、`input`）通过 `:not([data-slot])` 与新原语隔离，Tailwind 工具类可以在原语内部正常生效。`src/components/site/Button.astro` 仍是站点外壳的链接/返回入口组件；新原语用于需要 shadcn/ui 语义与变体的界面，以及 `/design` 画板。
+旧站点 CSS 的元素级规则（`button`、`a`、`input`）通过 `:not([data-slot])` 与新原语隔离，Tailwind 工具类可以在原语内部正常生效。此前手写的 `site/Button.astro` 已移除：链接型入口与行动使用 `buttonVariants` 套原生 `<a>`，按钮型行动使用 `Button`，两者共享同一套变体与焦点环。`/design` 画板继续覆盖基础原语的组合与变体。
 
 ### 链接、按钮与导航
 
@@ -466,10 +469,12 @@ layout:
 
 | 约定 | 实现位置 |
 | --- | --- |
-| 基础原语 | [button.tsx](src/components/ui/button.tsx)、[badge.tsx](src/components/ui/badge.tsx)、[card.tsx](src/components/ui/card.tsx)、[input.tsx](src/components/ui/input.tsx)、[alert.tsx](src/components/ui/alert.tsx)、[field.tsx](src/components/ui/field.tsx)、[input-group.tsx](src/components/ui/input-group.tsx) |
+| 基础原语 | [button.tsx](src/components/ui/button.tsx)、[badge.tsx](src/components/ui/badge.tsx)、[card.tsx](src/components/ui/card.tsx)、[input.tsx](src/components/ui/input.tsx)、[alert.tsx](src/components/ui/alert.tsx)、[field.tsx](src/components/ui/field.tsx)、[input-group.tsx](src/components/ui/input-group.tsx)、[pagination.tsx](src/components/ui/pagination.tsx) |
 | 语义令牌与尺度 | [tokens.css](src/styles/tokens.css)、[sync-color-docs.mjs](scripts/sync-color-docs.mjs) |
 | 浏览器令牌画板 | [design.astro](src/pages/design.astro)、[DesignSystemShowcase.tsx](src/components/design/DesignSystemShowcase.tsx) |
 | 次级跳转 | [TextArrowLink.astro](src/components/site/TextArrowLink.astro) |
+| 标签 | [TagLink.astro](src/components/tags/TagLink.astro) → [badge.tsx](src/components/ui/badge.tsx) |
+| 分页 | [Paginator.astro](src/components/site/Paginator.astro) → [pagination.tsx](src/components/ui/pagination.tsx) |
 | 文章列表卡片 | [PostPreview.astro](src/components/site/PostPreview.astro) |
 | 页头与移动菜单 | [SiteHeader.astro](src/components/site/SiteHeader.astro) |
 | 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |

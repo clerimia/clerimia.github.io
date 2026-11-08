@@ -1,4 +1,6 @@
 ---
+import { Card } from '@/components/ui/card'
+
 interface Props {
   username: string
 }
@@ -7,27 +9,46 @@ const { username } = Astro.props
 const profileUrl = `https://github.com/${username}`
 ---
 
-<section class='github-activity not-prose' data-github-activity data-username={username} aria-label='GitHub 提交活动'>
+<Card
+  className='github-activity not-prose gap-0'
+  role='region'
+  data-github-activity
+  data-username={username}
+  aria-label='GitHub 提交活动'
+>
   <div class='activity-header'>
     <span class='activity-title'>GitHub 提交活动</span>
     <span class='activity-summary' data-summary aria-live='polite'>正在加载贡献记录…</span>
   </div>
-  <div class='activity-scroll' tabindex='0' role='region' aria-label='过去一年的每日贡献，可横向滚动'>
+  <div
+    class='activity-scroll'
+    tabindex='0'
+    role='region'
+    aria-label='过去一年的每日贡献，可横向滚动'
+  >
     <div class='activity-calendar' data-calendar hidden></div>
     <p class='activity-message' data-message>正在获取过去一年的 GitHub 动态。</p>
     <noscript>
-      <img src={`https://ghchart.rshah.org/659eb9/${username}`} alt={`${username} 的 GitHub 贡献热力图`} loading='lazy' />
+      <img
+        src={`https://ghchart.rshah.org/659eb9/${username}`}
+        alt={`${username} 的 GitHub 贡献热力图`}
+        loading='lazy'
+      />
     </noscript>
   </div>
   <div class='activity-footer'>
     <a href={profileUrl} target='_blank' rel='noopener noreferrer'>@{username} ↗</a>
     <div class='activity-legend' aria-label='颜色越深，贡献越多'>
       <span>少</span>
-      {[0, 1, 2, 3, 4].map((level) => <span class='activity-cell' data-level={level} aria-hidden='true'></span>)}
+      {
+        [0, 1, 2, 3, 4].map((level) => (
+          <span class='activity-cell' data-level={level} aria-hidden='true' />
+        ))
+      }
       <span>多</span>
     </div>
   </div>
-</section>
+</Card>
 
 <script>
   interface Contribution {
@@ -93,7 +114,7 @@ const profileUrl = `https://github.com/${username}`
         cell.dataset.level = String(Math.max(0, Math.min(4, day.level)))
         cell.title = `${day.date}：${day.count} 次贡献`
         cell.style.gridColumn = String(Math.floor((offset + index) / 7) + 1)
-        cell.style.gridRow = String((offset + index) % 7 + 1)
+        cell.style.gridRow = String(((offset + index) % 7) + 1)
         grid.append(cell)
       })
 
@@ -197,10 +218,18 @@ const profileUrl = `https://github.com/${username}`
     border-radius: 2px;
     background: var(--activity-0);
   }
-  .github-activity .activity-cell[data-level='1'] { background: var(--activity-1); }
-  .github-activity .activity-cell[data-level='2'] { background: var(--activity-2); }
-  .github-activity .activity-cell[data-level='3'] { background: var(--activity-3); }
-  .github-activity .activity-cell[data-level='4'] { background: var(--activity-4); }
+  .github-activity .activity-cell[data-level='1'] {
+    background: var(--activity-1);
+  }
+  .github-activity .activity-cell[data-level='2'] {
+    background: var(--activity-2);
+  }
+  .github-activity .activity-cell[data-level='3'] {
+    background: var(--activity-3);
+  }
+  .github-activity .activity-cell[data-level='4'] {
+    background: var(--activity-4);
+  }
   .github-activity .activity-grid .activity-cell:hover {
     outline: 1px solid hsl(var(--foreground));
     outline-offset: 1px;

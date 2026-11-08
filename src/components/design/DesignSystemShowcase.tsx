@@ -18,6 +18,13 @@ import {
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { InputGroup, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink
+} from '@/components/ui/pagination'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
@@ -415,6 +422,38 @@ export default function DesignSystemShowcase() {
                 <Plus />
               </Button>
             </div>
+          </div>
+
+          <div>
+            <p className='mb-3 font-mono text-[10px] text-muted-foreground'>Pagination</p>
+            <Pagination className='justify-start'>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationLink href='#components' size='default'>
+                    上一页
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href='#components'>1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href='#components' isActive>
+                    2
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href='#components'>3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href='#components' size='default'>
+                    下一页
+                  </PaginationLink>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
 
           <div>

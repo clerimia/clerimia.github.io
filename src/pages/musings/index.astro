@@ -1,8 +1,10 @@
 ---
+import { getMusings, type MusingEntry } from '@/lib/posts'
+
+import PageLayout from '@/layouts/BaseLayout.astro'
 import PostPreview from '@/components/site/PostPreview.astro'
 import TagSidebar from '@/components/tags/TagSidebar.astro'
-import PageLayout from '@/layouts/BaseLayout.astro'
-import { getMusings, type MusingEntry } from '@/lib/posts'
+import { Separator } from '@/components/ui/separator'
 
 export const prerender = true
 const meta = { title: 'Musings', description: '记录阅读、生活与思考，长短皆可。' }
@@ -39,23 +41,26 @@ for (const entry of entries) {
     <div class='listing-layout'>
       <section id='content' class='animate min-w-0' aria-label='随笔列表'>
         {entries.length === 0 && <p class='text-muted-foreground'>还没有随笔。</p>}
-        {Array.from(byYear).map(([year, musings]) => (
-          <div class='mt-8 first:mt-0'>
-            <div class='musing-year'>
-              <h2>{year}</h2>
-              <span>{musings.length} 篇随笔</span>
+        {
+          Array.from(byYear).map(([year, musings]) => (
+            <div class='mt-8 first:mt-0'>
+              <div class='musing-year'>
+                <h2>{year}</h2>
+                <span>{musings.length} 篇随笔</span>
+                <Separator className='flex-1' />
+              </div>
+              <ul class='flex flex-col gap-3'>
+                {musings.map((post) => (
+                  <PostPreview
+                    {post}
+                    detailed
+                    description={post.data.description || snippet(post.body)}
+                  />
+                ))}
+              </ul>
             </div>
-            <ul class='flex flex-col gap-3'>
-              {musings.map((post) => (
-                <PostPreview
-                  {post}
-                  detailed
-                  description={post.data.description || snippet(post.body)}
-                />
-              ))}
-            </ul>
-          </div>
-        ))}
+          ))
+        }
       </section>
       <TagSidebar section='musings' />
     </div>
@@ -69,7 +74,13 @@ for (const entry of entries) {
     gap: var(--space-3);
     margin-bottom: var(--space-3);
   }
-  .musing-year h2 { margin: 0; font-size: var(--font-item-title); font-weight: 600; }
-  .musing-year span { color: hsl(var(--muted-foreground)); font-size: var(--font-meta); }
-  .musing-year::after { content: ''; flex: 1; height: 1px; background: hsl(var(--border)); }
+  .musing-year h2 {
+    margin: 0;
+    font-size: var(--font-item-title);
+    font-weight: 600;
+  }
+  .musing-year span {
+    color: hsl(var(--muted-foreground));
+    font-size: var(--font-meta);
+  }
 </style>

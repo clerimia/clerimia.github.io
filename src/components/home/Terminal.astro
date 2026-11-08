@@ -1,4 +1,6 @@
 ---
+import { Input } from '@/components/ui/input'
+
 import '@/styles/site/terminal.css'
 
 interface Props {
@@ -55,11 +57,7 @@ const helpRows: Array<[string, string]> = [
 ]
 ---
 
-<div
-  id='wt-shell'
-  class:list={['wt-shell', { 'wt-shell--embedded': embedded }]}
-  data-wt-shell
->
+<div id='wt-shell' class:list={['wt-shell', { 'wt-shell--embedded': embedded }]} data-wt-shell>
   {
     !embedded && (
       <div class='wt-titlebar'>
@@ -110,23 +108,41 @@ const helpRows: Array<[string, string]> = [
         ><span class='wt-prompt-cwd'>{cwd}</span><span class='wt-prompt-sigil'>❯</span></span
       >
       <span class='wt-input-wrap'>
-        <input
-          class='wt-input'
+        <Input
+          className='wt-input'
           data-wt='input'
-          spellcheck='false'
-          autocomplete='off'
-          autocapitalize='off'
-          autocorrect='off'
+          spellCheck={false}
+          autoComplete='off'
+          autoCapitalize='off'
+          autoCorrect='off'
           aria-label='终端输入'
           placeholder='help'
         />
-        <span class='wt-block-caret' data-wt='caret' aria-hidden='true' />
+        <span class='wt-block-caret' data-wt='caret' aria-hidden='true'></span>
       </span>
     </div>
   </div>
 </div>
 
-<script is:inline define:vars={{ user, host, cwd, bannerTitle, bannerSub, welcomeText, routes, social, authorName, authorDesc, helpRows, lsColumns, quickCommands, embedded }}>
+<script
+  is:inline
+  define:vars={{
+    user,
+    host,
+    cwd,
+    bannerTitle,
+    bannerSub,
+    welcomeText,
+    routes,
+    social,
+    authorName,
+    authorDesc,
+    helpRows,
+    lsColumns,
+    quickCommands,
+    embedded
+  }}
+>
   ;(function () {
     var shell = document.querySelector('[data-wt-shell]')
     if (!shell) return
@@ -311,10 +327,7 @@ const helpRows: Array<[string, string]> = [
           if (mode === 'dark') root.classList.add('dark')
           else if (mode === 'light') root.classList.remove('dark')
           else if (mode === 'system') {
-            root.classList.toggle(
-              'dark',
-              window.matchMedia('(prefers-color-scheme: dark)').matches
-            )
+            root.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches)
           } else {
             root.classList.toggle('dark')
           }
@@ -360,7 +373,7 @@ const helpRows: Array<[string, string]> = [
 
         default:
           emit('command not found: ' + name, 'err')
-          emit("输入 help 查看可用命令", 'muted')
+          emit('输入 help 查看可用命令', 'muted')
       }
     }
 
