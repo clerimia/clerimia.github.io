@@ -1,17 +1,21 @@
 ---
 import { Image } from 'astro:assets'
+import { cn } from '@/lib/ui'
 
-import Icon from '@/components/site/Icon.astro'
 import DailyQuote from '@/components/home/DailyQuote.astro'
+import HeroVine from '@/components/home/HeroVine.astro'
 import DirectionalArrow from '@/components/site/DirectionalArrow.astro'
+import Icon from '@/components/site/Icon.astro'
 import TextArrowLink from '@/components/site/TextArrowLink.astro'
+import { Button, buttonVariants } from '@/components/ui/button'
 import darkAvatar from '@/assets/avatar-dark.png'
 import avatar from '@/assets/avatar.png'
 
 import '@/styles/site/home.css'
 
-import PageLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, getPostUrl } from '@/lib/posts'
+
+import PageLayout from '@/layouts/BaseLayout.astro'
 
 const posts = (await getPosts()).filter((post) => post.data.section === 'blog').slice(0, 3)
 ---
@@ -25,19 +29,41 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
             <span class='home-greeting'>你好，我是</span>
             <span class='home-name'>clerimia</span>
           </p>
-          <h1 id='home-hero-heading'><span class='home-title-line home-title-line--first'><span class='home-title-accent'>一边</span>创作<span class='home-title-punctuation'>，</span></span><span class='home-title-line home-title-line--second'><span class='home-title-accent'>一边</span>成为自己<span class='home-title-punctuation home-title-seed'>。</span></span></h1>
+          <h1 id='home-hero-heading'>
+            <span class='home-title-line home-title-line--first'
+              ><span class='home-title-accent'>一边</span>创作<span class='home-title-punctuation'
+                >，</span
+              ></span
+            ><span class='home-title-line home-title-line--second'
+              ><span class='home-title-accent'>一边</span>成为自己<span
+                class='home-title-punctuation home-title-seed'>。</span
+              ></span>
+          </h1>
           <p class='home-description'>
             合肥工业大学在读，关注 <strong>AI Agent</strong> 与 <strong>全栈开发</strong>。
           </p>
           <div class='home-actions'>
-            <a class='home-reading-link' href='/blog' data-astro-prefetch>
+            <a
+              class={cn(buttonVariants(), 'home-reading-link')}
+              data-slot='button'
+              data-variant='default'
+              href='/blog'
+              data-astro-prefetch
+            >
               阅读文章
             </a>
-            <a class='home-notes-link' href='/notes' data-astro-prefetch>
+            <a
+              class={cn(buttonVariants({ variant: 'outline' }), 'home-notes-link')}
+              data-slot='button'
+              data-variant='outline'
+              href='/notes'
+              data-astro-prefetch
+            >
               翻翻笔记
             </a>
-            <button
-              class='home-terminal-link'
+            <Button
+              variant='ghost'
+              className='home-terminal-link'
               type='button'
               data-terminal-trigger
               aria-haspopup='dialog'
@@ -46,7 +72,7 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
             >
               <span class='home-terminal-link__glyph' aria-hidden='true'>&gt;_</span>
               <span>在终端里逛逛</span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -70,34 +96,55 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
                 loading='eager'
               />
             </div>
+            <HeroVine />
           </div>
           <div class='home-location'><Icon name='location' /><span>安徽 · 宣城</span></div>
           <div class='home-social-links'>
             <a
-              class='home-social-button site-icon-button'
+              class={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'home-social-button site-icon-button'
+              )}
+              data-slot='button'
+              data-variant='ghost'
+              data-size='icon'
               href='https://github.com/clerimia'
               target='_blank'
               rel='noopener noreferrer'
-              aria-label='GitHub'><Icon name='github' /></a
+              aria-label='GitHub'
             >
-            <a class='home-social-button site-icon-button' href='mailto:1525258693@qq.com' aria-label='发送邮件'
-              ><Icon name='email' /></a
+              <Icon name='github' />
+            </a>
+            <a
+              class={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'home-social-button site-icon-button'
+              )}
+              data-slot='button'
+              data-variant='ghost'
+              data-size='icon'
+              href='mailto:1525258693@qq.com'
+              aria-label='发送邮件'
             >
-            <a class='home-social-button site-icon-button' href='/rss.xml' aria-label='订阅 RSS'
-              ><Icon name='rss' /></a
+              <Icon name='email' />
+            </a>
+            <a
+              class={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'home-social-button site-icon-button'
+              )}
+              data-slot='button'
+              data-variant='ghost'
+              data-size='icon'
+              href='/rss.xml'
+              aria-label='订阅 RSS'
             >
+              <Icon name='rss' />
+            </a>
             <TextArrowLink class='home-about-link' href='/about'>更多关于我</TextArrowLink>
           </div>
         </aside>
       </div>
-      <svg class='home-sprout' viewBox='0 70 350 250' fill='none' aria-hidden='true'>
-        <path class='home-sprout__stem' d='M0 306 C96 288 176 256 236 200 C268 170 282 142 276 108' pathLength='1' />
-        <g transform='translate(142 258) rotate(-18)'><path class='home-sprout__leaf home-sprout__leaf--one' d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z' /></g>
-        <g transform='translate(212 222) rotate(-74)'><path class='home-sprout__leaf home-sprout__leaf--outline' d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z' /></g>
-        <g transform='translate(250 188) rotate(-12)'><path class='home-sprout__leaf home-sprout__leaf--three' d='M0 0 C14 -22 40 -28 60 -20 C52 6 24 16 0 0Z' /></g>
-        <g transform='translate(276 108) rotate(-98)'><path class='home-sprout__leaf home-sprout__leaf--four' d='M0 0 C12 -20 34 -24 52 -16 C44 6 20 14 0 0Z' /></g>
-        <g transform='translate(315 90)'><path class='home-sprout__fall' d='M0 0 C8 -14 26 -17 38 -11 C32 4 14 10 0 0Z' /></g>
-      </svg>
     </section>
 
     <section class='home-latest' aria-labelledby='home-latest-heading'>
@@ -110,7 +157,11 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
       <div class='home-post-list'>
         {
           posts.map((post) => (
-            <a class='home-post-row direction-arrow-trigger' href={getPostUrl(post)} data-astro-prefetch>
+            <a
+              class='home-post-row direction-arrow-trigger'
+              href={getPostUrl(post)}
+              data-astro-prefetch
+            >
               <div class='home-post-date'>
                 {post.data.publishDate
                   .toLocaleDateString('zh-CN', {

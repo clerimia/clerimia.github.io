@@ -43,12 +43,15 @@
   overflow-wrap: anywhere;
 }
 
-/* Current site configuration uses the modern inline-code treatment. */
+/* Inline code stays in the text flow: a faint surface, no hard border. */
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
-  padding: 0.3em 0.5em;
-  border: 1px solid hsl(var(--border));
+  padding: 0.12em 0.32em;
+  border: 0;
   border-radius: var(--radius-code);
-  background-color: hsl(var(--muted));
+  background-color: hsl(var(--secondary));
+  font-weight: 500;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::before,

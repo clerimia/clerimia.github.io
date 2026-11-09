@@ -1,169 +1,201 @@
-/* Theme tokens are HSL channels so `hsl(var(--token) / alpha)` remain compatible with existing site CSS.
-   The palette is the only source of raw values; components use the semantic tokens below. */
-:root, .token-theme {
-  --palette-neutral-0: 0.00000 0.00000% 100.00000%;
-  --palette-neutral-25: 120.00000 33.33333% 98.23529%;
-  --palette-neutral-45: 128.57143 20.00000% 93.13725%;
-  --palette-neutral-50: 132.00000 27.77778% 92.94118%;
-  --palette-neutral-100: 128.57143 17.50000% 84.31373%;
-  --palette-neutral-125: 133.33333 9.00000% 54.11765%;
-  --palette-neutral-200: 135.00000 10.95890% 71.37255%;
-  --palette-neutral-300: 140.00000 10.76923% 61.76471%;
-  --palette-neutral-400: 135.00000 14.28571% 32.94118%;
-  --palette-neutral-500: 144.70588 11.25828% 29.60784%;
-  --palette-neutral-600: 135.00000 9.37500% 25.09804%;
-  --palette-neutral-650: 135.78947 15.70248% 23.72549%;
-  --palette-neutral-700: 142.85714 21.64948% 19.01961%;
-  --palette-neutral-800: 145.71429 8.43373% 16.27451%;
-  --palette-neutral-900: 140.00000 13.04348% 13.52941%;
-  --palette-neutral-950: 165.00000 7.40741% 10.58824%;
-  --palette-green-50: 133.33333 33.33333% 94.70588%;
-  --palette-green-100: 130.90909 25.58140% 91.56863%;
-  --palette-green-120: 127.50000 29.62963% 89.41176%;
-  --palette-green-200: 134.04255 37.60000% 75.49020%;
-  --palette-green-700: 140.81633 28.00000% 34.31373%;
-  --palette-green-740: 133.84615 16.25000% 31.37255%;
-  --palette-green-800: 141.95122 29.49640% 27.25490%;
-  --palette-green-900: 142.28571 28.92562% 23.72549%;
-  --palette-green-940: 140.00000 16.85393% 17.45098%;
-  --palette-green-950: 144.54545 24.44444% 17.64706%;
-  --palette-wine-100: 345.30612 71.01449% 86.47059%;
-  --palette-wine-200: 343.00000 51.72414% 77.25490%;
-  --palette-wine-300: 342.60870 51.87970% 73.92157%;
-  --palette-wine-900: 340.00000 23.07692% 17.84314%;
-  --palette-wine-950: 336.66667 26.47059% 13.33333%;
-  --palette-blue-50: 205.00000 54.54545% 95.68627%;
-  --palette-blue-200: 206.15385 68.42105% 77.64706%;
-  --palette-blue-700: 205.53191 54.02299% 34.11765%;
-  --palette-blue-950: 205.00000 37.50000% 18.82353%;
-  --palette-amber-50: 36.52174 74.19355% 93.92157%;
-  --palette-amber-200: 36.66667 62.50000% 71.76471%;
-  --palette-amber-700: 34.85714 69.53642% 29.60784%;
-  --palette-amber-950: 35.00000 27.27273% 17.25490%;
-  --palette-red-50: 4.61538 61.90476% 95.88235%;
-  --palette-red-200: 3.95604 100.00000% 82.15686%;
-  --palette-red-700: 0.00000 57.60369% 42.54902%;
-  --palette-red-950: 0.00000 19.60784% 20.00000%;
-  --palette-violet-200: 276.73469 50.51546% 80.98039%;
-  --palette-violet-700: 276.42857 26.41509% 41.56863%;
-  --palette-rose-200: 335.74468 44.76190% 79.41176%;
-  --palette-rose-700: 336.61017 27.18894% 42.54902%;
+/* =========================================================================
+   clerimia design system — token foundation
+   -------------------------------------------------------------------------
+   Layer 1 · primitive tokens: raw values. UI never uses these directly.
+   Layer 2 · semantic tokens: shadcn/ui names, paired surface/foreground.
+   Layer 3 · component styles: consume semantic Tailwind utilities only.
 
-  /* shadcn/ui theme tokens */
-  --background: var(--palette-neutral-25);
-  --foreground: var(--palette-neutral-700);
-  --card: var(--palette-neutral-0);
-  --card-foreground: var(--palette-neutral-700);
-  --popover: var(--palette-neutral-0);
-  --popover-foreground: var(--palette-neutral-700);
-  --primary: var(--palette-green-700);
-  --primary-foreground: var(--palette-neutral-0);
-  --secondary: var(--palette-green-100);
-  --secondary-foreground: var(--palette-neutral-700);
-  --muted: var(--palette-green-50);
-  --muted-foreground: var(--palette-neutral-400);
-  --accent: var(--palette-green-120);
-  --accent-foreground: var(--palette-neutral-700);
-  --destructive: var(--palette-red-700);
-  --destructive-foreground: var(--palette-neutral-0);
-  --border: var(--palette-neutral-125);
-  --input: var(--palette-neutral-125);
-  --ring: var(--palette-green-800);
-  --chart-1: var(--palette-green-700);
-  --chart-2: var(--palette-blue-700);
-  --chart-3: var(--palette-violet-700);
-  --chart-4: var(--palette-amber-700);
-  --chart-5: var(--palette-rose-700);
-  --sidebar: var(--palette-neutral-0);
-  --sidebar-foreground: var(--palette-neutral-700);
-  --sidebar-primary: var(--palette-green-700);
-  --sidebar-primary-foreground: var(--palette-neutral-0);
-  --sidebar-accent: var(--palette-green-100);
-  --sidebar-accent-foreground: var(--palette-neutral-700);
-  --sidebar-border: var(--palette-neutral-125);
-  --sidebar-ring: var(--palette-green-800);
+   Color values stay as HSL channels so existing `hsl(var(--token) / alpha)`
+   call sites keep working. The palette table and DESIGN.md are generated from
+   this file by scripts/sync-color-docs.mjs.
+   ========================================================================= */
 
-  /* Site extensions */
-  --brand: var(--palette-green-700);
-  --primary-hover: var(--palette-green-800);
-  --primary-active: var(--palette-green-900);
-  --status-info: var(--palette-blue-700);
-  --status-info-surface: var(--palette-blue-50);
-  --status-success: var(--palette-green-700);
-  --status-success-surface: var(--palette-green-50);
-  --status-warning: var(--palette-amber-700);
-  --status-warning-surface: var(--palette-amber-50);
-  --status-error: var(--palette-red-700);
-  --status-error-surface: var(--palette-red-50);
-
-  /* Terminal sub-theme: complete colors, not HSL channels. */
-  --term-canvas: hsl(var(--palette-neutral-0));
-  --term-edge: hsl(var(--palette-neutral-125));
-  --term-muted: hsl(var(--palette-neutral-400));
-  --term-chrome: hsl(var(--palette-neutral-0));
-  --term-chrome-edge: hsl(var(--palette-neutral-125));
-  --term-foreground: hsl(var(--palette-neutral-700));
-}
-
-
-.dark {
-  --background: var(--palette-neutral-950);
-  --foreground: var(--palette-neutral-45);
-  --card: var(--palette-neutral-800);
-  --card-foreground: var(--palette-neutral-45);
-  --popover: var(--palette-neutral-800);
-  --popover-foreground: var(--palette-neutral-45);
-  --primary: var(--palette-wine-300);
-  --primary-foreground: var(--palette-wine-950);
-  --secondary: var(--palette-neutral-650);
-  --secondary-foreground: var(--palette-neutral-45);
-  --muted: var(--palette-neutral-800);
-  --muted-foreground: var(--palette-neutral-200);
-  --accent: var(--palette-wine-900);
-  --accent-foreground: var(--palette-neutral-45);
-  --destructive: var(--palette-red-200);
-  --destructive-foreground: var(--palette-wine-950);
-  --border: var(--palette-neutral-500);
-  --input: var(--palette-neutral-500);
-  --ring: var(--palette-green-200);
-  --chart-1: var(--palette-green-200);
-  --chart-2: var(--palette-blue-200);
-  --chart-3: var(--palette-violet-200);
-  --chart-4: var(--palette-amber-200);
-  --chart-5: var(--palette-rose-200);
-  --sidebar: var(--palette-neutral-800);
-  --sidebar-foreground: var(--palette-neutral-45);
-  --sidebar-primary: var(--palette-wine-300);
-  --sidebar-primary-foreground: var(--palette-wine-950);
-  --sidebar-accent: var(--palette-neutral-650);
-  --sidebar-accent-foreground: var(--palette-neutral-45);
-  --sidebar-border: var(--palette-neutral-500);
-  --sidebar-ring: var(--palette-green-200);
-
-  --brand: var(--palette-green-200);
-  --primary-hover: var(--palette-wine-100);
-  --primary-active: var(--palette-wine-200);
-  --status-info: var(--palette-blue-200);
-  --status-info-surface: var(--palette-blue-950);
-  --status-success: var(--palette-green-200);
-  --status-success-surface: var(--palette-green-950);
-  --status-warning: var(--palette-amber-200);
-  --status-warning-surface: var(--palette-amber-950);
-  --status-error: var(--palette-red-200);
-  --status-error-surface: var(--palette-red-950);
-
-  --term-canvas: hsl(var(--palette-neutral-900));
-  --term-edge: hsl(var(--palette-neutral-600));
-  --term-muted: hsl(var(--palette-neutral-300));
-  --term-chrome: hsl(var(--palette-green-940));
-  --term-chrome-edge: hsl(var(--palette-green-740));
-  --term-foreground: hsl(var(--palette-green-200));
-}
-
-/* Shared scales; both themes use the same layout and typography. */
 :root {
+  /* -----------------------------------------------------------------------
+     Primitive colors · neutral / green identity / wine night / status
+     --------------------------------------------------------------------- */
+  --primitive-neutral-0: 0.00000 0.00000% 100.00000%; /* #ffffff */
+  --primitive-neutral-50: 0.00000 0.00000% 98.03922%; /* #fafafa */
+  --primitive-neutral-100: 0.00000 0.00000% 96.07843%; /* #f5f5f5 */
+  --primitive-neutral-200: 0.00000 0.00000% 93.33333%; /* #eeeeee */
+  --primitive-neutral-250: 0.00000 0.00000% 94.11765%; /* #f0f0f0 */
+  --primitive-neutral-300: 0.00000 0.00000% 89.01961%; /* #e3e3e3 */
+  --primitive-neutral-400: 0.00000 0.00000% 78.43137%; /* #c8c8c8 */
+  --primitive-neutral-450: 0.00000 0.00000% 67.05882%; /* #ababab */
+  --primitive-neutral-500: 0.00000 0.00000% 52.94118%; /* #878787 */
+  --primitive-neutral-550: 140.00000 8.10811% 43.52941%; /* #66786c */
+  --primitive-neutral-600: 135.00000 14.28571% 32.94118%; /* #48604e */
+  --primitive-neutral-650: 144.70588 11.25828% 29.60784%; /* #43544a */
+  --primitive-neutral-700: 135.00000 9.37500% 25.09804%; /* #3a463d */
+  --primitive-neutral-750: 135.78947 15.70248% 23.72549%; /* #334638 */
+  --primitive-neutral-800: 142.85714 21.64948% 19.01961%; /* #263b2e */
+  --primitive-neutral-850: 145.71429 8.43373% 16.27451%; /* #262d29 */
+  --primitive-neutral-900: 140.00000 13.04348% 13.52941%; /* #1e2721 */
+  --primitive-neutral-950: 165.00000 7.40741% 10.58824%; /* #191d1c */
+
+  --primitive-green-50: 133.33333 33.33333% 94.70588%; /* #edf6ef */
+  --primitive-green-100: 130.90909 25.58140% 91.56863%; /* #e4efe6 */
+  --primitive-green-200: 127.50000 29.62963% 89.41176%; /* #dcecde */
+  --primitive-green-250: 133.04348 32.39437% 86.07843%; /* #d0e7d5 */
+  --primitive-green-300: 134.04255 37.60000% 75.49020%; /* #a9d8b4 */
+  --primitive-green-400: 136.80000 24.27184% 59.60784%; /* #7fb18d */
+  --primitive-green-500: 136.59574 20.52402% 44.90196%; /* #5b8a68 */
+  --primitive-green-600: 140.81633 28.00000% 34.31373%; /* #3f7050 · primary */
+  --primitive-green-650: 133.84615 16.25000% 31.37255%; /* #435d49 */
+  --primitive-green-700: 141.95122 29.49640% 27.25490%; /* #315a40 */
+  --primitive-green-800: 142.28571 28.92562% 23.72549%; /* #2b4e38 */
+  --primitive-green-850: 144.54545 24.44444% 17.64706%; /* #22382b */
+  --primitive-green-900: 140.00000 16.85393% 17.45098%; /* #25342a */
+  --primitive-green-950: 142.50000 23.52941% 13.33333%; /* #1a2a20 */
+
+  --primitive-wine-50: 347.14286 100.00000% 97.25490%; /* #fff1f4 */
+  --primitive-wine-100: 345.30612 71.01449% 86.47059%; /* #f5c4d0 */
+  --primitive-wine-200: 343.00000 51.72414% 77.25490%; /* #e3a7b8 */
+  --primitive-wine-300: 342.60870 51.87970% 73.92157%; /* #df9aae · night primary */
+  --primitive-wine-400: 340.94118 44.04145% 62.15686%; /* #c9748f */
+  --primitive-wine-500: 340.46512 35.24590% 52.15686%; /* #b05a76 */
+  --primitive-wine-600: 338.46154 38.23529% 40.00000%; /* #8d3f5b */
+  --primitive-wine-700: 338.00000 38.96104% 30.19608%; /* #6b2f45 */
+  --primitive-wine-800: 336.58537 38.31776% 20.98039%; /* #4a2131 */
+  --primitive-wine-900: 340.00000 23.07692% 17.84314%; /* #38232a */
+  --primitive-wine-950: 336.66667 26.47059% 13.33333%; /* #2b1920 */
+
+  --primitive-blue-50: 205.00000 54.54545% 95.68627%; /* #eef5fa */
+  --primitive-blue-100: 205.71429 58.33333% 90.58824%; /* #d9e9f5 */
+  --primitive-blue-200: 206.15385 68.42105% 77.64706%; /* #9fcbed */
+  --primitive-blue-300: 206.18182 59.13978% 63.52941%; /* #6ba9d9 */
+  --primitive-blue-400: 206.37931 46.03175% 49.41176%; /* #4485b8 */
+  --primitive-blue-500: 205.00000 53.46535% 39.60784%; /* #2f6e9b */
+  --primitive-blue-600: 205.53191 54.02299% 34.11765%; /* #285e86 */
+  --primitive-blue-700: 206.05263 55.07246% 27.05882%; /* #1f4a6b */
+  --primitive-blue-800: 206.12903 54.38596% 22.35294%; /* #1a3d58 */
+  --primitive-blue-850: 205.00000 37.50000% 18.82353%; /* #1e3342 */
+  --primitive-blue-900: 204.78261 53.48837% 16.86275%; /* #142f42 */
+  --primitive-blue-950: 204.70588 51.51515% 12.94118%; /* #102432 */
+
+  --primitive-amber-50: 36.52174 74.19355% 93.92157%; /* #fbf2e4 */
+  --primitive-amber-100: 36.00000 71.42857% 89.01961%; /* #f7e7cf */
+  --primitive-amber-200: 36.66667 62.50000% 71.76471%; /* #e4c18a */
+  --primitive-amber-300: 37.00000 59.40594% 60.39216%; /* #d6a85e */
+  --primitive-amber-400: 37.38462 52.41935% 48.62745%; /* #bd8c3b */
+  --primitive-amber-500: 36.29032 63.26531% 38.43137%; /* #a06f24 */
+  --primitive-amber-600: 34.85714 69.53642% 29.60784%; /* #805417 */
+  --primitive-amber-700: 34.77273 70.96774% 24.31373%; /* #6a4512 */
+  --primitive-amber-800: 34.02985 67.67677% 19.41176%; /* #533610 */
+  --primitive-amber-850: 35.00000 27.27273% 17.25490%; /* #382e20 */
+  --primitive-amber-900: 33.60000 65.78947% 14.90196%; /* #3f290d */
+  --primitive-amber-950: 32.90323 60.78431% 10.00000%; /* #291b0a */
+
+  --primitive-red-50: 4.61538 61.90476% 95.88235%; /* #fbefee */
+  --primitive-red-100: 4.44444 62.79070% 91.56863%; /* #f7dedc */
+  --primitive-red-200: 3.95604 100.00000% 82.15686%; /* #ffaaa4 */
+  --primitive-red-300: 3.25581 100.00000% 74.70588%; /* #ff857e */
+  --primitive-red-400: 3.26531 76.16580% 62.15686%; /* #e85d55 */
+  --primitive-red-500: 2.78146 61.13360% 51.56863%; /* #cf3f38 */
+  --primitive-red-600: 0.00000 57.60369% 42.54902%; /* #ab2e2e */
+  --primitive-red-700: 0.00000 58.62069% 34.11765%; /* #8a2424 */
+  --primitive-red-800: 0.00000 57.35294% 26.66667%; /* #6b1d1d */
+  --primitive-red-900: 0.00000 54.71698% 20.78431%; /* #521818 */
+  --primitive-red-950: 0.00000 19.60784% 20.00000%; /* #3d2929 */
+
+  --primitive-violet-50: 272.72727 52.38095% 95.88235%; /* #f5effa */
+  --primitive-violet-100: 272.72727 52.38095% 91.76471%; /* #ebdff5 */
+  --primitive-violet-200: 276.73469 50.51546% 80.98039%; /* #d4b6e7 */
+  --primitive-violet-300: 277.05882 43.58974% 69.41176%; /* #b98fd3 */
+  --primitive-violet-400: 273.84615 37.14286% 58.82353%; /* #9b6fbd */
+  --primitive-violet-500: 273.33333 32.27092% 49.21569%; /* #8255a6 */
+  --primitive-violet-600: 276.42857 26.41509% 41.56863%; /* #704e86 */
+  --primitive-violet-700: 276.52174 26.74419% 33.72549%; /* #5b3f6d */
+  --primitive-violet-800: 277.71429 25.92593% 26.47059%; /* #483255 */
+  --primitive-violet-900: 278.40000 24.75248% 19.80392%; /* #36263f */
+  --primitive-violet-950: 278.82353 24.63768% 13.52941%; /* #251a2b */
+
+  --primitive-rose-50: 338.18182 57.89474% 96.27451%; /* #fbf0f4 */
+  --primitive-rose-100: 339.13043 58.97436% 92.35294%; /* #f7e0e8 */
+  --primitive-rose-200: 335.74468 44.76190% 79.41176%; /* #e2b3c6 */
+  --primitive-rose-300: 336.92308 41.93548% 69.60784%; /* #d291aa */
+  --primitive-rose-400: 336.31579 35.18519% 57.64706%; /* #b96d8b */
+  --primitive-rose-500: 335.67568 29.83871% 48.62745%; /* #a15775 */
+  --primitive-rose-600: 336.61017 27.18894% 42.54902%; /* #8a4f66 */
+  --primitive-rose-700: 336.00000 28.40909% 34.50980%; /* #713f53 */
+  --primitive-rose-800: 333.65854 30.37037% 26.47059%; /* #582f41 */
+  --primitive-rose-900: 334.00000 30.61224% 19.21569%; /* #40222f */
+  --primitive-rose-950: 333.00000 30.30303% 12.94118%; /* #2b1720 */
+
+  /* Legacy aliases kept for the existing site CSS. New work uses primitives
+     through semantic tokens, never these names. */
+  --palette-neutral-0: var(--primitive-neutral-0);
+  --palette-neutral-25: var(--primitive-neutral-50);
+  --palette-neutral-45: var(--primitive-neutral-200);
+  --palette-neutral-50: var(--primitive-neutral-250);
+  --palette-neutral-100: var(--primitive-neutral-300);
+  --palette-neutral-125: var(--primitive-neutral-500);
+  --palette-neutral-200: var(--primitive-neutral-400);
+  --palette-neutral-300: var(--primitive-neutral-450);
+  --palette-neutral-400: var(--primitive-neutral-600);
+  --palette-neutral-500: var(--primitive-neutral-650);
+  --palette-neutral-600: var(--primitive-neutral-700);
+  --palette-neutral-650: var(--primitive-neutral-750);
+  --palette-neutral-700: var(--primitive-neutral-800);
+  --palette-neutral-800: var(--primitive-neutral-850);
+  --palette-neutral-900: var(--primitive-neutral-900);
+  --palette-neutral-950: var(--primitive-neutral-950);
+  --palette-green-50: var(--primitive-green-50);
+  --palette-green-100: var(--primitive-green-100);
+  --palette-green-120: var(--primitive-green-200);
+  --palette-green-200: var(--primitive-green-300);
+  --palette-green-700: var(--primitive-green-600);
+  --palette-green-740: var(--primitive-green-650);
+  --palette-green-800: var(--primitive-green-700);
+  --palette-green-900: var(--primitive-green-800);
+  --palette-green-940: var(--primitive-green-900);
+  --palette-green-950: var(--primitive-green-850);
+  --palette-wine-100: var(--primitive-wine-100);
+  --palette-wine-200: var(--primitive-wine-200);
+  --palette-wine-300: var(--primitive-wine-300);
+  --palette-wine-900: var(--primitive-wine-900);
+  --palette-wine-950: var(--primitive-wine-950);
+  --palette-blue-50: var(--primitive-blue-50);
+  --palette-blue-200: var(--primitive-blue-200);
+  --palette-blue-700: var(--primitive-blue-600);
+  --palette-blue-950: var(--primitive-blue-850);
+  --palette-amber-50: var(--primitive-amber-50);
+  --palette-amber-200: var(--primitive-amber-200);
+  --palette-amber-700: var(--primitive-amber-600);
+  --palette-amber-950: var(--primitive-amber-850);
+  --palette-red-50: var(--primitive-red-50);
+  --palette-red-200: var(--primitive-red-200);
+  --palette-red-700: var(--primitive-red-600);
+  --palette-red-950: var(--primitive-red-950);
+  --palette-violet-200: var(--primitive-violet-200);
+  --palette-violet-700: var(--primitive-violet-600);
+  --palette-rose-200: var(--primitive-rose-200);
+  --palette-rose-700: var(--primitive-rose-600);
+
+  /* -----------------------------------------------------------------------
+     Shared scales · geometry, motion, layout, type
+     --------------------------------------------------------------------- */
   color-scheme: light;
-  /* 同一套尺度由日夜主题共用。 */
+
+  --radius: 8px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-code: var(--radius-sm);
+  --radius-control: var(--radius-md);
+  --radius-panel: var(--radius-lg);
+  --radius-dialog: var(--radius-xl);
+  --radius-pill: 999px;
+
+  /* Controls grow to 44px on narrow screens, matching the touch target rule. */
+  --control-height-sm: 32px;
+  --control-height: 36px;
+  --control-height-lg: 40px;
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -176,15 +208,27 @@
   --layout-wide: 1080px;
   --layout-reading: 760px;
   --layout-aside: 224px;
+
   --motion-feedback: 160ms;
   --motion-feedback-easing: ease-out;
   --motion-overlay: 220ms;
   --motion-overlay-easing: cubic-bezier(0.2, 0, 0, 1);
-  --radius-code: 6px;
-  --radius-control: 10px;
-  --radius-panel: 16px;
-  --radius-dialog: 24px;
-  --radius-pill: 999px;
+
+  --elevation-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+  --elevation-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.08), 0 1px 2px -1px hsl(0 0% 0% / 0.08);
+  --elevation-md: 0 4px 12px -2px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.06);
+  --elevation-lg: 0 12px 32px -8px hsl(0 0% 0% / 0.14), 0 4px 8px -4px hsl(0 0% 0% / 0.08);
+  --elevation-overlay: 0 24px 64px -16px hsl(0 0% 0% / 0.24);
+
+  --z-header: 40;
+  --z-overlay: 60;
+  --z-dialog: 70;
+  --z-toast: 80;
+
+  --font-family-sans: Satoshi, 'Microsoft YaHei', system-ui, sans-serif;
+  --font-family-mono: ui-monospace, Consolas, monospace;
+
+  /* Content roles. Component text uses Tailwind's text-xs / text-sm / text-base. */
   --font-display: clamp(34px, calc(26.6px + 2vw), 48px);
   --font-page-title: clamp(28px, calc(23.6px + 1.2vw), 36px);
   --font-section: clamp(22px, calc(20.8px + 0.3vw), 24px);
@@ -194,9 +238,6 @@
   --font-ui: 14px;
   --font-meta: 12px;
 
-  --radius: var(--radius-control);
-  --font-family-sans: Satoshi, "Microsoft YaHei", system-ui, sans-serif;
-  --font-family-mono: ui-monospace, Consolas, monospace;
   --leading-display: 1.2;
   --weight-display: 600;
   --tracking-display: 0em;
@@ -223,8 +264,141 @@
   --tracking-meta: 0em;
 }
 
+@media (max-width: 639px) {
+  :root {
+    --control-height-sm: 44px;
+    --control-height: 44px;
+    --control-height-lg: 44px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Semantic light theme · shadcn/ui token contract
+   ---------------------------------------------------------------------- */
+:root, .token-theme {
+  --background: var(--primitive-neutral-50);
+  --foreground: var(--primitive-neutral-800);
+  --card: var(--primitive-neutral-0);
+  --card-foreground: var(--primitive-neutral-800);
+  --popover: var(--primitive-neutral-0);
+  --popover-foreground: var(--primitive-neutral-800);
+  --primary: var(--primitive-green-600);
+  --primary-foreground: var(--primitive-neutral-0);
+  --primary-hover: var(--primitive-green-700);
+  --primary-active: var(--primitive-green-800);
+  --secondary: var(--primitive-neutral-200);
+  --secondary-foreground: var(--primitive-neutral-800);
+  --muted: var(--primitive-neutral-100);
+  --muted-foreground: var(--primitive-neutral-600);
+  --accent: var(--primitive-green-250);
+  --accent-foreground: var(--primitive-neutral-800);
+  --destructive: var(--primitive-red-600);
+  --destructive-foreground: var(--primitive-neutral-0);
+  --border: var(--primitive-neutral-500);
+  --input: var(--primitive-neutral-500);
+  --ring: var(--primitive-green-700);
+  --chart-1: var(--primitive-green-600);
+  --chart-2: var(--primitive-blue-600);
+  --chart-3: var(--primitive-violet-600);
+  --chart-4: var(--primitive-amber-600);
+  --chart-5: var(--primitive-rose-600);
+  --sidebar: var(--primitive-neutral-0);
+  --sidebar-foreground: var(--primitive-neutral-800);
+  --sidebar-primary: var(--primitive-green-600);
+  --sidebar-primary-foreground: var(--primitive-neutral-0);
+  --sidebar-accent: var(--primitive-neutral-200);
+  --sidebar-accent-foreground: var(--primitive-neutral-800);
+  --sidebar-border: var(--primitive-neutral-500);
+  --sidebar-ring: var(--primitive-green-700);
+
+  /* Site extensions */
+  --brand: var(--primitive-green-600);
+  --status-info: var(--primitive-blue-600);
+  --status-info-surface: var(--primitive-blue-50);
+  --status-success: var(--primitive-green-600);
+  --status-success-surface: var(--primitive-green-50);
+  --status-warning: var(--primitive-amber-600);
+  --status-warning-surface: var(--primitive-amber-50);
+  --status-error: var(--primitive-red-600);
+  --status-error-surface: var(--primitive-red-50);
+
+  /* Terminal sub-theme: complete colors, not HSL channels. */
+  --term-canvas: hsl(var(--primitive-neutral-0));
+  --term-edge: hsl(var(--primitive-neutral-500));
+  --term-muted: hsl(var(--primitive-neutral-600));
+  --term-chrome: hsl(var(--primitive-neutral-0));
+  --term-chrome-edge: hsl(var(--primitive-neutral-500));
+  --term-foreground: hsl(var(--primitive-neutral-800));
+}
+
+/* -------------------------------------------------------------------------
+   Semantic dark theme · same roles, different expression
+   ---------------------------------------------------------------------- */
+.dark {
+  --background: var(--primitive-neutral-950);
+  --foreground: var(--primitive-neutral-200);
+  --card: var(--primitive-neutral-850);
+  --card-foreground: var(--primitive-neutral-200);
+  --popover: var(--primitive-neutral-850);
+  --popover-foreground: var(--primitive-neutral-200);
+  --primary: var(--primitive-wine-300);
+  --primary-foreground: var(--primitive-wine-950);
+  --primary-hover: var(--primitive-wine-100);
+  --primary-active: var(--primitive-wine-200);
+  --secondary: var(--primitive-neutral-750);
+  --secondary-foreground: var(--primitive-neutral-200);
+  --muted: var(--primitive-neutral-850);
+  --muted-foreground: var(--primitive-neutral-400);
+  --accent: var(--primitive-wine-900);
+  --accent-foreground: var(--primitive-neutral-200);
+  --destructive: var(--primitive-red-300);
+  --destructive-foreground: var(--primitive-wine-950);
+  --border: var(--primitive-neutral-550);
+  --input: var(--primitive-neutral-550);
+  --ring: var(--primitive-green-300);
+  --chart-1: var(--primitive-green-300);
+  --chart-2: var(--primitive-blue-200);
+  --chart-3: var(--primitive-violet-200);
+  --chart-4: var(--primitive-amber-200);
+  --chart-5: var(--primitive-rose-200);
+  --sidebar: var(--primitive-neutral-850);
+  --sidebar-foreground: var(--primitive-neutral-200);
+  --sidebar-primary: var(--primitive-wine-300);
+  --sidebar-primary-foreground: var(--primitive-wine-950);
+  --sidebar-accent: var(--primitive-neutral-750);
+  --sidebar-accent-foreground: var(--primitive-neutral-200);
+  --sidebar-border: var(--primitive-neutral-550);
+  --sidebar-ring: var(--primitive-green-300);
+
+  --brand: var(--primitive-green-300);
+  --status-info: var(--primitive-blue-200);
+  --status-info-surface: var(--primitive-blue-850);
+  --status-success: var(--primitive-green-300);
+  --status-success-surface: var(--primitive-green-850);
+  --status-warning: var(--primitive-amber-200);
+  --status-warning-surface: var(--primitive-amber-850);
+  --status-error: var(--primitive-red-300);
+  --status-error-surface: var(--primitive-red-950);
+
+  --term-canvas: hsl(var(--primitive-neutral-900));
+  --term-edge: hsl(var(--primitive-neutral-700));
+  --term-muted: hsl(var(--primitive-neutral-450));
+  --term-chrome: hsl(var(--primitive-green-900));
+  --term-chrome-edge: hsl(var(--primitive-green-650));
+  --term-foreground: hsl(var(--primitive-green-300));
+
+  --elevation-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.24);
+  --elevation-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.32), 0 1px 2px -1px hsl(0 0% 0% / 0.24);
+  --elevation-md: 0 4px 12px -2px hsl(0 0% 0% / 0.4), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
+  --elevation-lg: 0 12px 32px -8px hsl(0 0% 0% / 0.5), 0 4px 8px -4px hsl(0 0% 0% / 0.34);
+  --elevation-overlay: 0 24px 64px -16px hsl(0 0% 0% / 0.64);
+}
+
+/* -------------------------------------------------------------------------
+   Tailwind 4 theme bridge
+   ---------------------------------------------------------------------- */
 @theme inline {
-  /* Restrict utilities to the existing semantic palette. */
+  /* Restrict utilities to the semantic palette. */
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
@@ -236,6 +410,8 @@
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-active: hsl(var(--primary-active));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-muted: hsl(var(--muted));
@@ -261,8 +437,6 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
   --color-brand: hsl(var(--brand));
-  --color-primary-hover: hsl(var(--primary-hover));
-  --color-primary-active: hsl(var(--primary-active));
   --color-status-info: hsl(var(--status-info));
   --color-status-info-surface: hsl(var(--status-info-surface));
   --color-status-success: hsl(var(--status-success));
@@ -281,6 +455,22 @@
   --color-status-success-foreground: hsl(var(--status-success));
   --color-status-warning-foreground: hsl(var(--status-warning));
   --color-status-error-foreground: hsl(var(--status-error));
+
+  /* shadcn/ui radius scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Elevation is reserved for overlays; cards use borders. */
+  --shadow-xs: var(--elevation-xs);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-overlay: var(--elevation-overlay);
 
   --font-sans: var(--font-family-sans);
   --font-mono: var(--font-family-mono);

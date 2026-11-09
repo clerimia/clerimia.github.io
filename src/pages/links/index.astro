@@ -1,14 +1,15 @@
 ---
 import links from '@/public/links.json'
-import config from '@/site-config'
 
-import Timeline from '@/components/site/Timeline.astro'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { Comment } from '@/components/comments'
 import FriendList from '@/components/links/FriendList.astro'
 import GardenSprout from '@/components/links/GardenSprout.astro'
 import GardenVine from '@/components/links/GardenVine.astro'
 import LinkDisclosure from '@/components/links/LinkDisclosure.astro'
+import Timeline from '@/components/site/Timeline.astro'
+import { Button } from '@/components/ui/button'
+import config from '@/site-config'
 
 import '@/styles/site/links.css'
 
@@ -23,12 +24,16 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     <header class='garden-header' id='content-header'>
       <h1>友链<GardenSprout /></h1>
       <p>一些我喜欢的小天地。</p>
-      {friends[0].link_list.length > 0 && (
-        <div class='garden-actions'>
-          <span>{friends[0].link_list.length} 位朋友</span>
-          <button type='button' class='garden-random' data-random-friend>随便逛逛 <span aria-hidden='true'>→</span></button>
-        </div>
-      )}
+      {
+        friends[0].link_list.length > 0 && (
+          <div class='garden-actions'>
+            <span>{friends[0].link_list.length} 位朋友</span>
+            <Button type='button' className='garden-random' data-random-friend>
+              随便逛逛 <span aria-hidden='true'>→</span>
+            </Button>
+          </div>
+        )
+      }
       <GardenVine />
     </header>
     <section class='garden-friends' aria-label='朋友的博客'>
@@ -46,23 +51,33 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     <section class='garden-recommendations' aria-labelledby='special-links'>
       <h2 id='special-links'>推荐链接</h2>
       <ul>
-        {friends[2].link_list.map((friend) => (
-          <li><a href={friend.link} target='_blank' rel='noopener noreferrer'>{friend.name}<span aria-hidden='true'>↗</span></a></li>
-        ))}
+        {
+          friends[2].link_list.map((friend) => (
+            <li>
+              <a href={friend.link} target='_blank' rel='noopener noreferrer'>
+                {friend.name}
+                <span aria-hidden='true'>↗</span>
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </section>
     <section class='garden-section reading-column' aria-labelledby='apply-links'>
       <h2 id='apply-links'>申请友链</h2>
       <div class='friend-info-heading'>
         <p>本站信息</p>
-        <button
-          class='friend-info-copy'
+        <Button
+          variant='outline'
+          className='friend-info-copy'
           type='button'
           data-copy-value={friendInfoText}
           data-copy-label='全部站点信息'
           aria-label='一键复制站点信息'
-          aria-describedby='friend-copy-status'>一键复制</button
+          aria-describedby='friend-copy-status'
         >
+          一键复制
+        </Button>
       </div>
       <dl class='friend-info not-prose'>
         {
@@ -102,7 +117,9 @@ const linkEditPage = 'https://github.com/clerimia/clerimia.github.io/blob/main/p
     let previous = -1
     button?.addEventListener('click', () => {
       if (!links.length) return
-      const candidates = links.map((_, index) => index).filter((index) => links.length === 1 || index !== previous)
+      const candidates = links
+        .map((_, index) => index)
+        .filter((index) => links.length === 1 || index !== previous)
       previous = candidates[Math.floor(Math.random() * candidates.length)]
       links[previous].click()
     })

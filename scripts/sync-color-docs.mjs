@@ -5,17 +5,26 @@ const css = await readFile(new URL('../src/styles/tokens.css', import.meta.url),
 const sections = [...css.matchAll(/(?:^|\n)(:root, \.token-theme|\.dark)\s*\{([^}]*)\}/g)]
 if (sections.length !== 2) throw new Error('Expected light and dark token blocks')
 const declarations = (text) => Object.fromEntries([...text.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, key, value]) => [key, value.trim()]))
-const root = declarations(sections[0][2])
-const dark = { ...root, ...declarations(sections[1][2]) }
-
 const appRoot = css.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1]
 if (!appRoot) throw new Error('Expected shared :root scales in tokens.css')
+// Semantic tokens reference primitives defined in the shared :root block.
 const appTokens = declarations(appRoot)
+const root = { ...appTokens, ...declarations(sections[0][2]) }
+const dark = { ...root, ...declarations(sections[1][2]) }
+
+const trimNumber = (value) => String(Number(value.toFixed(2)))
+const evaluate = (text) =>
+  text.replace(/calc\(([^()]+)\)/g, (_, expression) => {
+    const match = expression.match(/^\s*([\d.]+)px\s*\*\s*([\d.]+)\s*$/)
+    return match ? `${trimNumber(Number(match[1]) * Number(match[2]))}px` : expression
+  })
 const scale = (name, visited = []) => {
   if (visited.includes(name)) throw new Error(`Circular scale token: ${name}`)
   const value = appTokens[name]
   if (!value) throw new Error(`Missing scale token: ${name}`)
-  return value.replace(/var\((--[\w-]+)\)/g, (_, child) => scale(child, [...visited, name]))
+  return evaluate(
+    value.replace(/var\((--[\w-]+)\)/g, (_, child) => scale(child, [...visited, name]))
+  )
 }
 
 // The frontmatter is a machine-readable contract for agents and design tools.
@@ -76,6 +85,13 @@ const typography = ['display', 'page-title', 'section', 'item-title', 'lead', 'r
 
 const rounded = [
   ['base', '--radius'],
+  ['sm', '--radius-sm'],
+  ['md', '--radius-md'],
+  ['lg', '--radius-lg'],
+  ['xl', '--radius-xl'],
+  ['2xl', '--radius-2xl'],
+  ['3xl', '--radius-3xl'],
+  ['4xl', '--radius-4xl'],
   ['code', '--radius-code'],
   ['control', '--radius-control'],
   ['panel', '--radius-panel'],
@@ -102,7 +118,7 @@ const layout = [
 function buildFrontmatter() {
   const lines = [
     '---',
-    'version: alpha',
+    'version: 0.1.0',
     'name: clerimia',
     `description: ${yamlValue('安静，但有自己的声音。整体安静，局部鲜活。')}`,
     'colors:'
@@ -173,9 +189,9 @@ const rows = [
   ['popover', '浮层表面'], ['popover-foreground', '浮层上的正文'],
   ['primary', '主要行动与链接'], ['primary-foreground', '实心行动底上的文字'],
   ['primary-hover', '已着行动色的悬停状态'], ['primary-active', '已着行动色的按下状态'],
-  ['secondary', '标签与搜索命中等中性局部表面'], ['secondary-foreground', '中性局部表面上的正文'],
+  ['secondary', '次级实心表面与中性标签'], ['secondary-foreground', '中性局部表面上的正文'],
   ['muted', '弱化内容表面'], ['muted-foreground', '弱化内容表面上的辅助文字'],
-  ['accent', '局部行动弱表面'], ['accent-foreground', '行动弱表面上的正文'],
+  ['accent', '交互悬停与选中表面（ghost / 菜单 / 行）'], ['accent-foreground', '行动弱表面上的正文'],
   ['destructive', '破坏性操作背景（错误角色别名）'], ['destructive-foreground', '破坏性操作文字'],
   ['border', '分隔与默认边框'], ['input', '输入控件边框'], ['ring', '键盘焦点'],
   ...[1, 2, 3, 4, 5].map((n) => [`chart-${n}`, `无序分类数据系列 ${n}`]),
@@ -191,14 +207,20 @@ const rows = [
   ['term-canvas', '终端画布'], ['term-edge', '终端边线'], ['term-muted', '终端辅助文字'],
   ['term-chrome', '终端标题栏'], ['term-chrome-edge', '终端标题栏边线'], ['term-foreground', '终端标题栏文字']
 ]
-const paletteRows = Object.keys(root).filter((name) => name.startsWith('--palette-')).map((name) => [name, hexFromChannels(resolve(name, root))])
+const paletteFamilies = ['neutral', 'green', 'wine', 'blue', 'amber', 'red', 'violet', 'rose']
+const paletteRows = paletteFamilies.flatMap((family) =>
+  Object.keys(appTokens)
+    .filter((name) => name.startsWith(`--primitive-${family}-`))
+    .sort((a, b) => Number(a.split('-').pop()) - Number(b.split('-').pop()))
+    .map((name) => [family, name, hexFromChannels(resolve(name, root))])
+)
 function hexFromChannels(channels) {
   return hex('temporary', { temporary: `hsl(${channels})` })
 }
 const markdownPalette = [
-  '| 基础色板通道 | 色值 |',
-  '| --- | --- |',
-  ...paletteRows.map(([name, value]) => `| \`${name}\` | \`${value}\` |`)
+  '| 色系 | 原语令牌 | 色值 |',
+  '| --- | --- | --- |',
+  ...paletteRows.map(([family, name, value]) => `| ${family} | \`${name}\` | \`${value}\` |`)
 ].join('\n')
 const markdownTable = (items) => [
   '| 语义令牌 | 日间 | 夜间 | 用途 |',
@@ -209,7 +231,17 @@ const overview = rows.filter(([name]) => ['background', 'foreground', 'card', 'm
 const marker = (content) => `<!-- color-tokens:start -->\n${content}\n<!-- color-tokens:end -->`
 const designContent = `## 2. 色彩与信息职责
 
-色彩的首要任务是传递信息。\`src/styles/tokens.css\` 是唯一色值来源：基础色板 HSL 通道 → 日夜主题令牌。主题令牌采用 shadcn/ui 的命名（\`background\`、\`foreground\`、\`card\`、\`popover\`、\`primary\`、\`secondary\`、\`muted\`、\`accent\`、\`destructive\`、\`border\`、\`input\`、\`ring\`、\`chart-1–5\`、\`sidebar\`），\`brand\`、\`primary-hover/active\`、\`status-*\` 与终端 \`term-*\` 作为本站扩展。组件使用 \`hsl(var(--token))\` 或 Tailwind 4 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌表见本节。
+色彩的首要任务是传递信息。\`src/styles/tokens.css\` 是唯一色值来源，并分为三层：
+
+| 层 | 令牌 | 职责 |
+| --- | --- | --- |
+| 原语 | \`--primitive-*\` | 原始色值；只被语义层引用，组件不直接使用 |
+| 语义 | \`--background\`、\`--foreground\`、\`--primary\` 等 | shadcn/ui 命名与成对角色；日夜主题在此切换 |
+| 组件 | \`bg-primary\`、\`text-muted-foreground\` 等 | 组件只消费语义工具类 |
+
+主题令牌采用 shadcn/ui 的命名（\`background\`、\`foreground\`、\`card\`、\`popover\`、\`primary\`、\`secondary\`、\`muted\`、\`accent\`、\`destructive\`、\`border\`、\`input\`、\`ring\`、\`chart-1–5\`、\`sidebar\`），\`brand\`、\`primary-hover/active\`、\`status-*\` 与终端 \`term-*\` 作为本站扩展。组件使用 \`hsl(var(--token))\` 或 Tailwind 4 语义类；品牌、行动与状态即使暂时同色，也保留各自职责。完整令牌表见本节。
+
+日间画布与支持表面保持中性；绿色留给主要行动、身份与临时交互状态。\`--accent\` 专指交互悬停/选中（ghost 按钮、菜单高亮、选中行），\`--secondary\` 是次级实心表面，\`--muted\` 是弱化内容表面；三者职责不同，不互相替代。
 
 | 类别 | 职责 |
 | --- | --- |
@@ -223,11 +255,11 @@ const designContent = `## 2. 色彩与信息职责
 
 ${markdownTable(overview)}
 
-文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、必要控件边界与状态以 3:1 为目标。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。
+文字与必要的控件边界应按实际表面验证对比度，普通文字以 4.5:1、大号文字与必要控件边界以 3:1 为目标。日间 \`--border\` 对画布约 3.4:1；夜间 \`--border\` 对卡片约 3.0:1。信息提示配色和分类数据色已定义，真实组件与图表中的使用仍需验证。
 
-### 基础色板
+### 原语色板
 
-下表由色板通道换算为便于查看的十六进制色值；通道是内部基础值，组件应使用语义令牌。
+下表由原语通道换算为便于查看的十六进制色值；原语只用于定义语义令牌，组件应使用语义工具类。
 
 ${markdownPalette}
 
@@ -235,7 +267,7 @@ ${markdownPalette}
 
 ${markdownTable(rows)}
 
-每个表面令牌都有对应的 \`-foreground\`。状态文字使用 \`--status-*\`，弱表面使用 \`--status-*-surface\`。两套主题的三个弱表面都保持三级阶梯：\`--muted\`（弱化内容）< \`--secondary\`（选择与命中）< \`--accent\`（行动悬停）；日间由绿阶 \`green-50 / 100 / 120\` 承担，夜间用面板色、选择表面与酒红弱表面。\`--border\` 使用 \`neutral-125\`，对画布约 3.1:1，足以让卡片与控件外框立住；更重的分隔需要新的层级，而不是继续压深同一个令牌。组件优先使用语义工具类，避免直接写色值。`
+每个表面令牌都有对应的 \`-foreground\`。状态文字使用 \`--status-*\`，弱表面使用 \`--status-*-surface\`。两套主题的弱表面保持三级阶梯：\`--muted\`（弱化内容）< \`--secondary\`（选择与命中）< \`--accent\`（行动悬停）；日间为 \`#f5f5f5 < #eeeeee < #d0e7d5\`，夜间为 \`#262d29 < #334638 < #38232a\`。圆角以 \`--radius: 8px\` 为基准，按 shadcn/ui 的 \`0.6 / 0.8 / 1 / 1.4 / 1.8 / 2.2 / 2.6\` 派生为 \`4.8 / 6.4 / 8 / 11.2 / 14.4 / 17.6 / 20.8px\`。组件优先使用语义工具类，避免直接写色值。`
 
 async function update(path, content, { frontmatter } = {}) {
   const url = new URL(`../${path}`, import.meta.url)

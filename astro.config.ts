@@ -117,7 +117,8 @@ export default defineConfig({
   },
 
   // [Integrations]
-  integrations: [mdx({ optimize: true }), sitemap(), react()],
+  // The design-system reference is noindex and stays out of the sitemap.
+  integrations: [mdx({ optimize: true }), sitemap({ filter: (page) => !page.endsWith('/design') }), react()],
   vite: { plugins: [tailwindcss()] },
 
   // [Experimental]

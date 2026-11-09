@@ -1,12 +1,16 @@
 ---
 import { Image } from 'astro:assets'
-import Icon from '@/components/site/Icon.astro'
-import avatar from '@/assets/avatar.png'
-import darkAvatar from '@/assets/avatar-dark.png'
-import '@/styles/site/about.css'
+import { cn } from '@/lib/ui'
+
+import PageLayout from '@/layouts/BaseLayout.astro'
 import GitHubActivity from '@/components/about/GitHubActivity.astro'
 import { Comment } from '@/components/comments'
-import PageLayout from '@/layouts/BaseLayout.astro'
+import Icon from '@/components/site/Icon.astro'
+import { buttonVariants } from '@/components/ui/button'
+import darkAvatar from '@/assets/avatar-dark.png'
+import avatar from '@/assets/avatar.png'
+
+import '@/styles/site/about.css'
 ---
 
 <PageLayout meta={{ title: 'About', description: '关于 clerimia。' }} back='/'>
@@ -16,10 +20,26 @@ import PageLayout from '@/layouts/BaseLayout.astro'
         <h1>关于我</h1>
         <p>我是 clerimia，合肥工业大学计算机科学与技术专业在读。</p>
         <div class='about-profile__links'>
-          <a href='https://github.com/clerimia' target='_blank' rel='noopener noreferrer'>
+          <a
+            class={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'no-underline')}
+            data-slot='button'
+            data-variant='outline'
+            data-size='sm'
+            href='https://github.com/clerimia'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <Icon name='github' /> GitHub
           </a>
-          <a href='mailto:1525258693@qq.com'><Icon name='email' /> 1525258693@qq.com</a>
+          <a
+            class={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'no-underline')}
+            data-slot='button'
+            data-variant='outline'
+            data-size='sm'
+            href='mailto:1525258693@qq.com'
+          >
+            <Icon name='email' /> 1525258693@qq.com
+          </a>
         </div>
       </div>
 
@@ -47,8 +67,8 @@ import PageLayout from '@/layouts/BaseLayout.astro'
       <section aria-labelledby='now-heading'>
         <h2 id='now-heading'>最近在做什么</h2>
         <p>
-          我对很多事情都很好奇，想做的事也不少。最近比较感兴趣的是 AI Agent，也在折腾自己的
-          Personal Agent，希望能通过日常聊天软件和它交流。研究这些东西的时候，会遇到不少值得继续想的问题，
+          我对很多事情都很好奇，想做的事也不少。最近比较感兴趣的是 AI Agent，也在折腾自己的 Personal
+          Agent，希望能通过日常聊天软件和它交流。研究这些东西的时候，会遇到不少值得继续想的问题，
           于是也就有了这里的一些文章。
         </p>
       </section>
@@ -100,7 +120,11 @@ import PageLayout from '@/layouts/BaseLayout.astro'
       <h2 id='site-heading'>关于本站</h2>
       <p>
         使用 <a href='https://astro.build/' target='_blank' rel='noopener noreferrer'>Astro</a>
-        和 <a href='https://github.com/cworld1/astro-theme-pure' target='_blank' rel='noopener noreferrer'>Astro Theme Pure</a>
+        和 <a
+          href='https://github.com/cworld1/astro-theme-pure'
+          target='_blank'
+          rel='noopener noreferrer'>Astro Theme Pure</a
+        >
         搭建，部署在 GitHub Pages。
       </p>
     </section>

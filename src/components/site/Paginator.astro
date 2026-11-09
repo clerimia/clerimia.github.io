@@ -1,15 +1,22 @@
 ---
 // Adapted from Astro Pure 1.4.7 (CWorld), Apache-2.0.
 // Modified for local imports and site-only APIs.
-type PaginationLink = {
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink
+} from '@/components/ui/pagination'
+
+type PaginationTarget = {
   url: string
   text?: string
   srLabel?: string
 }
 
 interface Props {
-  nextUrl?: PaginationLink
-  prevUrl?: PaginationLink
+  nextUrl?: PaginationTarget
+  prevUrl?: PaginationTarget
 }
 
 const { nextUrl, prevUrl } = Astro.props
@@ -17,19 +24,35 @@ const { nextUrl, prevUrl } = Astro.props
 
 {
   (prevUrl || nextUrl) && (
-    <nav class='mt-4 flex items-center gap-x-4 sm:mt-6'>
-      {prevUrl && (
-        <a class='me-auto py-2' data-astro-prefetch href={prevUrl.url}>
-          {prevUrl.srLabel && <span class='sr-only'>{prevUrl.srLabel}</span>}
-          {prevUrl.text ? prevUrl.text : 'Previous'}
-        </a>
-      )}
-      {nextUrl && (
-        <a class='ms-auto py-2' data-astro-prefetch href={nextUrl.url}>
-          {nextUrl.srLabel && <span class='sr-only'>{nextUrl.srLabel}</span>}
-          {nextUrl.text ? nextUrl.text : 'Next'}
-        </a>
-      )}
-    </nav>
+    <Pagination className='mt-4 sm:mt-6' aria-label='分页'>
+      <PaginationContent className='w-full justify-between'>
+        {prevUrl && (
+          <PaginationItem>
+            <PaginationLink
+              href={prevUrl.url}
+              size='default'
+              className='px-0 text-muted-foreground hover:bg-transparent hover:text-primary'
+              data-astro-prefetch
+            >
+              {prevUrl.srLabel && <span class='sr-only'>{prevUrl.srLabel}</span>}
+              {prevUrl.text ? prevUrl.text : 'Previous'}
+            </PaginationLink>
+          </PaginationItem>
+        )}
+        {nextUrl && (
+          <PaginationItem className='ms-auto'>
+            <PaginationLink
+              href={nextUrl.url}
+              size='default'
+              className='px-0 text-muted-foreground hover:bg-transparent hover:text-primary'
+              data-astro-prefetch
+            >
+              {nextUrl.srLabel && <span class='sr-only'>{nextUrl.srLabel}</span>}
+              {nextUrl.text ? nextUrl.text : 'Next'}
+            </PaginationLink>
+          </PaginationItem>
+        )}
+      </PaginationContent>
+    </Pagination>
   )
 }

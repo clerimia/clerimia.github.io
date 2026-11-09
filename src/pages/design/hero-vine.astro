@@ -1,0 +1,269 @@
+---
+import { Image } from 'astro:assets'
+
+import HeroVine from '@/components/home/HeroVine.astro'
+import BaseHead from '@/components/site/BaseHead.astro'
+import ThemeProvider from '@/components/site/ThemeProvider.astro'
+import darkAvatar from '@/assets/avatar-dark.png'
+import avatar from '@/assets/avatar.png'
+
+import '@/styles/global.css'
+import '@/styles/site/home.css'
+import '@/styles/site/hero-vine-lab.css'
+---
+
+<html lang='zh-CN'>
+  <head>
+    <BaseHead title='Hero vine lab' description='首页藤环叶片校验页' />
+    <ThemeProvider />
+    <meta name='robots' content='noindex, nofollow' />
+  </head>
+
+  <body class='vine-lab-page'>
+    <main class='vine-lab' data-vine-lab>
+      <header class='vine-lab__header'>
+        <div>
+          <p class='vine-lab__eyebrow'>design / hero vine</p>
+          <h1 class='vine-lab__title'>藤环叶片校验</h1>
+          <p class='vine-lab__description'>
+            放大查看首页头像藤环。第六、第七片叶子可以用右侧滑块调整叶尖角度和整体缩放，数值会实时更新；确认后再写回生成脚本。
+          </p>
+        </div>
+        <button class='vine-lab__theme' type='button' data-theme-toggle>切换主题</button>
+      </header>
+
+      <div class='vine-lab__grid'>
+        <section class='vine-lab__stage' aria-label='藤环预览' data-vine-stage>
+          <div class='home-avatar-frame vine-lab__frame'>
+            <div class='home-avatar-mat'>
+              <Image
+                class='home-avatar--light'
+                src={avatar}
+                alt='clerimia 的头像'
+                width={520}
+                height={520}
+                loading='eager'
+              />
+              <Image
+                class='home-avatar--dark'
+                src={darkAvatar}
+                alt='clerimia 的深色模式头像'
+                width={darkAvatar.width}
+                height={darkAvatar.height}
+                loading='eager'
+              />
+            </div>
+            <HeroVine />
+          </div>
+          <div class='vine-lab__labels' data-leaf-markers aria-hidden='true'></div>
+        </section>
+
+        <aside class='vine-lab__panel' aria-label='叶片参数'>
+          <h2 class='vine-lab__panel-title'>第六、第七片</h2>
+          <p class='vine-lab__hint'>
+            角度按屏幕方向计算：0° 向右，90° 向下，180° 向左，270° 向上。尺寸倍率 1.00 表示当前生成尺寸。
+          </p>
+
+          <div class='vine-lab__control' data-control data-leaf='6'>
+            <div class='vine-lab__control-head'>
+              <label for='leaf-6-angle'>第六片 · 叶尖角度</label>
+              <output class='vine-lab__value' data-angle-value>160°</output>
+            </div>
+            <input id='leaf-6-angle' type='range' min='0' max='360' step='1' value='160' data-angle />
+            <div class='vine-lab__control-head'>
+              <label for='leaf-6-scale'>第六片 · 尺寸倍率</label>
+              <output class='vine-lab__value' data-scale-value>1.00×</output>
+            </div>
+            <input id='leaf-6-scale' type='range' min='0.5' max='1.5' step='0.01' value='1' data-scale />
+          </div>
+
+          <div class='vine-lab__control' data-control data-leaf='7'>
+            <div class='vine-lab__control-head'>
+              <label for='leaf-7-angle'>第七片 · 叶尖角度</label>
+              <output class='vine-lab__value' data-angle-value>160°</output>
+            </div>
+            <input id='leaf-7-angle' type='range' min='0' max='360' step='1' value='160' data-angle />
+            <div class='vine-lab__control-head'>
+              <label for='leaf-7-scale'>第七片 · 尺寸倍率</label>
+              <output class='vine-lab__value' data-scale-value>1.00×</output>
+            </div>
+            <input id='leaf-7-scale' type='range' min='0.5' max='1.5' step='0.01' value='1' data-scale />
+          </div>
+
+          <pre class='vine-lab__output' data-leaf-output></pre>
+          <div class='vine-lab__actions'>
+            <button class='vine-lab__action' type='button' data-copy-settings>复制参数</button>
+            <button class='vine-lab__action' type='button' data-reset-settings>重置</button>
+          </div>
+          <p class='vine-lab__status' data-copy-status aria-live='polite'></p>
+        </aside>
+      </div>
+    </main>
+
+    <script>
+      const lab = document.querySelector<HTMLElement>('[data-vine-lab]')
+      const markersLayer = lab?.querySelector<HTMLElement>('[data-leaf-markers]')
+      const output = lab?.querySelector<HTMLElement>('[data-leaf-output]')
+      const themeToggle = lab?.querySelector<HTMLButtonElement>('[data-theme-toggle]')
+      const copyButton = lab?.querySelector<HTMLButtonElement>('[data-copy-settings]')
+      const resetButton = lab?.querySelector<HTMLButtonElement>('[data-reset-settings]')
+      const copyStatus = lab?.querySelector<HTMLElement>('[data-copy-status]')
+
+      if (lab && markersLayer && output) {
+        const markersRoot = markersLayer
+        const outputRoot = output
+        const leaves = [...lab.querySelectorAll<SVGElement>('.home-vine__sprout')]
+        const leafControls = [6, 7]
+
+        interface LeafState {
+          index: number
+          leaf: SVGElement
+          outer: SVGElement
+          angle: HTMLInputElement
+          scale: HTMLInputElement
+          angleValue: HTMLOutputElement
+          scaleValue: HTMLOutputElement
+          initialAngle: number
+          initialScale: number
+        }
+
+        const states: LeafState[] = []
+
+        const normalizeAngle = (value: number) => ((value % 360) + 360) % 360
+        const readAngle = (outer: SVGElement) => {
+          const match = outer.getAttribute('transform')?.match(/rotate\(([-\d.]+)\)/)
+          return match ? normalizeAngle(Number(match[1])) : 0
+        }
+        const setAngle = (outer: SVGElement, angle: number) => {
+          const transform = outer.getAttribute('transform') ?? ''
+          const next = transform.replace(/rotate\([-\d.]+\)/, `rotate(${angle})`)
+          outer.setAttribute('transform', next)
+        }
+
+        for (const index of leafControls) {
+          const leaf = leaves[index - 1]
+          const control = lab.querySelector<HTMLElement>(`[data-control][data-leaf='${index}']`)
+          const outer = leaf?.parentElement as SVGElement | null
+          const angle = control?.querySelector<HTMLInputElement>('[data-angle]')
+          const scale = control?.querySelector<HTMLInputElement>('[data-scale]')
+          const angleValue = control?.querySelector<HTMLOutputElement>('[data-angle-value]')
+          const scaleValue = control?.querySelector<HTMLOutputElement>('[data-scale-value]')
+          if (!leaf || !outer || !angle || !scale || !angleValue || !scaleValue) continue
+
+          const initialAngle = readAngle(outer)
+          const initialScale = 1
+          angle.value = String(initialAngle)
+          scale.value = String(initialScale)
+          angleValue.value = `${Math.round(initialAngle)}°`
+          scaleValue.value = `${initialScale.toFixed(2)}×`
+
+          const state: LeafState = {
+            index,
+            leaf,
+            outer,
+            angle,
+            scale,
+            angleValue,
+            scaleValue,
+            initialAngle,
+            initialScale
+          }
+          states.push(state)
+
+          angle.addEventListener('input', () => {
+            const value = Number(angle.value)
+            setAngle(outer, value)
+            angleValue.value = `${Math.round(value)}°`
+            render()
+            requestAnimationFrame(updateMarkers)
+          })
+
+          scale.addEventListener('input', () => {
+            const value = Number(scale.value)
+            leaf.style.setProperty('--lab-scale', String(value))
+            scaleValue.value = `${value.toFixed(2)}×`
+            render()
+            requestAnimationFrame(updateMarkers)
+          })
+        }
+
+        const markers = leaves.map((leaf, index) => {
+          const marker = document.createElement('span')
+          marker.className = 'vine-lab__marker'
+          marker.textContent = String(index + 1)
+          markersRoot.appendChild(marker)
+          return { leaf, marker }
+        })
+
+        function updateMarkers() {
+          const layerRect = markersRoot.getBoundingClientRect()
+          for (const { leaf, marker } of markers) {
+            const rect = leaf.getBoundingClientRect()
+            marker.style.left = `${rect.left + rect.width / 2 - layerRect.left}px`
+            marker.style.top = `${rect.top + rect.height / 2 - layerRect.top}px`
+          }
+        }
+
+        function render() {
+          const data = Object.fromEntries(
+            states.map((state) => [
+              `leaf ${state.index}`,
+              {
+                angle: Math.round(Number(state.angle.value)),
+                scale: Number(Number(state.scale.value).toFixed(2))
+              }
+            ])
+          )
+          outputRoot.textContent = JSON.stringify(data, null, 2)
+        }
+
+        const updateThemeLabel = () => {
+          if (!themeToggle) return
+          themeToggle.textContent = document.documentElement.classList.contains('dark')
+            ? '切换到浅色'
+            : '切换到深色'
+        }
+
+        themeToggle?.addEventListener('click', () => {
+          const dark = document.documentElement.classList.toggle('dark')
+          localStorage.setItem('theme', dark ? 'dark' : 'light')
+          updateThemeLabel()
+        })
+
+        copyButton?.addEventListener('click', async () => {
+          if (!copyStatus) return
+          try {
+            await navigator.clipboard.writeText(outputRoot.textContent ?? '')
+            copyStatus.textContent = '参数已复制。'
+          } catch {
+            copyStatus.textContent = '复制失败，请手动选择上方参数。'
+          }
+          window.setTimeout(() => {
+            copyStatus.textContent = ''
+          }, 2400)
+        })
+
+        resetButton?.addEventListener('click', () => {
+          for (const state of states) {
+            state.angle.value = String(state.initialAngle)
+            state.scale.value = String(state.initialScale)
+            setAngle(state.outer, state.initialAngle)
+            state.leaf.style.setProperty('--lab-scale', String(state.initialScale))
+            state.angleValue.value = `${Math.round(state.initialAngle)}°`
+            state.scaleValue.value = `${state.initialScale.toFixed(2)}×`
+          }
+          render()
+          requestAnimationFrame(updateMarkers)
+        })
+
+        updateThemeLabel()
+        render()
+        updateMarkers()
+        window.addEventListener('load', updateMarkers)
+        window.addEventListener('resize', updateMarkers)
+        window.setTimeout(updateMarkers, 3600)
+        window.setTimeout(updateMarkers, 5200)
+      }
+    </script>
+  </body>
+</html>

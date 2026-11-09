@@ -1,0 +1,223 @@
+.vine-lab-page {
+  min-height: 100svh;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.vine-lab {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 32px clamp(20px, 3vw, 48px) 72px;
+}
+
+.vine-lab__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 28px;
+}
+
+.vine-lab__eyebrow {
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--font-meta);
+  letter-spacing: 0.08em;
+}
+
+.vine-lab__title {
+  margin: 6px 0 8px;
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.vine-lab__description {
+  max-width: 60ch;
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--font-meta);
+  line-height: 1.7;
+}
+
+.vine-lab__theme {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-md);
+  background: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+  font-size: var(--font-meta);
+}
+
+.vine-lab__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 32px;
+  align-items: start;
+}
+
+.vine-lab__stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 640px;
+  padding: 56px 32px;
+  overflow: visible;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-xl);
+  background: hsl(var(--muted));
+}
+
+.vine-lab__frame {
+  --home-avatar-size: clamp(260px, 42vw, 520px);
+}
+
+/* 校验页始终显示藤环，不套用首页的移动端隐藏规则。 */
+.vine-lab .home-vine {
+  display: block;
+}
+
+.vine-lab .home-vine__sprout {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scale(var(--lab-scale, 1));
+}
+
+.vine-lab__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.vine-lab__marker {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  transform: translate(-50%, -50%);
+  border: 1px solid hsl(var(--primary));
+  border-radius: 999px;
+  background: hsl(var(--background));
+  color: hsl(var(--primary));
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.vine-lab__panel {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-lg);
+  background: hsl(var(--card));
+}
+
+.vine-lab__panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.vine-lab__hint {
+  margin: -10px 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--font-meta);
+  line-height: 1.6;
+}
+
+.vine-lab__control {
+  display: grid;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.vine-lab__control:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.vine-lab__control-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vine-lab__control-head label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.vine-lab__value {
+  color: hsl(var(--primary));
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.vine-lab__control input[type='range'] {
+  width: 100%;
+  accent-color: hsl(var(--primary));
+}
+
+.vine-lab__output {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.vine-lab__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vine-lab__action {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-sm);
+  background: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+  font-size: var(--font-meta);
+}
+
+.vine-lab__status {
+  min-height: 1.5em;
+  margin: -10px 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: var(--font-meta);
+}
+
+@media (max-width: 900px) {
+  .vine-lab__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vine-lab__panel {
+    position: static;
+  }
+
+  .vine-lab__stage {
+    min-height: 520px;
+    padding-inline: 16px;
+  }
+}

@@ -1,4 +1,6 @@
 ---
+import { Badge } from '@/components/ui/badge'
+
 interface Props {
   href: string
   class?: string
@@ -9,45 +11,24 @@ interface Props {
 const { href, class: className, ...attrs } = Astro.props
 ---
 
-<a class:list={['tag-pill', className]} {href} data-astro-prefetch {...attrs}>
-  <span><slot /></span>
+<a class:list={['tag-pill group', className]} {href} data-astro-prefetch {...attrs}>
+  <Badge
+    variant='outline'
+    className='rounded-sm px-[9px] py-1 font-normal text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary group-focus-visible:border-primary group-focus-visible:text-primary group-active:text-primary-active'
+  >
+    <slot />
+  </Badge>
 </a>
 
 <style>
-  /* One tag action, one form: a compact badge inside a 44px target. */
+  /* One tag action, one form: a compact Badge inside a control-height target. */
   .tag-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 7px;
-    color: hsl(var(--muted-foreground));
-    font-size: var(--font-meta);
-    line-height: 1.4;
+    min-width: var(--control-height);
+    min-height: var(--control-height);
+    padding: 5px;
     text-decoration: none;
-    transition: color var(--motion-feedback) var(--motion-feedback-easing);
-  }
-
-  .tag-pill > span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 4px 9px;
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius-code);
-  }
-
-  .tag-pill:hover,
-  .tag-pill:focus-visible {
-    color: hsl(var(--primary));
-  }
-
-  .tag-pill:active {
-    color: hsl(var(--primary-active));
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tag-pill { transition: none; }
   }
 </style>
