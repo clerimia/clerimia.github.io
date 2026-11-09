@@ -421,7 +421,7 @@ layout:
 | UI | 14px | 1.6 | 导航、按钮与短摘要 |
 | Meta | 12px | 1.5 | 日期与少量辅助信息 |
 
-实现以 `src/styles/tokens.css` 为统一来源，Tailwind 4 的 `text-{role}` 同时应用字号、行高、字重和字距（标题角色 600，其余 400，默认 `0em`）；`.dark` 类切换主题。组件文字使用 shadcn/ui 的 `text-xs / text-sm / text-base`（12 / 14 / 16px），界面默认 `text-sm`，标签与元信息用 `text-xs`，正文仍使用 `text-reading` 以保留长文节奏。`src/styles/global.css` 汇集语义映射与基础层，现有站点样式保留；`src/components/ui/` 放 shadcn/ui 风格的基础原语，`src/pages/design.astro` 是可在浏览器中检查的令牌与组件画板。JS 通过 `src/lib/tokens.ts` 读取 CSS 动效和复用媒体查询。（基础层已实现；页面级双主题与真实设备回归待完成。）
+实现以 `src/styles/tokens.css` 为统一来源，Tailwind 4 的 `text-{role}` 同时应用字号、行高、字重和字距（标题角色 600，其余 400，默认 `0em`）；`.dark` 类切换主题。组件文字使用 shadcn/ui 的 `text-xs / text-sm / text-base`（12 / 14 / 16px），界面默认 `text-sm`，标签与元信息用 `text-xs`，正文仍使用 `text-reading` 以保留长文节奏。`src/styles/global.css` 汇集语义映射与基础层，现有站点样式保留；`src/components/ui/` 放 shadcn/ui 风格的基础原语，`src/pages/design.astro` 是可在浏览器中检查的令牌与组件画板。（基础层已实现；页面级双主题与真实设备回归待完成。）
 
 正文以 400 字重为起点，标题和重点以 600–700 为起点；部分层级在宽窄屏之间平滑变化。首页标语是展示例外：以更大的字号、两行排版和身份绿渐变承载创作理念；具体数值见本节表格。不要通过降低正文对比度来制造安静感。
 
