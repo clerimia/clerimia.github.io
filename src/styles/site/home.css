@@ -207,79 +207,155 @@
   margin-inline: auto;
 }
 
-/* A slow orbit frames the portrait without moving the image itself. */
-.home-avatar-frame::before {
-  content: '';
+/* 藤蔓从首屏空白处生长，绕过头像背后形成不闭合的身份环；叶片随生长依次展开。 */
+.home-vine {
   position: absolute;
-  inset: -9px;
-  border: 1px dashed hsl(var(--brand));
-  border-radius: 50%;
-  opacity: 0.55;
-  animation: home-orbit 40s linear infinite;
-  pointer-events: none;
-}
-
-.home-avatar-frame::after {
-  content: '';
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 3px, hsl(var(--brand)) 0 3px, transparent 3.5px);
-  animation: home-orbit 40s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes home-orbit { to { transform: rotate(360deg); } }
-
-/* The sprout grows once on entry, then remains as a quiet identity detail. */
-.home-sprout {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: min(350px, 42%);
-  height: auto;
-  color: hsl(var(--brand));
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
+  color: hsl(var(--brand));
   pointer-events: none;
 }
 
-.home-sprout__stem {
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: home-grow 2.6s ease-out 0.3s forwards;
+.home-vine { z-index: 0; }
+
+/* 风：外层缓慢带动整枝，内层再反向微摆；两层不同周期，叶片才不会整齐划一地动。 */
+.home-vine__sway,
+.home-vine__sway-inner {
+  transform-box: view-box;
+  transform-origin: 50% 106%;
 }
 
-.home-sprout__leaf {
-  fill: currentColor;
-  opacity: 0.7;
-  transform-box: fill-box;
-  transform-origin: left bottom;
-  transform: scale(0);
-  animation: home-unfurl 0.8s ease-out forwards;
+.home-vine__sway {
+  animation: home-vine-wind 11s ease-in-out -3s infinite alternate;
 }
-.home-sprout__leaf--one { animation-delay: 1.5s; }
-.home-sprout__leaf--outline { fill: none; stroke: currentColor; stroke-width: 1.4; animation-delay: 1.9s; }
-.home-sprout__leaf--three { animation-delay: 2.3s; }
-.home-sprout__leaf--four { animation-delay: 2.7s; }
-.home-sprout__fall {
+
+.home-vine__sway-inner {
+  animation: home-vine-wind-inner 6.5s ease-in-out -1.4s infinite alternate;
+}
+
+@keyframes home-vine-wind {
+  from { transform: rotate(-0.55deg); }
+  to { transform: rotate(0.6deg); }
+}
+
+@keyframes home-vine-wind-inner {
+  from { transform: rotate(0.4deg); }
+  to { transform: rotate(-0.35deg); }
+}
+
+.home-avatar-mat {
+  position: relative;
+  z-index: 1;
+}
+
+.home-vine__stem {
+  fill: currentColor;
+  opacity: 0.94;
+}
+
+/* 背光一侧的窄带让茎有圆柱感，不靠渐变。 */
+.home-vine__stem-shade {
+  fill: color-mix(in srgb, currentColor 55%, black);
+  opacity: 0.3;
+}
+
+/* 叶片随藤条长到对应位置才展开：外层负责显隐，内层负责从叶柄处舒展。 */
+.home-vine__sprout {
+  opacity: 0;
+  animation: home-vine-sprout 0.2s ease-out var(--d, 0s) forwards;
+}
+
+.home-vine__sprout-inner {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scale(0.2);
+  animation: home-vine-unfurl 0.68s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s) forwards;
+}
+
+@keyframes home-vine-sprout {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.home-vine__petiole {
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-width: 0.82;
+  opacity: 0.85;
+}
+
+.home-vine__tendril {
+  fill: currentColor;
+  opacity: 0;
+  animation: home-vine-tendril 0.8s ease-out var(--d, 0s) forwards;
+}
+
+@keyframes home-vine-tendril { to { opacity: 0.85; } }
+
+.home-vine__leaf {
+  fill: currentColor;
+  opacity: var(--o, 0.84);
+}
+
+.home-vine__leaf--outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.36;
+  stroke-linejoin: round;
+  opacity: 0.72;
+}
+
+.home-vine__vein {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.34;
+  stroke-linecap: round;
+  opacity: 0.55;
+  stroke: color-mix(in srgb, currentColor 55%, black);
+}
+
+.home-vine__vein--side { opacity: 0.42; }
+
+/* 末梢外缘另有一片较透明的叶子，整枝长成后脱离并向外飘落。 */
+.home-vine__fall-leaf {
+  fill: currentColor;
   opacity: 0;
   transform-box: fill-box;
-  animation: home-fall 9s ease-in-out 4.6s 1 both;
+  transform-origin: center;
+  will-change: transform, opacity;
+  animation: home-vine-fall 3.2s linear var(--fall-d, 4s) forwards;
 }
-@keyframes home-grow { to { stroke-dashoffset: 0; } }
-@keyframes home-unfurl { to { transform: scale(1); } }
-@keyframes home-fall {
-  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
-  12% { opacity: 0.9; }
-  50% { transform: translate(-30px, 80px) rotate(70deg); opacity: 0.8; }
-  85% { opacity: 0.5; }
-  100% { transform: translate(20px, 170px) rotate(150deg); opacity: 0; }
+
+@keyframes home-vine-fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(150deg); }
+  7% { opacity: 0.42; transform: translate(0.2px, -0.6px) rotate(153deg); }
+  18% { opacity: 0.48; transform: translate(-1.2px, 2.4px) rotate(162deg); }
+  33% { opacity: 0.46; transform: translate(-3.2px, 7px) rotate(178deg); }
+  50% { opacity: 0.42; transform: translate(-2.2px, 14px) rotate(200deg); }
+  68% { opacity: 0.34; transform: translate(-5.2px, 23px) rotate(228deg); }
+  84% { opacity: 0.22; transform: translate(-4.4px, 33px) rotate(252deg); }
+  100% { opacity: 0; transform: translate(-8px, 43px) rotate(278deg); }
+}
+
+/* 茎带用遮罩沿中心线生长；遮罩是看不见的粗描边，只负责揭示。 */
+.home-vine__reveal {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 36;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: home-vine-grow var(--dur, 3.6s) var(--ease, cubic-bezier(0.35, 0.05, 0.25, 1)) var(--delay, 0.5s) forwards;
+}
+
+@keyframes home-vine-grow { to { stroke-dashoffset: 0; } }
+@keyframes home-vine-unfurl {
+  from { transform: scale(0.2); }
+  to { transform: scale(1); }
 }
 
 .home-avatar-mat img {
@@ -293,10 +369,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-avatar-frame::before, .home-avatar-frame::after { animation: none; }
-  .home-sprout__stem { animation: none; stroke-dashoffset: 0; }
-  .home-sprout__leaf { animation: none; transform: none; }
-  .home-sprout__fall { animation: none; }
+  .home-vine__reveal { animation: none; stroke-dashoffset: 0; }
+  .home-vine__tendril { animation: none; opacity: 0.85; }
+  .home-vine__sprout { animation: none; opacity: 1; }
+  .home-vine__sprout-inner { animation: none; transform: none; }
+  .home-vine__fall-leaf { animation: none; opacity: 0; }
+  .home-vine__sway, .home-vine__sway-inner { animation: none; }
   .home-hello, .home-title-line, .home-title-seed, .home-description, .home-actions, .home-profile { animation: none; }
   .home-actions a, .home-actions button { transition: none; }
   .home-actions a:hover, .home-actions button:hover { transform: none; }
@@ -491,11 +569,8 @@
     margin-inline: 0;
   }
 
-  .home-sprout {
-    position: static;
-    display: block;
-    width: min(260px, 75%);
-    margin-top: 8px;
+  .home-vine {
+    display: none;
   }
 
   .home-location {

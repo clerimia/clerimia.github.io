@@ -3,6 +3,7 @@ import { Image } from 'astro:assets'
 import { cn } from '@/lib/ui'
 
 import DailyQuote from '@/components/home/DailyQuote.astro'
+import HeroVine from '@/components/home/HeroVine.astro'
 import DirectionalArrow from '@/components/site/DirectionalArrow.astro'
 import Icon from '@/components/site/Icon.astro'
 import TextArrowLink from '@/components/site/TextArrowLink.astro'
@@ -95,6 +96,7 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
                 loading='eager'
               />
             </div>
+            <HeroVine />
           </div>
           <div class='home-location'><Icon name='location' /><span>安徽 · 宣城</span></div>
           <div class='home-social-links'>
@@ -143,35 +145,6 @@ const posts = (await getPosts()).filter((post) => post.data.section === 'blog').
           </div>
         </aside>
       </div>
-      <svg class='home-sprout' viewBox='0 70 350 250' fill='none' aria-hidden='true'>
-        <path
-          class='home-sprout__stem'
-          d='M0 306 C96 288 176 256 236 200 C268 170 282 142 276 108'
-          pathLength='1'></path>
-        <g transform='translate(142 258) rotate(-18)'
-          ><path
-            class='home-sprout__leaf home-sprout__leaf--one'
-            d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z'></path></g
-        >
-        <g transform='translate(212 222) rotate(-74)'
-          ><path
-            class='home-sprout__leaf home-sprout__leaf--outline'
-            d='M0 0 C14 -26 46 -32 70 -22 C60 8 28 20 0 0Z'></path></g
-        >
-        <g transform='translate(250 188) rotate(-12)'
-          ><path
-            class='home-sprout__leaf home-sprout__leaf--three'
-            d='M0 0 C14 -22 40 -28 60 -20 C52 6 24 16 0 0Z'></path></g
-        >
-        <g transform='translate(276 108) rotate(-98)'
-          ><path
-            class='home-sprout__leaf home-sprout__leaf--four'
-            d='M0 0 C12 -20 34 -24 52 -16 C44 6 20 14 0 0Z'></path></g
-        >
-        <g transform='translate(315 90)'
-          ><path class='home-sprout__fall' d='M0 0 C8 -14 26 -17 38 -11 C32 4 14 10 0 0Z'></path></g
-        >
-      </svg>
     </section>
 
     <section class='home-latest' aria-labelledby='home-latest-heading'>

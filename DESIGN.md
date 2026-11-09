@@ -477,6 +477,7 @@ layout:
 | 分页 | [Paginator.astro](src/components/site/Paginator.astro) → [pagination.tsx](src/components/ui/pagination.tsx) |
 | 文章列表卡片 | [PostPreview.astro](src/components/site/PostPreview.astro) |
 | 页头与移动菜单 | [SiteHeader.astro](src/components/site/SiteHeader.astro) |
+| 首页藤环动效 | [generate-hero-vine.mjs](scripts/generate-hero-vine.mjs) → [HeroVine.astro](src/components/home/HeroVine.astro) + [home.css](src/styles/site/home.css) |
 | 页面框架 | [BaseLayout.astro](src/layouts/BaseLayout.astro)、[ContentLayout.astro](src/layouts/ContentLayout.astro) |
 
 ## 5. 布局与空间
@@ -508,7 +509,9 @@ layout:
 
 动效用于回应操作或说明浮层的出现和消失；普通阅读内容保持稳定。指针反馈以短暂的颜色或边框变化为主，焦点不延迟。主题切换时正文与画布同步更新，避免过渡中出现低对比度。
 
-首页首屏可以保留有节制的入场、枝叶和身份轨道动效，表达博客的个性。启用减少动态效果时，内容立即呈现，非必要位移和持续动画停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见上表。
+首页首屏可以保留有节制的入场和身份动效，表达博客的个性：头像外沿从左下起笔、逆时针绕一圈的藤环；藤身生长到哪个位置，叶片就在那里依次展开，七片叶基本等距，在左上方收尾、不闭环。整枝长成后，另有一片较透明的叶子从末梢附近向下飘落；风来时整枝轻摆。手机宽度（`≤ 680px`）不显示。叶片依次出现和透明落叶是一次性入场动效，不循环。启用减少动态效果时，内容立即呈现，非必要位移、持续动画和落叶停止，交互与状态仍完整可用。浮层支持键盘进入、Escape 关闭和焦点恢复；具体行为见上表。
+
+**藤环动效状态**：已实现；已核验桌面宽屏、`390px`、日夜主题与减少动态效果，真实设备待验证。
 
 ## 8. 响应式行为
 
