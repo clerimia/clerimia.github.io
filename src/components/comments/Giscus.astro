@@ -84,7 +84,7 @@ const enabled = GISCUS.enable && GISCUS.repo && GISCUS.repoId && GISCUS.category
               var count = event.data?.giscus?.discussion?.totalCommentCount
               if (!Number.isSafeInteger(count) || count < 0) return
               var label = document.querySelector('[data-comment-count]')
-              if (label) label.textContent = count + (count === 1 ? ' comment' : ' comments')
+              if (label) label.textContent = count + ' 条评论'
             })
           }
 

@@ -78,7 +78,7 @@ const hasSidebar = headings.some((heading) => heading.depth <= 3)
     <Copyright {data} />
     <ArticleBottom collections={posts} {id} class='mt-3 sm:mt-6' />
     {
-      /* 评论区：与页头的「参与讨论」共用 enableComment，
+      /* 评论区：与页头的「评论」入口共用 enableComment，
          保证不会出现「有入口没评论区」的死锚点。 */
     }
     {

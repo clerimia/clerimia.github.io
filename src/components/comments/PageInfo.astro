@@ -1,4 +1,5 @@
 ---
+import TextArrowLink from '@/components/site/TextArrowLink.astro'
 import { cn } from '@/lib/ui'
 
 interface Props {
@@ -13,32 +14,9 @@ const { comment, view: _view, class: className, ...props } = Astro.props
 {
   comment && (
     <div class={cn('page-info', className)} data-pagefind-ignore {...props}>
-      <a class='comment-link' href='#comments' aria-label='跳转到文章评论区'>
+      <TextArrowLink href='#comments' ariaLabel='跳转到文章评论区'>
         <span data-comment-count>评论</span>
-      </a>
+      </TextArrowLink>
     </div>
   )
 }
-
-<style>
-  .comment-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: hsl(var(--muted-foreground));
-    font-size: var(--font-ui);
-    text-decoration: none;
-    transition: color var(--motion-feedback) var(--motion-feedback-easing);
-  }
-  .comment-link:hover,
-  .comment-link:focus-visible {
-    color: hsl(var(--primary));
-  }
-  .comment-link:focus-visible {
-    outline: 2px solid hsl(var(--ring));
-    outline-offset: 3px;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .comment-link { transition: none; }
-  }
-</style>
