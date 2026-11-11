@@ -1,0 +1,254 @@
+---
+title: '智能体也需要做梦？'
+description: '人类睡觉时，大脑并没有停止工作。白天经历过的事情会在睡眠中被重新激活，与已有记忆发生联系，逐渐稳定下来，也可能在重新组合中产生新的理解。Anthropic 把这种离线整理的思路带进了 Agent 的记忆系统，并称之为 Dreaming。'
+publishDate: '2026-11-10'
+section: 'blog'
+tags: ['AI Agent', '记忆', 'Anthropic', '认知']
+language: '中文'
+draft: false
+---
+
+import ArticleFigure from '@/components/blog/ArticleFigure.astro'
+import KeyPoint from '@/components/blog/KeyPoint.astro'
+import memoryHierarchy from './anthropic-memory-hierarchy.png'
+import pokemonMemory from './anthropic-pokemon-memory.png'
+import dreamingCorrect from './anthropic-dreaming-correct.png'
+import dreamingRepresentations from './anthropic-dreaming-representations.png'
+import dreamingInjectedContext from './anthropic-dreaming-injected-context.png'
+import labContracts from './anthropic-lab-contracts.png'
+
+原文：[Components of Agent Memory](https://www.anthropic.com/research/components-of-agent-memory)
+
+## 人为什么需要做梦？
+
+白天形成的记忆并不会因为经历结束，就自动变成稳定、可随时调用的知识。它们还需要被重新激活、巩固，并与已有的经验和知识建立联系。研究发现，睡眠有助于新记忆的稳定与整合；而梦境内容有时也会带有近期经历的片段。它并不是对现实的完整回放，更像是不同记忆片段在离线状态下重新交织。[\[1\]](https://pmc.ncbi.nlm.nih.gov/articles/PMC4704085/)
+
+这件事很有意思：**大脑并不满足于把经历原样保存下来，它还会在我们没有继续接收外界信息的时候，重新处理这些经历。**
+
+一段经历可能被巩固，一些细节可能逐渐淡去，原本分散的经验也可能被联系起来。我们最终留下的，不只是发生过什么，还有从经历中逐渐形成的理解。
+
+所以睡眠中的离线记忆处理，给了我们一个很好的启发：**学习和经历并不只发生在当下，离线的重放与整合同样重要。**
+
+那么，一个需要长期工作的智能体，是否也需要这样的过程？
+
+## 智能体也需要做梦吗？
+
+先想想 Agent 是怎么记忆的。
+
+当它完成一次任务，会话中会留下大量信息：比如用户提出了什么要求、调用了哪些工具、遇到了什么错误、最终采取了什么行动。Agent 可以从中挑出一些内容，写进自己的记忆。
+
+但这其实包含着一个很难解决的判断：
+
+**Agent 必须在不知道未来任务是什么的情况下，决定现在什么值得记住。**
+
+今天看起来重要的信息，下一次可能完全用不上；一次不起眼的失败，却可能揭示一个以后反复出现的问题。更麻烦的是，Agent 在单次会话中只能看到局部经历，很难判断某个现象究竟是偶然，还是长期存在的规律。
+
+这让我想到，人类记忆与 Agent 记忆面临着相似的困难：经历本身并不等于理解。要让过去真正帮助未来，还需要一个重新审视和组织经验的过程。
+
+Anthropic 在 *Components of Agent Memory* 中提出的 Dreaming 机制，正是把这种思路引入 Agent：**工作时积累经历，空闲时回顾经历，重新判断哪些信息值得保留，以及它们之间有什么联系。**
+
+这里的 Dreaming 并不是让模型真的像人一样做梦，而是为记忆系统安排一个离线处理阶段。
+
+## Dreaming 如何整理记忆？
+
+要理解 Dreaming，可以先看它的架构由哪些部分组成。
+
+Anthropic 把 Agent 记忆组织成了几个层次。它们是从原始经历到可复用知识，再到每次工作时都能看到的核心信息，逐步提炼的过程。
+
+<ArticleFigure
+  src={memoryHierarchy}
+  alt='记忆层级图：从下到上依次是 Transcripts（可搜索的事件日志）、Memory notes（Claude 写下的重要观察）、Memory representations（由记录和笔记计算出的 Wiki 等结构）、Injected context（每轮会话都会加载的记忆）。Dreaming 的箭头从 Transcripts 指向各层，并在相邻的上层之间双向连接；左侧是 Session，右侧是 Next session。'
+  index='图 1'
+  caption='Claude 用 dreaming 组织记忆。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/a0bcfa203214d817d2b4261b7188aba8be6db5b2-3840x1754.png'
+/>
+
+1. **会话记录（Transcripts）**：保存对话、工具调用和执行结果。它最接近真实发生过的事情，信息完整，但也最庞杂。
+2. **记忆笔记（Memory Notes）**：Agent 从当下经历中主动挑出的重要观察。它更精简，但也可能记错或遗漏上下文。
+3. **记忆表征（Memory Representations）**：把不同会话的记录和笔记放在一起比较，修正冲突、发现关联，逐渐形成结构化的知识，例如互相链接的 Wiki。
+4. **注入上下文（Injected Context）**：从已有记忆中挑出最重要的一小部分，每一轮会话都会自动加载到上下文当中。
+
+可以把这几层理解为：原始记录保留发生过什么，记忆笔记捕捉当下认为重要的内容，记忆表征负责跨经历整合，而注入上下文让最关键的信息能够及时参与下一次工作。
+
+Dreaming 的工作发生在这些层之间。它会重新检查记忆笔记与原始记录是否一致，也会把分散在不同会话中的信息联系起来。最终形成的结构化知识，还可以进一步提炼，成为之后会话的基础上下文。
+
+这不是一次性的摘要生成，而是一个可以反复运行的维护过程。
+
+## 四个实验：记忆需要什么能力，人又该怎样引导
+
+Anthropic 用不同实验考察了记忆系统的几个关键问题。它们关注的并不是同一种能力：
+
+- 从过去的错误中学习
+- 判断什么真正值得记住
+- 组织记忆是否真的有收益
+- 人应该怎样引导模型记忆
+
+### 从过去的错误中学习
+
+[CL-Bench（Continual Learning Bench）](https://continual-learning-bench.com/) 关注 Agent 能不能把一次任务中的反馈，带到之后全新的会话中。
+
+实验中，Agent 先回答一个数据库问题，系统再告诉它正确答案。Agent 可以把这次经验写进记忆，随后在新的会话中回答后续问题。真正重要的不是它记住了某个答案，而是它能否从反馈中总结出下一次可用的经验。
+
+不同模型的表现体现了这种能力的差异：Sonnet 4.6 会提出一些关于「为什么答错」的猜测；Opus 4.7 开始把笔记整理成一份参考文档，并区分已经验证和仍未验证的信息；Opus 5 则把规则、依据、此前的答案和容易踩到的陷阱一起记录下来。
+
+这说明，经验不能只留下一个结论。它还需要依据和适用条件，否则 Agent 可能记住了一个曾经正确的答案，却不知道为什么正确，也不知道什么时候不再适用。
+
+### 判断什么真正值得记住
+
+在 Pokémon Red 实验中，Agent 需要持续探索游戏世界、完成目标，并且可以自由读写记忆文件。
+
+<ArticleFigure
+  src={pokemonMemory}
+  alt='同比例的两张 Pokémon 记忆目录树图。左侧是 Claude Sonnet 3.7：413 个文件、977,930 个字符，目录包括 locations、battles、consolidated、pokemon、master、main 等，面积占据整张图的大部分；右侧是 Claude Fable 5：10 个文件、43,406 个字符，只有 locations、gameplay 和 global.md 三个区域，面积很小。图中面积与记忆字符数成正比。'
+  index='图 2'
+  caption='Sonnet 3.7 与 Fable 5 在 Pokémon 中的记忆文件夹。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/5e15e10f665773050d90fafc38ab8dd76ae5368b-3840x2545.png'
+/>
+
+约 10,000 步时，Sonnet 3.7 留下了 413 个文件、225 个文件夹，共 977,930 个字符，只拿到 1 枚徽章；Fable 5 只保留了 10 个文件、2 个文件夹，共 43,406 个字符，拿到 4 枚徽章。
+
+Sonnet 3.7 倾向于记录大量过程：遇到一个 NPC、进行一场战斗、捡到一个道具，都可能变成一份记忆。结果是记忆规模迅速膨胀，而游戏状态又在不断变化，许多记录很快就过时了。Agent 不得不花越来越多时间维护记忆，反而影响真正的任务。
+
+Fable 5 则保留了少量围绕目标、地点和游戏策略组织的文件。它没有把每一次失败都完整保存下来，而是尝试从重复经历中提炼出下一次可以使用的策略。
+
+这组对比说明，记忆并不是越多越好。**真正困难的不是保存经历，而是从经历中识别出对未来有帮助的东西。**
+
+事件本身当然也可能重要，例如用户明确表达的偏好、一次关键决策，或者一个不可重复的经历。但记忆系统需要判断：这条信息是否会影响未来的理解和行动？它是否已经过时？是否只是一次偶然情况？
+
+### 组织记忆是否真的有收益
+
+当记忆逐渐积累，仅仅依靠搜索可能不够。Agent 还可以把分散的笔记组织成彼此关联的知识，例如逐渐形成一套 Wiki。
+
+Anthropic 给出的结果是：Wiki 与搜索结合得分 61%，单独搜索 53%，单独使用 Wiki 48%。结构化组织与原始检索可以互相补充，尤其是在需要跨多份资料建立联系的问题上。不过，Wiki 并不是越复杂越好：面对单份文档的问题，或者结构本身过于复杂时，它未必能带来收益。
+
+### 人应该怎样引导模型记忆
+
+前三个实验关心的是记忆本身的能力，这一组则换了角度：人应该怎样和记忆系统配合。
+
+在 CL-Bench 上，他们只告诉模型「这里有一个可以跨会话使用的记忆文件夹」，没有规定该记什么。对 Opus 4.7 和 Opus 5 来说，只说明记忆可以用来做什么就已经足够，两者都从记忆中获得了明显的提升。
+
+但当他们给出一条具体规则——「只记录失败」——Opus 5 从记忆中得到的收益下降了 0.234，Opus 4.7 下降了 0.150。规则把「什么值得记」的判断限制在设计者事先想到的范围里；对更强的模型来说，这反而削弱了记忆的作用。
+
+这并不意味着规则总是无用。Sonnet 4.6 经常忽略自己的记忆文件，也没有去验证「我为什么答错」的假设；提示它先读记忆、再验证假设之后，分数从 0.364 提升到 0.641。Sonnet 5 在没有额外提示时，10 次里有 9 次会自己先读记忆。
+
+所以更准确的说法是：**模型越强，越适合先告诉它记忆是为了什么，再让它自己决定记什么、怎样记；模型越弱，越需要补上可检验的规则和脚手架。** 目的提供判断方向，规则补足暂时做不好的能力，两者可以并存。
+
+## Dreaming 的作用
+
+四个实验分别回答了不同的问题：Agent 能不能从过去的反馈中学到经验？能不能判断哪些信息值得保留？积累的记忆该怎样组织？人又该怎样引导它？它们背后有一个共同的限制：**单次会话里的判断，总是建立在局部经历之上。** Agent 当下看到的只是一个任务、一段上下文。它可能不知道自己之前犯过类似的错误，也未必意识到几次看似无关的交流之间存在联系。
+
+Dreaming 的价值，不是把过去总结一遍，而是针对这个限制做几件不同的事：纠正错误、组织记忆、提炼规则、聚焦目标，以及补上单次会话看不到的空缺。
+
+### 纠错
+
+<ArticleFigure
+  src={dreamingCorrect}
+  alt='记忆层级图：Memory notes 层高亮为橙色，一条橙色箭头从 Transcripts 指向它，其余层保持灰色。图中标注 Memory notes 是 Claude 写下的重要观察。'
+  index='图 3'
+  caption='Dreaming 对照会话记录修正记忆笔记。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/55ce85bd12860090704a5543a3da7504334ad9a9-3840x1754.png'
+/>
+
+Dreaming 可以把记忆笔记和原始会话记录对照，检查一条笔记有没有写错、是不是已经过时，然后改写它。会话记录保存的是当时真实发生过的事，它为笔记提供了可以核对的依据。
+
+原文里有一个很具体的例子。在 Pokémon 中，Claude 需要穿过 Mt. Moon：入口在西侧，出口在东侧，入口附近有一段单向的落差，掉下去就会回到来时的路，而且爬不回来。Claude 把山脚下的 PokéCenter 当作路标，它会不会走错，取决于它认为 PokéCenter 在山的那一侧。
+
+有一次，它把 PokéCenter 记在了错误的一侧。走出 PokéCenter 时，它宣布「Mt. Moon 已经在身后了」，并把笔记改成「Mt Moon DONE」。但 Mt. Moon 并不在身后。几步之后，它从那段落差掉了下去，回到了来时的路。导航工具没有显示这次掉落，Claude 便以为自己只是「向西走过头了」，而且一直在正确的一侧——其实并不是。
+
+它对这份记忆运行了一次 dreaming：把笔记和会话记录对照，发现自己把 PokéCenter 的位置记反了，改写了笔记。用修正后的笔记，Claude 直接走回洞口，最终到达了 Cerulean City。而在没有修正的那次运行里，它三次掉回同一条路，最后写道：「我宁愿停下来，也不想继续绕圈。」
+
+一条记错的笔记，可能在之后的会话里被读到、被信任。纠错的意义不只是让记忆更整齐，而是阻止一个错误继续传播。
+
+### 组织记忆
+
+<ArticleFigure
+  src={dreamingRepresentations}
+  alt='记忆层级图：Memory representations 层高亮为橙色，橙色箭头从 Transcripts 和 Memory notes 指向这一层，标注为由记录和笔记计算得出，例如 Wiki。'
+  index='图 4'
+  caption='Dreaming 把分散的笔记组织成 Wiki。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/30923242548d746ee77784c87826cadc46574c34-3840x1754.png'
+/>
+
+Dreaming 还可以把分散在不同会话里的笔记放在一起比较，修正冲突、建立链接，逐渐形成结构化的知识，例如一套互相链接的 Wiki。
+
+原文用一批约 35 万个文件、约 4.2 亿 token 的内部文档做了测试：让 Opus 5 agent 在 128 个 session 里不断探索文件、写页或改页、合并重复内容、核对来源。随着 dreaming 从 2 个 session 扩展到 128 个，只靠 Wiki 回答这 25 个问题的得分从 13% 提升到 48%。它先建出一个初步的 Wiki，之后的每一轮 dreaming 再补充、修改、删减；早期像一个刚入职的新人，越往后越像熟悉业务的老员工。
+
+不过第三个实验也提醒过：Wiki 和搜索结合时得分最高，面对单份文档的问题时未必有收益。组织记忆的目的不是建造一套看起来完善的知识库，而是让信息在真正需要的时候更容易被找到、理解和使用。
+
+### 提炼规则
+
+<ArticleFigure
+  src={dreamingInjectedContext}
+  alt='记忆层级图：Injected context 层高亮为橙色，一条橙色箭头从 Transcripts 指向它，其余层保持灰色。图中标注这是每次会话都会加载的记忆。'
+  index='图 5'
+  caption='Dreaming 把稳定的笔记提升到注入上下文。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/c88bcc04c5d0e77db5828c9dbe72faf1c4421f8f-3840x1754.png'
+/>
+
+Dreaming 还可以从重复出现的经历中提炼出可复用的规则，并把稳定、常用的部分提升到记忆层级的最上层，由 Agent 的运行框架在每次会话开始时预先加载。这样 Claude 不需要搜索，甚至不需要知道有东西可搜。
+
+Fable 5 在 Pokémon 里留下了这样的规则。连续 7 个精灵球都没抓住一只鲤鱼王之后，它写下：「如果连续 3 个球失败，就改变节奏，在菜单操作之间多按几次等待——这样做之后立刻就抓住了。」这条规则被写进它的记忆文件，成为之后可以反复使用的策略，而不只是一场战斗的记录。
+
+不过，并不是所有规则都值得放进最上层。注入的记忆会占用宝贵的 token，一条错误的笔记会被带进每一个会话；加载了也不保证 Claude 会照做——Claude Code 的文档就提醒过，指令文件越长，遵循度越低。所以 dreaming 在这里的很多工作反而是「让它保持小」：把细节移回下层，只留下指向它们的链接。Claude Code 的 auto memory 也是这样，每次只加载 `MEMORY.md` 的前 200 行或 25 KB，把它当作索引，而不是把所有记忆都塞进上下文。
+
+### 聚焦目标
+
+<ArticleFigure
+  src={labContracts}
+  alt='两张对比图。左图 Before：四个 agent 同时写入同一个共享页面 provisions.md，一个 agent 的保存会擦掉另一个 agent 写下的内容，57 条评分事实只剩 41 条。右图 After：四份合同各有自己的页面，由单个 agent 逐字引用条款，57 条评分事实全部保留。'
+  index='图 6'
+  caption='LAB 合同任务：共享页面与每份合同单独建页的对比。'
+  sourceHref='https://www.anthropic.com/research/components-of-agent-memory'
+  sourceLabel='Anthropic'
+  originalHref='https://www-cdn.anthropic.com/images/4zrzovbb/website/592f604d38e90537553ab7127d1d3115924fda92-3840x1822.png'
+/>
+
+Dreaming 还可以塑造记忆生长的方向：不是平均地保存一切，而是围绕一个具体目标组织记忆。
+
+比如，在一个模拟公司并购的 LAB 任务中，Claude 要根据一组合同建 Wiki。最初的指令没有说明合同条款是最重要的信息，多个 agent 同时往同一张共享表里写，结果互相覆盖：57 条评分事实只剩 41 条，生成的简报只覆盖 72% 的评分点。后来它复盘失败、提出修改指令、重建 Wiki：每份合同由单个 agent 单独建页，逐字引用条款；57 条事实全部保留，简报覆盖率达到 100%。
+
+这里更值得注意的，不是「改对了指令」，而是这个目标是被发现的。最初的指令并不知道什么最重要；Claude 在失败之后回头反思，才发现合同条款才是这份记忆要服务的东西。这和第四个实验正好接上：对强模型来说，告诉它「记忆是为了什么」，比规定「记什么」更有效；而 Dreaming 让模型有机会在离线整理时，自己把那个「为什么」找出来，再据此改变记忆的结构。
+
+### 发现跨会话的空缺
+
+原文里的空缺很具体：对 Wiki 再运行一次 dreaming，它发现有 9 个链接指向一个不存在的页面，于是把这些链接改指到已有页面，并补了索引等 3 个新页面。单次会话里写下的笔记，只能看到当次会话的局部；跨会话整理才能发现「这里缺了一块」。
+
+对 Personal Agent 来说，空缺不只是断掉的链接，也可能是「这个人关心什么」还没有被完整理解。用户真正持续关注的事情，未必会在某一次对话中完整出现，而可能分散在不同项目、任务和时间的交流里。
+
+<KeyPoint label='我的判断'>
+  比如，我会在一些会话中研究 Agent Memory，在另一些会话中设计持续协作系统，又在其他讨论里关注 AI 应该怎样向人表达信息。单独看，它们是不同的问题；把这些会话放在一起，Agent 或许能发现它们之间反复出现的联系：我关心的不只是某个具体工具，而是智能体如何长期理解上下文、与人协作，并把信息表达清楚。
+
+  **Dreaming 对我最大的价值，是发现那些跨会话的潜在需求和模式。**
+</KeyPoint>
+
+这不是要 Agent 据此给用户贴上一个固定的兴趣标签。更合理的做法，是把这种联系当作一个有证据、可以修正的假设：哪些主题反复出现？哪些问题跨越了不同项目？新的交流是否支持或推翻了之前的判断？这类理解应该随着后续经历不断调整。
+
+把这几件事放在一起看，又能回到记忆最初面临的难题：Agent 不知道下一次会遇到什么，因此每次决定保存一条信息，其实都隐含着一个判断——**这条信息未来可能派得上用场。** 记忆不是对过去的完整复刻，而是对未来可能需要什么的一种预测。
+
+预测当然可能出错。某条规则可能从一开始就是错的，某个偏好可能已经改变，一段当时看似重要的经历也可能再没有被用到。所以记忆不能只在写入时做一次判断，还需要在后续协作中接受检验。在线工作产生经历，离线整理重新审视这些经历，更新后的记忆再参与下一次工作。新的工作继续提供反馈，记忆也就有机会不断修正自己的预测。
+
+## 还没有解决的问题
+
+不过，把记忆整理放到离线阶段，并不意味着所有问题都解决了。Anthropic 在原文最后提出的几个问题，其实都和系统如何分配记录、整理与检索的成本有关。
+
+- **什么时候记录？** Agent 可以在任务进行时即时写入记忆，让重要信息尽快可用；但记录和整理也会分散它对当前任务的注意力。若完全交给离线 Dreaming，当前会话又可能暂时用不上刚刚产生的新知识。即时记录与后台整理之间，需要找到合适的分工。
+- **怎样保持记忆可靠、不过时？** 记忆可能一开始就写错，也可能随着环境变化逐渐过时。频繁检查有助于发现问题，却需要额外的模型调用和计算资源。是否应该定期整理，还是优先检查那些经常被访问、变化较快的记忆？整理的频率本身也是一个设计问题。
+- **是否所有历史都值得提炼成结构化知识？** Wiki 等记忆表征有助于连接分散的信息，但需要持续维护，也可能积累错误。对于某些问题，直接搜索原始会话反而更简单、更准确。
+
+例如，[Hermes Agent 的记忆设计](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) 就把长期保留的核心信息与历史会话检索分开：前者保存少量重要事实，后者通过 `session_search` 在历史会话中进行全文检索，找到相关内容后再查看原始消息。它的 [Session Search 文档](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/sessions.md) 介绍了具体的搜索与浏览方式。这提供了另一种思路：不必把每段历史都提前总结进记忆，需要具体细节时，也可以回到原始 Session 中查找。
+
+这和 Anthropic 对 Wiki 与 Search 的实验形成了呼应：结构化记忆和原始检索并不是非此即彼。跨文档、需要建立联系的问题，可能更受益于整理好的知识结构；只需要找回某次对话中的具体信息时，搜索原始记录就足够了。真正需要设计的，是两者如何互相补充，而不是把所有信息都塞进同一种记忆形式。
+
+---
+
+[1] Wamsley, E. J. (2014). Dreaming and Offline Memory Consolidation. *Current Neurology and Neuroscience Reports*, 14(3), 433. https://pmc.ncbi.nlm.nih.gov/articles/PMC4704085/
