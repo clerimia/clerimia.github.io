@@ -1,0 +1,76 @@
+---
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  src: ImageMetadata
+  alt: string
+  index: string
+  caption: string
+  sourceHref: string
+  sourceLabel: string
+  originalHref?: string
+}
+
+const { src, alt, index, caption, sourceHref, sourceLabel, originalHref } = Astro.props
+---
+
+<figure class='article-figure not-prose'>
+  <div class='figure-image'>
+    <Image
+      src={src}
+      alt={alt}
+      widths={[640, 960, 1280]}
+      sizes='(max-width: 684px) 100vw, 684px'
+      loading='lazy'
+    />
+  </div>
+  <figcaption>
+    <span class='figure-index'>{index}</span>
+    {caption}图片：<a href={sourceHref} target='_blank' rel='noreferrer'>{sourceLabel}</a>
+    {originalHref && <> · <a href={originalHref} target='_blank' rel='noreferrer'>原图</a></>}。
+  </figcaption>
+</figure>
+
+<style>
+  .article-figure {
+    display: block;
+    width: 100%;
+    max-width: var(--layout-reading);
+    margin: 1.5rem 0;
+    padding: 0;
+  }
+  .figure-image {
+    overflow: hidden;
+    border-radius: var(--radius-control);
+  }
+  .figure-image :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    margin-top: 10px;
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .figure-index {
+    margin-inline-end: 6px;
+    color: hsl(var(--brand));
+    font-size: 11px;
+    font-weight: 700;
+  }
+  figcaption a {
+    color: hsl(var(--primary));
+    text-underline-offset: 3px;
+  }
+  figcaption a:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  @media (max-width: 639px) {
+    .article-figure { margin-block: 1.25rem; }
+  }
+</style>

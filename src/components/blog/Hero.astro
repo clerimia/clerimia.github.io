@@ -98,12 +98,12 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     }
   </div>
 
-  <h1 class='mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
+  <h1 class='mt-4 text-2xl font-medium sm:mt-6 sm:text-3xl'>
     {title}
   </h1>
 
-  <div class='mt-3'>
-    <p class='article-description'>{description}</p>
+  <div class='mt-5'>
+    {description && <p class='article-description text-lead text-pretty'>{description}</p>}
     <slot name='description' />
   </div>
 </div>
@@ -126,10 +126,11 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
   }
 
   .article-description {
-    max-width: var(--layout-reading);
+    /* 38em 是文字行长，额外 18px 留给导语竖线与缩进。 */
+    max-width: calc(38em + 18px);
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid hsl(var(--brand));
     color: hsl(var(--muted-foreground));
-    font-size: var(--font-lead);
-    line-height: 1.75;
   }
 
   .draft-status {

@@ -1,4 +1,4 @@
-/* Article figures share the page palette and leave its background visible. */
+/* Article figures share the page palette and stay aligned to the reading column. */
 .value-diagram,
 .scion-diagram {
   --diagram-ink: hsl(var(--foreground));
@@ -6,19 +6,19 @@
   --diagram-line: hsl(var(--border) / 0.65);
   --diagram-surface: hsl(var(--card));
   --diagram-card: hsl(var(--secondary));
-  /* 图表分类色不是操作状态，继续使用绿色以免随 action 变红。 */
+  /* 图表分类色不表示操作状态，继续使用跨主题身份绿。 */
   --diagram-blue: hsl(var(--brand));
   --diagram-blue-soft: color-mix(in srgb, hsl(var(--brand)) 6%, transparent);
-  --diagram-teal: #23786a;
-  --diagram-teal-soft: rgb(35 120 106 / 0.06);
-  --diagram-red: #a84b38;
-  --diagram-red-soft: rgb(168 75 56 / 0.06);
-  --diagram-amber: #94612d;
-  --diagram-amber-soft: rgb(148 97 45 / 0.06);
+  --diagram-teal: hsl(var(--status-success));
+  --diagram-teal-soft: hsl(var(--status-success-surface));
+  --diagram-red: hsl(var(--status-error));
+  --diagram-red-soft: hsl(var(--status-error-surface));
+  --diagram-amber: hsl(var(--status-warning));
+  --diagram-amber-soft: hsl(var(--status-warning-surface));
   display: block;
   width: 100%;
   max-width: 640px;
-  margin: 1.5rem auto;
+  margin: 1.5rem 0;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -27,14 +27,4 @@
   font-family: inherit;
   line-height: 1.5;
   scroll-margin-top: 24px;
-}
-
-.dark .value-diagram,
-.dark .scion-diagram {
-  --diagram-teal: #8dcabb;
-  --diagram-teal-soft: rgb(141 202 187 / 0.06);
-  --diagram-red: #e4a28d;
-  --diagram-red-soft: rgb(228 162 141 / 0.07);
-  --diagram-amber: #d3b38a;
-  --diagram-amber-soft: rgb(211 179 138 / 0.06);
 }

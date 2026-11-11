@@ -1,0 +1,50 @@
+---
+interface Props {
+  label?: string
+}
+
+const { label } = Astro.props
+---
+
+<aside class='key-point not-prose'>
+  {label && <span class='key-point-label'>{label}</span>}
+  <div class='key-point-body'>
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .key-point {
+    display: block;
+    margin: 1.5rem 0;
+    padding: 14px 16px 14px 18px;
+    border-inline-start: 2px solid hsl(var(--brand));
+    border-radius: 0 var(--radius-control) var(--radius-control) 0;
+    background: color-mix(in srgb, hsl(var(--brand)) 6%, transparent);
+  }
+  .key-point-label {
+    display: block;
+    margin-bottom: 4px;
+    color: hsl(var(--brand));
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: .04em;
+  }
+  .key-point-body :global(p) {
+    margin: 0;
+    color: hsl(var(--foreground));
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .key-point-body :global(p + p) { margin-top: 8px; }
+  .key-point-body :global(strong) {
+    color: hsl(var(--foreground));
+    font-weight: 650;
+  }
+  @media (max-width: 639px) {
+    .key-point {
+      margin-block: 1.25rem;
+      padding: 12px 14px 12px 16px;
+    }
+  }
+</style>
