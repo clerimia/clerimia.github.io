@@ -455,9 +455,13 @@
 
 .home-section-heading {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
   margin-bottom: 15px;
+}
+
+.home-section-heading > .text-arrow-link {
+  margin-block: -12px;
 }
 
 .home-section-heading h2 {
